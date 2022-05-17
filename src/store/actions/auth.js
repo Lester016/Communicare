@@ -23,7 +23,8 @@ export const authFailed = (error) => {
 };
 
 export const login = (email, password) => {
-  let url = "https://tup-payroll.herokuapp.com/api/users/login";
+  let url =
+    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCqLt1akVbJI8TOxP3HMTCXgsV9DHBoXww";
 
   const config = {
     headers: {
@@ -36,13 +37,13 @@ export const login = (email, password) => {
     axios
       .post(url, { email, password }, config)
       .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userID", res.data._id);
+        // localStorage.setItem("token", res.data.token);
+        // localStorage.setItem("userID", res.data._id);
         console.log(res.data);
-        dispatch(authSuccess(res.data.token, res.data._id));
+        dispatch(authSuccess(res.data.idToken, res.data.localId));
       })
       .catch((error) => {
-        dispatch(authFailed(error.response.data.message));
+        dispatch(authFailed(error.response.data.error.message));
       });
   };
 };
