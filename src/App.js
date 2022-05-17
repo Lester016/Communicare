@@ -1,9 +1,4 @@
-import { Routes, Route, Redirect, Link, Outlet } from "react-router-dom";
-
-import "./App.css";
-import Home from "./containers/Home";
-import Login from "./containers/Login";
-import Register from "./containers/Register";
+import { Link, Outlet } from "react-router-dom";
 
 function App() {
   return (
