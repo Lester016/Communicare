@@ -1,8 +1,11 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { connect } from "react-redux";
 
-const Register = ({ loading, error }) => {
+import * as actions from "../store/actions";
+
+const Register = ({ register, loading, error }) => {
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required().label("Email"),
     password: Yup.string().required().label("Password"),
@@ -17,7 +20,7 @@ const Register = ({ loading, error }) => {
       initialValues={{ email: "", password: "", confirmPassword: "" }}
       validationSchema={RegisterSchema}
       onSubmit={(values) => {
-        console.log(values.email, values.password);
+        register(values.email, values.password);
       }}
     >
       <Form>
@@ -39,4 +42,20 @@ const Register = ({ loading, error }) => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+    loading: state.auth.loading,
+    error: state.auth.error,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    register: (email, password) => {
+      dispatch(actions.register(email, password));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

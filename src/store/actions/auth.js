@@ -22,6 +22,32 @@ export const authFailed = (error) => {
   };
 };
 
+export const register = (email, password) => {
+  let url =
+    "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCqLt1akVbJI8TOxP3HMTCXgsV9DHBoXww";
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return (dispatch) => {
+    dispatch(authStart());
+    axios
+      .post(url, { email, password }, config)
+      .then((res) => {
+        localStorage.setItem("token", res.data.idToken);
+        localStorage.setItem("userID", res.data.localId);
+        console.log(res.data);
+        dispatch(authSuccess(res.data.idToken, res.data.localId));
+      })
+      .catch((error) => {
+        dispatch(authFailed(error.response.data.error.message));
+      });
+  };
+};
+
 export const login = (email, password) => {
   let url =
     "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCqLt1akVbJI8TOxP3HMTCXgsV9DHBoXww";
@@ -37,8 +63,8 @@ export const login = (email, password) => {
     axios
       .post(url, { email, password }, config)
       .then((res) => {
-        // localStorage.setItem("token", res.data.token);
-        // localStorage.setItem("userID", res.data._id);
+        localStorage.setItem("token", res.data.idToken);
+        localStorage.setItem("userID", res.data.localId);
         console.log(res.data);
         dispatch(authSuccess(res.data.idToken, res.data.localId));
       })
