@@ -16,7 +16,8 @@ const ProtectedLayout = ({ user }) => {
           paddingBottom: "1rem",
         }}
       >
-        <Link to="/home">Home</Link> | <Link to="/contacts">Contacts</Link>
+        <Link to="/">Home</Link> | <Link to="/contacts">Contacts</Link> |{" "}
+        <Link to="/logout">Logout</Link>
       </nav>
 
       <Outlet />

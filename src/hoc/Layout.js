@@ -16,7 +16,7 @@ const Layout = ({ user }) => {
           paddingBottom: "1rem",
         }}
       >
-        <Link to="/home">Home</Link> | <Link to="/auth/login">Login</Link> |{" "}
+        <Link to="/auth/login">Login</Link> |{" "}
         <Link to="/auth/register">Register</Link>
       </nav>
 
