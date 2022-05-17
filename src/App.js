@@ -1,19 +1,19 @@
-import { Link, Outlet } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+
+import Fallback from "./containers/Fallback";
+import Layout from "./containers/Layout";
+import Login from "./containers/Login";
+import Register from "./containers/Register";
 
 function App() {
   return (
-    <div>
-      <h1>Communicare</h1>
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem",
-        }}
-      >
-        <Link to="/login">Login</Link> | <Link to="/register">Register</Link>
-      </nav>
-      <Outlet />
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="*" element={<Fallback />} />
+      </Route>
+    </Routes>
   );
 }
 
