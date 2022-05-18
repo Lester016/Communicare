@@ -14,6 +14,7 @@ import Logout from "./containers/Logout";
 
 function App({ onAutoSignup }) {
   useEffect(() => {
+    console.log("App rendered");
     onAutoSignup();
   }, [onAutoSignup]);
 
