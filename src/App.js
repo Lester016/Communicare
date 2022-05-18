@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
+import { io } from "socket.io-client";
 
 import * as actions from "./store/actions";
 import Fallback from "./containers/Fallback";
@@ -12,11 +13,26 @@ import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 
-function App({ onAutoSignup }) {
+const socket = io("http://localhost:8000/");
+
+function App({ onAutoSignup, userID, email }) {
+  const [responseMessage, setResponseMessage] = useState([]);
+
   useEffect(() => {
     console.log("App rendered");
+
+    socket.on("chat message", (data) =>
+      setResponseMessage((prevState) => [...prevState, data])
+    );
+
     onAutoSignup();
   }, [onAutoSignup]);
+
+  const handleSubmitMessage = (message) => {
+    if (message !== "") {
+      socket.emit("chat message", { message, userID, email });
+    }
+  };
 
   return (
     <Routes>
@@ -26,7 +42,15 @@ function App({ onAutoSignup }) {
       </Route>
 
       <Route path="/" element={<ProtectedLayout />}>
-        <Route index element={<Home />} />
+        <Route
+          index
+          element={
+            <Home
+              onSubmitMessage={handleSubmitMessage}
+              responseMessage={responseMessage}
+            />
+          }
+        />
         <Route path="contacts" element={<Contacts />} />
         <Route path="logout" element={<Logout />} />
       </Route>
@@ -36,10 +60,17 @@ function App({ onAutoSignup }) {
   );
 }
 
+const mapStateToProps = (state) => {
+  return {
+    userID: state.auth.userID,
+    email: state.auth.email,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onAutoSignup: () => dispatch(actions.authCheckState()),
   };
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
