@@ -26,7 +26,7 @@ function App({ onAutoSignup }) {
       </Route>
 
       <Route path="/" element={<ProtectedLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route index element={<Home />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="logout" element={<Logout />} />
       </Route>
