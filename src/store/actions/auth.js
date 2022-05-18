@@ -7,11 +7,12 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (token, userID) => {
+export const authSuccess = (token, userID, email) => {
   return {
     type: actionTypes.AUTH_SUCCESS,
     tokenId: token,
     userID: userID,
+    email: email,
   };
 };
 
@@ -39,8 +40,11 @@ export const register = (email, password) => {
       .then((res) => {
         localStorage.setItem("token", res.data.idToken);
         localStorage.setItem("userID", res.data.localId);
+        localStorage.setItem("email", res.data.email);
         console.log(res.data);
-        dispatch(authSuccess(res.data.idToken, res.data.localId));
+        dispatch(
+          authSuccess(res.data.idToken, res.data.localId, res.data.email)
+        );
       })
       .catch((error) => {
         dispatch(authFailed(error.response.data.error.message));
@@ -65,8 +69,11 @@ export const login = (email, password) => {
       .then((res) => {
         localStorage.setItem("token", res.data.idToken);
         localStorage.setItem("userID", res.data.localId);
+        localStorage.setItem("email", res.data.email);
         console.log(res.data);
-        dispatch(authSuccess(res.data.idToken, res.data.localId));
+        dispatch(
+          authSuccess(res.data.idToken, res.data.localId, res.data.email)
+        );
       })
       .catch((error) => {
         dispatch(authFailed(error.response.data.error.message));
@@ -77,6 +84,7 @@ export const login = (email, password) => {
 export const clearTokens = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userID");
+  localStorage.removeItem("email");
   return {
     type: actionTypes.AUTH_CLEAR_TOKENS,
   };
@@ -90,8 +98,9 @@ export const authCheckState = () => {
       dispatch(clearTokens()); // or just return
     } else {
       const userID = localStorage.getItem("userID");
+      const email = localStorage.getItem("email");
 
-      dispatch(authSuccess(token, userID));
+      dispatch(authSuccess(token, userID, email));
     }
   };
 };

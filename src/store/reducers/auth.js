@@ -3,6 +3,7 @@ import * as actionTypes from "../actions/actionTypes";
 const initialState = {
   token: null,
   userID: null,
+  email: null,
   error: null,
   loading: false,
 };
@@ -19,6 +20,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         token: action.tokenId,
         userID: action.userID,
+        email: action.email,
         loading: false,
         error: null,
       };
@@ -33,6 +35,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         token: null,
         userID: null,
+        email: null,
       };
     default:
       return state;
