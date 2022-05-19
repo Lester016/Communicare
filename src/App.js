@@ -22,6 +22,11 @@ const socket = io("http://localhost:8000/", {
 function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isCallReceived, setIsCallReceived] = useState(false);
+  const [callerInfo, setCallerInfo] = useState({
+    callerID: "",
+    callerEmail: "",
+  });
 
   useEffect(() => {
     if (userID) {
@@ -40,8 +45,12 @@ function App({ onAutoSignup, userID, email }) {
       setResponseMessage((prevState) => [...prevState, data])
     );
 
-    socket.on("call-user", (data) => {
-      console.log("caller data: ", data);
+    socket.on("call-user", ({ callerID, callerEmail }) => {
+      setIsCallReceived(true);
+      setCallerInfo({
+        callerID: callerID,
+        callerEmail: callerEmail,
+      });
     });
   }, []);
 
@@ -65,7 +74,15 @@ function App({ onAutoSignup, userID, email }) {
         <Route path="register" element={<Register />} />
       </Route>
 
-      <Route path="/" element={<ProtectedLayout />}>
+      <Route
+        path="/"
+        element={
+          <ProtectedLayout
+            isCallReceived={isCallReceived}
+            callerInfo={callerInfo}
+          />
+        }
+      >
         <Route
           index
           element={
