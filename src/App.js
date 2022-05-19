@@ -13,7 +13,11 @@ import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 
-const socket = io("http://localhost:8000/", { autoConnect: false });
+// Hosted
+// https://communicare-server.herokuapp.com/
+const socket = io("http://localhost:8000/", {
+  autoConnect: false,
+});
 
 function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
@@ -35,12 +39,23 @@ function App({ onAutoSignup, userID, email }) {
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
     );
+
+    socket.on("call-user", (data) => {
+      console.log("caller data: ", data);
+    });
   }, []);
 
   const handleSubmitMessage = (message) => {
     if (message !== "") {
       socket.emit("chat message", { message, userID, email });
     }
+  };
+
+  const callUser = (userToCallID) => {
+    socket.emit("call-user", {
+      userToCallID: userToCallID,
+      callerID: userID,
+    });
   };
 
   return (
@@ -62,7 +77,13 @@ function App({ onAutoSignup, userID, email }) {
         />
         <Route
           path="contacts"
-          element={<Contacts onlineUsers={onlineUsers} />}
+          element={
+            <Contacts
+              onlineUsers={onlineUsers}
+              contactUser={callUser}
+              userID={userID}
+            />
+          }
         />
         <Route path="logout" element={<Logout />} />
       </Route>
