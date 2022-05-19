@@ -13,20 +13,29 @@ import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 
-const socket = io("http://localhost:8000/");
+const socket = io("http://localhost:8000/", { autoConnect: false });
 
 function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
-    console.log("App rendered");
+    if (userID) {
+      socket.connect();
+      socket.emit("add-user", { userID, email });
+    } else {
+      socket.disconnect();
+    }
 
+    onAutoSignup();
+  }, [onAutoSignup, userID, email]);
+
+  useEffect(() => {
+    socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
     );
-
-    onAutoSignup();
-  }, [onAutoSignup]);
+  }, []);
 
   const handleSubmitMessage = (message) => {
     if (message !== "") {
@@ -51,7 +60,10 @@ function App({ onAutoSignup, userID, email }) {
             />
           }
         />
-        <Route path="contacts" element={<Contacts />} />
+        <Route
+          path="contacts"
+          element={<Contacts onlineUsers={onlineUsers} />}
+        />
         <Route path="logout" element={<Logout />} />
       </Route>
 
