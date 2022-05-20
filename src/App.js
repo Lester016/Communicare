@@ -27,6 +27,7 @@ function App({ onAutoSignup, userID, email }) {
   const [stream, setStream] = useState();
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
+  const [isCallEnded, setIsCallEnded] = useState(false);
   const [callerInfo, setCallerInfo] = useState({
     callerID: "",
     callerEmail: "",
@@ -48,6 +49,8 @@ function App({ onAutoSignup, userID, email }) {
   }, [onAutoSignup, userID, email]);
 
   useEffect(() => {
+    getUserMedia();
+
     socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
@@ -83,7 +86,6 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const callUser = (userToCallID) => {
-    getUserMedia();
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -109,7 +111,7 @@ function App({ onAutoSignup, userID, email }) {
   const answerCall = () => {
     setIsCallAccepted(true);
 
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    const peer = new Peer({ initiator: false, trickle: false, stream });
 
     peer.on("signal", (data) => {
       socket.emit("answer-call", {
@@ -141,6 +143,9 @@ function App({ onAutoSignup, userID, email }) {
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
             myMedia={myMedia}
+            userMedia={userMedia}
+            isCallAccepted={isCallAccepted}
+            answerCall={answerCall}
           />
         }
       >

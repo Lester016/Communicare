@@ -2,18 +2,27 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link, Navigate, Outlet } from "react-router-dom";
 
-const ProtectedLayout = ({ user, isCallReceived, callerInfo, myMedia }) => {
+const ProtectedLayout = ({
+  user,
+  isCallReceived,
+  callerInfo,
+  myMedia,
+  userMedia,
+  isCallAccepted,
+  answerCall,
+}) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
   }
 
-  console.log("callerInfo: ", callerInfo);
   return (
     <div>
       <h1>Communicare</h1>
       <div>
         <h4>My Media</h4>
+
         <video playsInline muted autoPlay ref={myMedia} />
+        <video playsInline autoPlay ref={userMedia} />
       </div>
       <nav
         style={{
@@ -25,7 +34,14 @@ const ProtectedLayout = ({ user, isCallReceived, callerInfo, myMedia }) => {
         <Link to="/logout">Logout</Link>
       </nav>
 
-      {isCallReceived && <h3>{callerInfo.callerEmail} is calling...</h3>}
+      {isCallReceived && (
+        <div>
+          <h3>{callerInfo.callerEmail} is calling...</h3>
+          <button type="button" onClick={answerCall}>
+            Answer call
+          </button>
+        </div>
+      )}
 
       <Outlet />
     </div>
