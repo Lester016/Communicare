@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
 import { io } from "socket.io-client";
@@ -27,6 +27,8 @@ function App({ onAutoSignup, userID, email }) {
     callerID: "",
     callerEmail: "",
   });
+
+  const myMedia = useRef();
 
   useEffect(() => {
     if (userID) {
@@ -60,7 +62,21 @@ function App({ onAutoSignup, userID, email }) {
     }
   };
 
+  const getUserMedia = async () => {
+    try {
+      let stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      myMedia.current.srcObject = stream;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const callUser = (userToCallID) => {
+    getUserMedia();
+
     socket.emit("call-user", {
       userToCallID: userToCallID,
       callerID: userID,
@@ -80,6 +96,7 @@ function App({ onAutoSignup, userID, email }) {
           <ProtectedLayout
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
+            myMedia={myMedia}
           />
         }
       >

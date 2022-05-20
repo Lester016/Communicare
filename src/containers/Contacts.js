@@ -1,6 +1,6 @@
 import React from "react";
 
-const Contacts = ({ onlineUsers, contactUser, userID }) => {
+const Contacts = ({ onlineUsers, contactUser, userID, myMedia }) => {
   return (
     <div>
       Contact

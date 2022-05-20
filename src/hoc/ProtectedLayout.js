@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link, Navigate, Outlet } from "react-router-dom";
 
-const ProtectedLayout = ({ user, isCallReceived, callerInfo }) => {
+const ProtectedLayout = ({ user, isCallReceived, callerInfo, myMedia }) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
   }
@@ -11,6 +11,10 @@ const ProtectedLayout = ({ user, isCallReceived, callerInfo }) => {
   return (
     <div>
       <h1>Communicare</h1>
+      <div>
+        <h4>My Media</h4>
+        <video playsInline muted autoPlay ref={myMedia} />
+      </div>
       <nav
         style={{
           borderBottom: "solid 1px",
