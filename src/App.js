@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
 import { io } from "socket.io-client";
+import Peer from "simple-peer";
 
 import * as actions from "./store/actions";
 import Fallback from "./containers/Fallback";
@@ -23,12 +24,17 @@ function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isCallReceived, setIsCallReceived] = useState(false);
+  const [stream, setStream] = useState();
+  const [callSignal, setCallSignal] = useState();
+  const [callAccepted, setCallAccepted] = useState(false);
   const [callerInfo, setCallerInfo] = useState({
     callerID: "",
     callerEmail: "",
   });
 
   const myMedia = useRef();
+  const userMedia = useRef();
+  const connectionRef = useRef();
 
   useEffect(() => {
     if (userID) {
@@ -47,8 +53,9 @@ function App({ onAutoSignup, userID, email }) {
       setResponseMessage((prevState) => [...prevState, data])
     );
 
-    socket.on("call-user", ({ callerID, callerEmail }) => {
+    socket.on("call-user", ({ callerID, callerEmail, signal }) => {
       setIsCallReceived(true);
+      setCallSignal(signal);
       setCallerInfo({
         callerID: callerID,
         callerEmail: callerEmail,
@@ -68,6 +75,7 @@ function App({ onAutoSignup, userID, email }) {
         video: true,
         audio: true,
       });
+      setStream(stream);
       myMedia.current.srcObject = stream;
     } catch (err) {
       console.log(err);
@@ -76,11 +84,26 @@ function App({ onAutoSignup, userID, email }) {
 
   const callUser = (userToCallID) => {
     getUserMedia();
+    const peer = new Peer({ initiator: true, trickle: false, stream });
 
-    socket.emit("call-user", {
-      userToCallID: userToCallID,
-      callerID: userID,
+    peer.on("signal", (data) => {
+      socket.emit("call-user", {
+        userToCallID: userToCallID,
+        callerID: userID,
+        signal: data,
+      });
     });
+
+    peer.on("stream", (stream) => {
+      userMedia.current.srcObject = stream;
+    });
+
+    socket.on("call-accepted", (signal) => {
+      setCallAccepted(true);
+      peer.signal(signal);
+    });
+
+    connectionRef.current = peer;
   };
 
   return (
