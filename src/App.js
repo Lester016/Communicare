@@ -26,7 +26,7 @@ function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [callSignal, setCallSignal] = useState();
-  const [callAccepted, setCallAccepted] = useState(false);
+  const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [callerInfo, setCallerInfo] = useState({
     callerID: "",
     callerEmail: "",
@@ -98,10 +98,31 @@ function App({ onAutoSignup, userID, email }) {
       userMedia.current.srcObject = stream;
     });
 
-    socket.on("call-accepted", (signal) => {
-      setCallAccepted(true);
+    socket.on("call-accepted", ({ signal }) => {
+      setIsCallAccepted(true);
       peer.signal(signal);
     });
+
+    connectionRef.current = peer;
+  };
+
+  const answerCall = () => {
+    setIsCallAccepted(true);
+
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+
+    peer.on("signal", (data) => {
+      socket.emit("answer-call", {
+        callerID: callerInfo.callerID,
+        signal: data,
+      });
+    });
+
+    peer.on("stream", (stream) => {
+      userMedia.current.srcObject = stream;
+    });
+
+    peer.signal(callSignal);
 
     connectionRef.current = peer;
   };
