@@ -10,6 +10,8 @@ const ProtectedLayout = ({
   userMedia,
   isCallAccepted,
   answerCall,
+  endCall,
+  isCallEnded,
 }) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
@@ -20,9 +22,20 @@ const ProtectedLayout = ({
       <h1>Communicare</h1>
       <div>
         <h4>My Media</h4>
-
         <video playsInline muted autoPlay ref={myMedia} />
-        <video playsInline autoPlay ref={userMedia} />
+        {isCallAccepted && !isCallEnded ? (
+          <>
+            <button onClick={endCall}>Hang up</button>
+            <video playsInline autoPlay ref={userMedia} />
+          </>
+        ) : isCallReceived ? (
+          <div>
+            <h3>{callerInfo.callerEmail} is calling...</h3>
+            <button type="button" onClick={answerCall}>
+              Answer call
+            </button>
+          </div>
+        ) : null}
       </div>
       <nav
         style={{
@@ -33,15 +46,6 @@ const ProtectedLayout = ({
         <Link to="/">Home</Link> | <Link to="/contacts">Contacts</Link> |{" "}
         <Link to="/logout">Logout</Link>
       </nav>
-
-      {isCallReceived && (
-        <div>
-          <h3>{callerInfo.callerEmail} is calling...</h3>
-          <button type="button" onClick={answerCall}>
-            Answer call
-          </button>
-        </div>
-      )}
 
       <Outlet />
     </div>

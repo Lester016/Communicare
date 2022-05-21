@@ -41,6 +41,7 @@ function App({ onAutoSignup, userID, email }) {
     if (userID) {
       socket.connect();
       socket.emit("add-user", { userID, email });
+      getUserMedia();
     } else {
       socket.disconnect();
     }
@@ -49,8 +50,6 @@ function App({ onAutoSignup, userID, email }) {
   }, [onAutoSignup, userID, email]);
 
   useEffect(() => {
-    getUserMedia();
-
     socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
@@ -129,6 +128,14 @@ function App({ onAutoSignup, userID, email }) {
     connectionRef.current = peer;
   };
 
+  const endCall = () => {
+    setIsCallEnded(true);
+
+    connectionRef.current.destroy();
+
+    window.location.reload();
+  };
+
   return (
     <Routes>
       <Route path="/auth" element={<Layout />}>
@@ -146,6 +153,8 @@ function App({ onAutoSignup, userID, email }) {
             userMedia={userMedia}
             isCallAccepted={isCallAccepted}
             answerCall={answerCall}
+            isCallEnded={isCallEnded}
+            endCall={endCall}
           />
         }
       >
