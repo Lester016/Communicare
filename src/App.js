@@ -85,7 +85,17 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const callUser = (userToCallID) => {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
+        ],
+      },
+      stream,
+    });
 
     peer.on("signal", (data) => {
       socket.emit("call-user", {
@@ -110,7 +120,17 @@ function App({ onAutoSignup, userID, email }) {
   const answerCall = () => {
     setIsCallAccepted(true);
 
-    const peer = new Peer({ initiator: false, trickle: false, stream });
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
+        ],
+      },
+      stream,
+    });
 
     peer.on("signal", (data) => {
       socket.emit("answer-call", {
