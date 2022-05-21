@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const Home = ({ onSubmitMessage, responseMessage }) => {
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    console.log("RENDERED HOME");
-  }, []);
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);

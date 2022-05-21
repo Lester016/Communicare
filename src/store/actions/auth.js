@@ -70,7 +70,6 @@ export const login = (email, password) => {
         localStorage.setItem("token", res.data.idToken);
         localStorage.setItem("userID", res.data.localId);
         localStorage.setItem("email", res.data.email);
-        console.log(res.data);
         dispatch(
           authSuccess(res.data.idToken, res.data.localId, res.data.email)
         );
