@@ -88,7 +88,10 @@ function App({ onAutoSignup, userID, email }) {
       input.connect(processor);
 
       processor.onaudioprocess = function (e) {
-        micProcess(e);
+        let left = e.inputBuffer.getChannelData(0);
+        // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
+        let left16 = downsampleBuffer(left, 44100, 16000);
+        socket.emit("binaryData", left16);
       };
       setStream(stream);
     };
@@ -101,13 +104,6 @@ function App({ onAutoSignup, userID, email }) {
       console.log("TRANSCRIBE MESSAGE: ", message)
     );
   }, []);
-
-  const micProcess = (e) => {
-    let left = e.inputBuffer.getChannelData(0);
-    // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-    let left16 = downsampleBuffer(left, 44100, 16000);
-    socket.emit("binaryData", left16);
-  };
 
   const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
     if (outSampleRate === sampleRate) {
