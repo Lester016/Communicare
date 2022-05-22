@@ -88,7 +88,7 @@ function App({ onAutoSignup, userID, email }) {
       input.connect(processor);
 
       processor.onaudioprocess = function (e) {
-        microphoneProcess(e);
+        micProcess(e);
       };
       setStream(stream);
     };
@@ -102,7 +102,7 @@ function App({ onAutoSignup, userID, email }) {
     );
   }, []);
 
-  const microphoneProcess = (e) => {
+  const micProcess = (e) => {
     let left = e.inputBuffer.getChannelData(0);
     // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
     let left16 = downsampleBuffer(left, 44100, 16000);
