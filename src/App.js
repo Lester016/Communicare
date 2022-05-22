@@ -17,7 +17,7 @@ import Logout from "./containers/Logout";
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("http://localhost:8000/", {
+const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
