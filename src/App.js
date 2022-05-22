@@ -26,6 +26,7 @@ function App({ onAutoSignup, userID, email }) {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
+  const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -37,6 +38,10 @@ function App({ onAutoSignup, userID, email }) {
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
+  const iceConfig = [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
+  ];
 
   useEffect(() => {
     if (userID) {
@@ -90,10 +95,7 @@ function App({ onAutoSignup, userID, email }) {
       initiator: true,
       trickle: false,
       config: {
-        iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
-          { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
-        ],
+        iceServers: iceConfig,
       },
       stream,
     });
@@ -125,10 +127,7 @@ function App({ onAutoSignup, userID, email }) {
       initiator: false,
       trickle: false,
       config: {
-        iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
-          { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
-        ],
+        iceServers: iceConfig,
       },
       stream,
     });
@@ -157,6 +156,10 @@ function App({ onAutoSignup, userID, email }) {
     window.location.reload();
   };
 
+  const enableTranscriptionHandler = () => {
+    setIsTranscriptionEnabled((prevState) => !prevState);
+  };
+
   return (
     <Routes>
       <Route path="/auth" element={<Layout />}>
@@ -176,6 +179,8 @@ function App({ onAutoSignup, userID, email }) {
             answerCall={answerCall}
             isCallEnded={isCallEnded}
             endCall={endCall}
+            enableTranscription={enableTranscriptionHandler}
+            isTranscriptionEnabled={isTranscriptionEnabled}
           />
         }
       >

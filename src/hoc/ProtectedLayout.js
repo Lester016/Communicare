@@ -12,6 +12,8 @@ const ProtectedLayout = ({
   answerCall,
   endCall,
   isCallEnded,
+  enableTranscription,
+  isTranscriptionEnabled,
 }) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
@@ -20,6 +22,14 @@ const ProtectedLayout = ({
   return (
     <div>
       <h1>Communicare</h1>
+      <div>
+        {isTranscriptionEnabled ? (
+          <h5>Transcribing Text ... </h5>
+        ) : (
+          <h5>Transcription is off</h5>
+        )}
+        <button onClick={enableTranscription}>Enable Transcription</button>
+      </div>
       <div>
         <h4>My Media</h4>
         <video playsInline muted autoPlay ref={myMedia} />
