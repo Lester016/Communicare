@@ -29,7 +29,8 @@ function App({ onAutoSignup, userID, email }) {
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
   const [isLocalTranscriptionEnabled, setIsLocalTranscriptionEnabled] =
     useState(false);
-  const [localTranscriptionMessage, setLocalTranscriptionMessage] = useState();
+  const [localTranscriptionMessage, setLocalTranscriptionMessage] =
+    useState(null);
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -111,6 +112,7 @@ function App({ onAutoSignup, userID, email }) {
         .getUserMedia({ video: false, audio: true })
         .then(handleSuccess);
     } else {
+      setLocalTranscriptionMessage(null);
       socket.emit("endGoogleCloudStream");
     }
   };
