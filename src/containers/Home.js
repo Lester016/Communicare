@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-const Home = ({ onSubmitMessage, responseMessage }) => {
+const Home = ({
+  onSubmitMessage,
+  responseMessage,
+  startLocalTranscription,
+  isLocalTranscriptionEnabled,
+}) => {
   const [message, setMessage] = useState("");
 
   const handleChangeMessage = (e) => {
@@ -29,6 +34,27 @@ const Home = ({ onSubmitMessage, responseMessage }) => {
             {data.email}: {data.message}
           </p>
         ))}
+      </div>
+      <div>
+        <h1>TRANSCRIBE</h1>
+        <div>
+          <ul>
+            <li>
+              Speak and this tool will transcribe the words spoken into written
+              text.
+            </li>
+            <li>
+              Make sure the speaking voice is clear for a better translation
+              quality.
+            </li>
+            <li>Rotate your phone for better usage.</li>
+            <li>Click the button to start transcribing.</li>
+          </ul>
+        </div>
+
+        <button onClick={startLocalTranscription}>
+          {isLocalTranscriptionEnabled ? "Transcribe now" : "Stop Transcribing"}
+        </button>
       </div>
     </div>
   );

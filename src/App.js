@@ -17,7 +17,7 @@ import Logout from "./containers/Logout";
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("https://communicare-server.herokuapp.com/", {
+const socket = io("http://localhost:8000/", {
   autoConnect: false,
 });
 
@@ -27,6 +27,8 @@ function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
+  const [isLocalTranscriptionEnabled, setIsLocalTranscriptionEnabled] =
+    useState(false);
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -68,10 +70,17 @@ function App({ onAutoSignup, userID, email }) {
         callerEmail: callerEmail,
       });
     });
+
+    socket.on("transcribedMessage", ({ message }) =>
+      console.log("TRANSCRIBE MESSAGE: ", message)
+    );
   }, []);
 
-  useEffect(() => {
-    socket.emit("startGoogleCloudStream");
+  const startLocalTranscription = () => {
+    setIsLocalTranscriptionEnabled((prevState) => !prevState);
+
+    socket.emit("startGoogleCloudStream", { callerID: userID });
+
     let bufferSize = 2048;
     let AudioContext = window.AudioContext || window.webkitAudioContext;
     let context = new AudioContext({
@@ -99,11 +108,7 @@ function App({ onAutoSignup, userID, email }) {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then(handleSuccess);
-
-    socket.on("transcribedMessage", ({ message }) =>
-      console.log("TRANSCRIBE MESSAGE: ", message)
-    );
-  }, []);
+  };
 
   const downsampleBuffer = (buffer, sampleRate, outSampleRate) => {
     if (outSampleRate === sampleRate) {
@@ -246,6 +251,8 @@ function App({ onAutoSignup, userID, email }) {
             <Home
               onSubmitMessage={handleSubmitMessage}
               responseMessage={responseMessage}
+              startLocalTranscription={startLocalTranscription}
+              isLocalTranscriptionEnabled={isLocalTranscriptionEnabled}
             />
           }
         />
