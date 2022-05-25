@@ -13,83 +13,83 @@ import TextField from "../components/TextField";
 import Button from "../components/Button";
 import Typography from "../components/Typography";
 
-const LoginContainer = styled(Box)`
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-
-  @media only screen and (max-width: 800px) {
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%);
-  }
-`
-
-const LogoContainer = styled(Box)`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(90deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%);
-
-  @media only screen and (max-width: 800px) {
-    flex: 0;
-    background: none;
-  }
-`
-
-const Logo = styled('img')`
-  width: 65%;
-
-  @media only screen and (max-width: 800px) {
-    width: 200px;
-    margin-top: 64px;
-    margin-bottom: 64px;
-  }
-`
-
-const LoginFormContainer = styled(Box)`
-  width: 600px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media only screen and (max-width: 800px) {
-    width: 100%;
-  }
-`
-
-const StyledForm = styled(Form)`
-  width: 100%;
-  background-color: #FFFFFF;
-  display: flex;
-  flex-direction: column;
+const LoginContainer = styled(Box)(({ theme }) => ({
+  width: "100vw",
+  height: "100vh",
+  display: "flex",
   
-  border-radius: 25px;
-  margin: 0px 10%;
-  padding: 5% 5%;
+  [theme.breakpoints.down('md')]: {
+    flexDirection: "column",
+    alignItems: "center",
+    background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+  },
+}));
 
-  & > * {
-    margin: 10px !important;
+const LogoContainer = styled(Box)(({ theme }) => ({
+  flex: 1,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "linear-gradient(90deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+  
+  [theme.breakpoints.down('md')]: {
+    flex: 0,
+    background: "none",
+  },
+}));
+
+const Logo = styled(`img`)(({ theme }) => ({
+  width: "65%",
+
+  [theme.breakpoints.down('md')]: {
+    width: "200px",
+    marginTop: "64px",
+    marginBottom: "64px",
   }
-`
+}))
 
-const Header = styled(Typography)`
-  font-weight: 700;
-`
+const LoginFormContainer = styled(Box)(({ theme }) => ({
+  width: "700px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 
-const StyledButton = styled(Button)`
-  background-color: #6667AB;
-
-  &:hover {
-    background-color: #4e4f85;
+  [theme.breakpoints.down('md')]: {
+    width: "100%",
   }
-`
+}))
 
-const StyledLink = styled(Link)`
-  color: #22BB72;
-  font-weight: 700;
-`
+const StyledForm = styled(Box)(({ theme }) => ({
+  width: "100%",
+  backgroundColor: "#ffffff",
+  display: "flex",
+  flexDirection: "column",
+
+  borderRadius: "25px",
+  margin: "0px 10%",
+  padding: "5%",
+
+  "& > *": {
+    margin: "10px !important",
+  }
+}))
+
+const Header = styled(Typography)(({ theme }) => ({
+  fontWeight: "700",
+}))
+
+const StyledButton = styled(Button) (({ theme }) => ({
+  backgroundColor: "#6667AB",
+
+  "&:hover": {
+    backgroundColor: "#4e4f85",
+  }
+}))
+
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: "#22bb72",
+  fontWeight: "700",
+}))
 
 const Login = ({ login, error, loading }) => {
   const LoginSchema = Yup.object().shape({
@@ -123,8 +123,8 @@ const Login = ({ login, error, loading }) => {
             <p style={{ marginTop: 15, color: "red" }}>{error ? error : null}</p>
 
             {loading ? (
-              <Box sx={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                <CircularProgress sx={{color: "#6667AB"}}/>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <CircularProgress sx={{ color: "#6667AB" }} />
               </Box>) :
               <StyledButton type="submit">Sign in</StyledButton>
             }
