@@ -29,6 +29,7 @@ function App({ onAutoSignup, userID, email }) {
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
   const [isLocalTranscriptionEnabled, setIsLocalTranscriptionEnabled] =
     useState(false);
+  const [localTranscriptionMessage, setLocalTranscriptionMessage] = useState();
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -71,9 +72,9 @@ function App({ onAutoSignup, userID, email }) {
       });
     });
 
-    socket.on("transcribedMessage", ({ message }) =>
-      console.log("TRANSCRIBE MESSAGE: ", message)
-    );
+    socket.on("transcribedMessage", ({ message }) => {
+      setLocalTranscriptionMessage(message);
+    });
   }, []);
 
   const startLocalTranscription = () => {
@@ -257,6 +258,7 @@ function App({ onAutoSignup, userID, email }) {
               responseMessage={responseMessage}
               startLocalTranscription={startLocalTranscription}
               isLocalTranscriptionEnabled={isLocalTranscriptionEnabled}
+              localTranscriptionMessage={localTranscriptionMessage}
             />
           }
         />

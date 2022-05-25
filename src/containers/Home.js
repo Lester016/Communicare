@@ -5,6 +5,7 @@ const Home = ({
   responseMessage,
   startLocalTranscription,
   isLocalTranscriptionEnabled,
+  localTranscriptionMessage,
 }) => {
   const [message, setMessage] = useState("");
 
@@ -55,6 +56,7 @@ const Home = ({
         <button onClick={startLocalTranscription}>
           {isLocalTranscriptionEnabled ? "Stop Transcribing" : "Transcribe now"}
         </button>
+        <h3>{localTranscriptionMessage && localTranscriptionMessage}</h3>
       </div>
     </div>
   );
