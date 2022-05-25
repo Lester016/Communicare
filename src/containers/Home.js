@@ -53,7 +53,7 @@ const Home = ({
         </div>
 
         <button onClick={startLocalTranscription}>
-          {isLocalTranscriptionEnabled ? "Transcribe now" : "Stop Transcribing"}
+          {isLocalTranscriptionEnabled ? "Stop Transcribing" : "Transcribe now"}
         </button>
       </div>
     </div>
