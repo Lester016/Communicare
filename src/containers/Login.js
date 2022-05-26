@@ -59,7 +59,7 @@ const LoginFormContainer = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledForm = styled(Box)(({ theme }) => ({
+const StyledForm = styled(Form)(({ theme }) => ({
   width: "100%",
   backgroundColor: "#ffffff",
   display: "flex",
@@ -108,6 +108,7 @@ const Login = ({ login, error, loading }) => {
           initialValues={{ email: "", password: "" }}
           validationSchema={LoginSchema}
           onSubmit={(values) => {
+            console.log(values)
             login(values.email, values.password);
           }}
         >

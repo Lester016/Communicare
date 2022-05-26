@@ -14,8 +14,6 @@ import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
@@ -161,7 +159,7 @@ function App({ onAutoSignup, userID, email }) {
 
   return (
     <Routes>
-      <Route path="/auth"> {/*element={<Layout />}*/}
+      <Route path="/auth" element={<Layout />}> {/*element={<Layout />}*/}
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
       </Route>
