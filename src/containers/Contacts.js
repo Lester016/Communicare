@@ -29,12 +29,26 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
       .catch((error) => console.log("error catched: ", error));
   };
 
+  const removeContactHandler = (item) => {
+    let updatedContacts = [...contacts];
+
+    let index = updatedContacts.findIndex((x) => x.userID === item);
+    if (index > -1) {
+      updatedContacts.splice(index, 1); // 2nd parameter means remove one item only
+    }
+
+    axios
+      .put(
+        `https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app/contacts/${userID}.json`,
+        updatedContacts
+      )
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
+  };
+
   const isInContactsHandler = (array, item) => {
     for (let index = 0; index < array.length; index++) {
       const element = array[index].userID;
-      // if (element === item) {
-      //   return true;
-      // }
 
       if (element === item) {
         return true;
@@ -50,11 +64,14 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
           <div key={user.userID}>
             <p style={{ color: "blue" }}>{user.email}</p>
             <button onClick={() => contactUser(user.userID)}>Call</button>
-
-            <button onClick={() => {}}>Remove in contacts</button>
+            {console.log("CONTACTS: ", contacts)}
+            <button onClick={() => removeContactHandler(user.userID)}>
+              Remove in contacts
+            </button>
           </div>
         ))}
       </div>
+
       <h3>Online Users</h3>
       {onlineUsers.map((user) => (
         <div
