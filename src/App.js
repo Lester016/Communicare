@@ -114,6 +114,7 @@ function App({ onAutoSignup, userID, email }) {
         .then(handleSuccess);
     } else {
       setLocalTranscriptionMessage(null);
+      stopAudioOnly(stream);
       socket.emit("endGoogleCloudStream");
     }
   };
@@ -186,8 +187,25 @@ function App({ onAutoSignup, userID, email }) {
     setIsCallEnded(true);
 
     connectionRef.current.destroy();
+    stopBothVideoAndAudio(stream);
+  };
 
-    window.location.reload();
+  // stop both mic and camera
+  const stopBothVideoAndAudio = (stream) => {
+    stream.getTracks().forEach((track) => {
+      if (track.readyState === "live") {
+        track.stop();
+      }
+    });
+  };
+
+  // stop mic only
+  const stopAudioOnly = (stream) => {
+    stream.getTracks().forEach((track) => {
+      if (track.readyState === "live" && track.kind === "audio") {
+        track.stop();
+      }
+    });
   };
 
   const enableTranscriptionHandler = () => {

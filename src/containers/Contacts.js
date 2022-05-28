@@ -64,11 +64,16 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
           <div key={user.userID}>
             <p style={{ color: "blue" }}>
               {user.email}{" "}
-              {isInContactsHandler(onlineUsers, user.userID)
-                ? "(Online)"
-                : "(Offline)"}
+              {isInContactsHandler(onlineUsers, user.userID) ? (
+                <>
+                  <p>(Online)</p>
+                  <button onClick={() => contactUser(user.userID)}>Call</button>
+                </>
+              ) : (
+                "(Offline)"
+              )}
             </p>
-            <button onClick={() => contactUser(user.userID)}>Call</button>
+
             <button onClick={() => removeContactHandler(user.userID)}>
               Remove in contacts
             </button>
