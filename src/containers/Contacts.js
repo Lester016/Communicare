@@ -62,17 +62,15 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
       <div style={{ border: "1px solid grey", marginBottom: 10 }}>
         {contacts.map((user) => (
           <div key={user.userID}>
-            <p style={{ color: "blue" }}>
-              {user.email}{" "}
-              {isInContactsHandler(onlineUsers, user.userID) ? (
-                <>
-                  <p>(Online)</p>
-                  <button onClick={() => contactUser(user.userID)}>Call</button>
-                </>
-              ) : (
-                "(Offline)"
-              )}
-            </p>
+            <p style={{ color: "blue" }}>{user.email} </p>
+            {isInContactsHandler(onlineUsers, user.userID) ? (
+              <>
+                <p>(Online)</p>
+                <button onClick={() => contactUser(user.userID)}>Call</button>
+              </>
+            ) : (
+              "(Offline)"
+            )}
 
             <button onClick={() => removeContactHandler(user.userID)}>
               Remove in contacts
