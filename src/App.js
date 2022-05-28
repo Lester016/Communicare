@@ -80,11 +80,15 @@ function App({ onAutoSignup, userID, email }) {
       setLocalTranscriptionMessage(message);
     });
 
-    socket.on("enable-transcribe", ({ isEnable }) => {
-      console.log("IS TRANSCRIPTION ENABLED: ", isEnable);
-    });
-
     onMedia();
+  }, []);
+
+  useEffect(() => {
+    socket.on("enable-transcribe", ({ isEnable, transcribeFrom }) => {
+      console.log("enable-transcribe", isEnable);
+      console.log("otherPartyID", transcribeFrom);
+      socket.emit("startGoogleCloudStream", { callerID: transcribeFrom });
+    });
   }, []);
 
   const startLocalTranscription = () => {
@@ -251,11 +255,10 @@ function App({ onAutoSignup, userID, email }) {
   const enableTranscriptionHandler = () => {
     setIsTranscriptionEnabled((prevState) => !prevState);
     onTranscribe();
-    socket.emit("startGoogleCloudStream", { callerID: otherPartyID });
   };
 
   const onTranscribe = () => {
-    socket.emit("enable-transcribe", { id: otherPartyID });
+    socket.emit("enable-transcribe", { id: otherPartyID, myId: userID });
   };
 
   return (
