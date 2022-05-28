@@ -39,6 +39,7 @@ function App({ onAutoSignup, userID, email }) {
     callerID: "",
     callerEmail: "",
   });
+  const [otherPartyID, setOtherPartyID] = useState(null);
 
   const myMedia = useRef();
   const userMedia = useRef();
@@ -72,11 +73,18 @@ function App({ onAutoSignup, userID, email }) {
         callerID: callerID,
         callerEmail: callerEmail,
       });
+      setOtherPartyID(callerID);
     });
 
     socket.on("transcribedMessage", ({ message }) => {
       setLocalTranscriptionMessage(message);
     });
+
+    socket.on("enable-transcribe", ({ isEnable }) => {
+      console.log("IS TRANSCRIPTION ENABLED: ", isEnable);
+    });
+
+    onMedia();
   }, []);
 
   const startLocalTranscription = () => {
@@ -147,6 +155,7 @@ function App({ onAutoSignup, userID, email }) {
         let left16 = downSampleBuffer(left, 44100, 16000);
         socket.emit("binaryData", left16);
       };
+
       setStream(stream);
     };
 
@@ -156,6 +165,7 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const callUser = (userToCallID) => {
+    setOtherPartyID(userToCallID);
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -240,6 +250,12 @@ function App({ onAutoSignup, userID, email }) {
 
   const enableTranscriptionHandler = () => {
     setIsTranscriptionEnabled((prevState) => !prevState);
+    onTranscribe();
+    socket.emit("startGoogleCloudStream", { callerID: otherPartyID });
+  };
+
+  const onTranscribe = () => {
+    socket.emit("enable-transcribe", { id: otherPartyID });
   };
 
   return (
