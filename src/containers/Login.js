@@ -108,7 +108,6 @@ const Login = ({ login, error, loading }) => {
           initialValues={{ email: "", password: "" }}
           validationSchema={LoginSchema}
           onSubmit={(values) => {
-            console.log(values)
             login(values.email, values.password);
           }}
         >

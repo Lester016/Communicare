@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from 'react'
 
-const Contacts = ({ onlineUsers, contactUser, userID }) => {
+const Call = ({ onlineUsers, contactUser, userID }) => {
   return (
     <div>
       Contact
@@ -22,6 +22,6 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
       ))}
     </div>
   );
-};
+}
 
-export default Contacts;
+export default Call

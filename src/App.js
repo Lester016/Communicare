@@ -11,7 +11,10 @@ import Layout from "./hoc/Layout";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
-import Contacts from "./containers/Contacts";
+import Call from "./containers/Call";
+import Account from "./containers/Account";
+import Help from "./containers/Help";
+import Communicare from "./containers/Communicare";
 import Logout from "./containers/Logout";
 
 // Hosted
@@ -189,15 +192,19 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
         <Route
-          path="contacts"
+          path="/call"
           element={
-            <Contacts
+            <Call
               onlineUsers={onlineUsers}
               contactUser={callUser}
               userID={userID}
             />
           }
         />
+        <Route path="/account" element={<Account />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/communicare" element={<Communicare />} />
+
         <Route path="logout" element={<Logout />} />
       </Route>
 
