@@ -20,6 +20,7 @@ const Login = ({ login, error, loading }) => {
       }}
     >
       <Form>
+        <p>Test</p>
         <h1>Login</h1>
         <Field type="email" name="email" />
         <ErrorMessage name="email" component="div" />
