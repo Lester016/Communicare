@@ -37,7 +37,6 @@ context.resume();
 
 function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
@@ -68,7 +67,6 @@ function App({ onAutoSignup, userID, email }) {
   }, [onAutoSignup, userID, email]);
 
   useEffect(() => {
-    socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
     );
