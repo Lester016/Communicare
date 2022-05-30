@@ -6,7 +6,20 @@ import { findContact } from "../utils/findContact";
 const firebase_url =
   "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-const Home = ({ userID, email, socket, callUser }) => {
+const Home = ({
+  userID,
+  email,
+  socket,
+  callUser,
+  myMedia,
+  userMedia,
+  onMedia,
+  isCallAccepted,
+  isCallEnded,
+  isTranscriptionEnabled,
+  enableTranscription,
+  endCall,
+}) => {
   const [message, setMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -17,9 +30,12 @@ const Home = ({ userID, email, socket, callUser }) => {
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
     );
+
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
       setContacts(response.data !== null ? response.data : []);
     });
+
+    onMedia();
   }, []);
 
   const handleChangeMessage = (e) => {
@@ -61,6 +77,25 @@ const Home = ({ userID, email, socket, callUser }) => {
   return (
     <div>
       Home
+      <div>
+        <video playsInline muted autoPlay ref={myMedia} />
+        {isCallAccepted && !isCallEnded ? (
+          <>
+            <div>
+              {isTranscriptionEnabled ? (
+                <h5>Transcribing Text ... </h5>
+              ) : (
+                <h5>Transcription is off</h5>
+              )}
+              <button onClick={enableTranscription}>
+                Enable Transcription
+              </button>
+            </div>
+            <button onClick={endCall}>Hang up</button>
+            <video playsInline autoPlay ref={userMedia} />
+          </>
+        ) : null}
+      </div>
       <div>
         <label>Your message: </label>
         <input type="text" value={message} onChange={handleChangeMessage} />

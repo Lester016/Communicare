@@ -106,8 +106,6 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const callUser = (userToCallID) => {
-    onMedia();
-
     setOtherPartyID(userToCallID);
     const peer = new Peer({
       initiator: true,
@@ -204,18 +202,29 @@ function App({ onAutoSignup, userID, email }) {
           <ProtectedLayout
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
-            myMedia={myMedia}
-            userMedia={userMedia}
-            isCallAccepted={isCallAccepted}
             answerCall={answerCall}
-            isCallEnded={isCallEnded}
-            endCall={endCall}
-            enableTranscription={enableTranscriptionHandler}
-            isTranscriptionEnabled={isTranscriptionEnabled}
           />
         }
       >
-        <Route index element={<Home socket={socket} callUser={callUser} />} />
+        <Route
+          index
+          element={
+            <Home
+              socket={socket}
+              callUser={callUser}
+              myMedia={myMedia}
+              userMedia={userMedia}
+              onMedia={onMedia}
+              isCallAccepted={isCallAccepted}
+              isCallReceived={isCallReceived}
+              callerInfo={callerInfo}
+              isCallEnded={isCallEnded}
+              endCall={endCall}
+              enableTranscription={enableTranscriptionHandler}
+              isTranscriptionEnabled={isTranscriptionEnabled}
+            />
+          }
+        />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />

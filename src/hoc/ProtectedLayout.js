@@ -2,19 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link, Navigate, Outlet } from "react-router-dom";
 
-const ProtectedLayout = ({
-  user,
-  isCallReceived,
-  callerInfo,
-  myMedia,
-  userMedia,
-  isCallAccepted,
-  answerCall,
-  endCall,
-  isCallEnded,
-  enableTranscription,
-  isTranscriptionEnabled,
-}) => {
+const ProtectedLayout = ({ user, isCallReceived, callerInfo, answerCall }) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
   }
@@ -25,23 +13,7 @@ const ProtectedLayout = ({
 
       <div>
         <h4>My Media</h4>
-        <video playsInline muted autoPlay ref={myMedia} />
-        {isCallAccepted && !isCallEnded ? (
-          <>
-            <div>
-              {isTranscriptionEnabled ? (
-                <h5>Transcribing Text ... </h5>
-              ) : (
-                <h5>Transcription is off</h5>
-              )}
-              <button onClick={enableTranscription}>
-                Enable Transcription
-              </button>
-            </div>
-            <button onClick={endCall}>Hang up</button>
-            <video playsInline autoPlay ref={userMedia} />
-          </>
-        ) : isCallReceived ? (
+        {isCallReceived ? (
           <div>
             <h3>{callerInfo.callerEmail} is calling...</h3>
             <button type="button" onClick={answerCall}>
@@ -50,6 +22,7 @@ const ProtectedLayout = ({
           </div>
         ) : null}
       </div>
+
       <nav
         style={{
           borderBottom: "solid 1px",
