@@ -87,8 +87,6 @@ function App({ onAutoSignup, userID, email }) {
     socket.on("transcribedMessage", ({ message }) => {
       setLocalTranscriptionMessage(message);
     });
-
-    onMedia();
   }, []);
 
   useEffect(() => {
@@ -122,7 +120,9 @@ function App({ onAutoSignup, userID, email }) {
     if (!isLocalTranscriptionEnabled) {
       socket.emit("startGoogleCloudStream", { callerID: userID });
 
-      await getUserMedia({ video: false, audio: true });
+      let stream = await getUserMedia({ video: false, audio: true });
+      handleSuccess(stream);
+      setStream(stream);
     } else {
       setLocalTranscriptionMessage(null);
       stopAudioOnly(stream);
@@ -136,28 +136,16 @@ function App({ onAutoSignup, userID, email }) {
     }
   };
 
-  const onMedia = () => {
-    const handleSuccess = (stream) => {
-      myMedia.current.srcObject = stream;
-      let input = context.createMediaStreamSource(stream);
-      input.connect(processor);
-
-      processor.onaudioprocess = function (e) {
-        let left = e.inputBuffer.getChannelData(0);
-        // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-        let left16 = downSampleBuffer(left, 44100, 16000);
-        socket.emit("binaryData", left16);
-      };
-
-      setStream(stream);
-    };
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then(handleSuccess);
+  const onMedia = async () => {
+    let stream = await getUserMedia({ video: true, audio: true });
+    myMedia.current.srcObject = stream;
+    handleSuccess(stream);
+    setStream(stream);
   };
 
   const callUser = (userToCallID) => {
+    onMedia();
+
     setOtherPartyID(userToCallID);
     const peer = new Peer({
       initiator: true,
