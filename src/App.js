@@ -15,6 +15,8 @@ import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
+import Transcribe from "./containers/Transcribe";
+import { getUserMedia } from "./utils/getUserMedia";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
@@ -39,10 +41,7 @@ function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
-  const [isLocalTranscriptionEnabled, setIsLocalTranscriptionEnabled] =
-    useState(false);
-  const [localTranscriptionMessage, setLocalTranscriptionMessage] =
-    useState(null);
+
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -83,10 +82,6 @@ function App({ onAutoSignup, userID, email }) {
       });
       setOtherPartyID(callerID);
     });
-
-    socket.on("transcribedMessage", ({ message }) => {
-      setLocalTranscriptionMessage(message);
-    });
   }, []);
 
   useEffect(() => {
@@ -108,26 +103,6 @@ function App({ onAutoSignup, userID, email }) {
       let left16 = downSampleBuffer(left, 44100, 16000);
       socket.emit("binaryData", left16);
     };
-  };
-
-  const getUserMedia = async (constraints) => {
-    return await navigator.mediaDevices.getUserMedia(constraints);
-  };
-
-  const startLocalTranscription = async () => {
-    setIsLocalTranscriptionEnabled((prevState) => !prevState);
-
-    if (!isLocalTranscriptionEnabled) {
-      socket.emit("startGoogleCloudStream", { callerID: userID });
-
-      let stream = await getUserMedia({ video: false, audio: true });
-      handleSuccess(stream);
-      setStream(stream);
-    } else {
-      setLocalTranscriptionMessage(null);
-      stopAudioOnly(stream);
-      socket.emit("endGoogleCloudStream");
-    }
   };
 
   const handleSubmitMessage = (message) => {
@@ -220,15 +195,6 @@ function App({ onAutoSignup, userID, email }) {
     });
   };
 
-  // stop mic only
-  const stopAudioOnly = (stream) => {
-    stream.getTracks().forEach((track) => {
-      if (track.readyState === "live" && track.kind === "audio") {
-        track.stop();
-      }
-    });
-  };
-
   const enableTranscriptionHandler = () => {
     setIsTranscriptionEnabled((prevState) => !prevState);
     onTranscribe();
@@ -268,9 +234,6 @@ function App({ onAutoSignup, userID, email }) {
             <Home
               onSubmitMessage={handleSubmitMessage}
               responseMessage={responseMessage}
-              startLocalTranscription={startLocalTranscription}
-              isLocalTranscriptionEnabled={isLocalTranscriptionEnabled}
-              localTranscriptionMessage={localTranscriptionMessage}
             />
           }
         />
@@ -284,6 +247,7 @@ function App({ onAutoSignup, userID, email }) {
             />
           }
         />
+        <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
       </Route>
 
