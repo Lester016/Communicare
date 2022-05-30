@@ -23,6 +23,16 @@ const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
+let bufferSize = 2048;
+let AudioContext = window.AudioContext || window.webkitAudioContext;
+let context = new AudioContext({
+  // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
+  latencyHint: "interactive",
+});
+let processor = context.createScriptProcessor(bufferSize, 1, 1);
+processor.connect(context.destination);
+context.resume();
+
 function App({ onAutoSignup, userID, email }) {
   const [responseMessage, setResponseMessage] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -89,39 +99,30 @@ function App({ onAutoSignup, userID, email }) {
     });
   }, []);
 
-  const startLocalTranscription = () => {
+  const handleSuccess = (stream) => {
+    // myMedia.current.srcObject = stream;
+    let input = context.createMediaStreamSource(stream);
+    input.connect(processor);
+
+    processor.onaudioprocess = function (e) {
+      let left = e.inputBuffer.getChannelData(0);
+      // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
+      let left16 = downSampleBuffer(left, 44100, 16000);
+      socket.emit("binaryData", left16);
+    };
+  };
+
+  const getUserMedia = async (constraints) => {
+    return await navigator.mediaDevices.getUserMedia(constraints);
+  };
+
+  const startLocalTranscription = async () => {
     setIsLocalTranscriptionEnabled((prevState) => !prevState);
 
     if (!isLocalTranscriptionEnabled) {
       socket.emit("startGoogleCloudStream", { callerID: userID });
 
-      let bufferSize = 2048;
-      let AudioContext = window.AudioContext || window.webkitAudioContext;
-      let context = new AudioContext({
-        // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
-        latencyHint: "interactive",
-      });
-      let processor = context.createScriptProcessor(bufferSize, 1, 1);
-      processor.connect(context.destination);
-      context.resume();
-
-      const handleSuccess = (stream) => {
-        // myMedia.current.srcObject = stream;
-        let input = context.createMediaStreamSource(stream);
-        input.connect(processor);
-
-        processor.onaudioprocess = function (e) {
-          let left = e.inputBuffer.getChannelData(0);
-          // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-          let left16 = downSampleBuffer(left, 44100, 16000);
-          socket.emit("binaryData", left16);
-        };
-        setStream(stream);
-      };
-
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: true })
-        .then(handleSuccess);
+      await getUserMedia({ video: false, audio: true });
     } else {
       setLocalTranscriptionMessage(null);
       stopAudioOnly(stream);
@@ -136,16 +137,6 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const onMedia = () => {
-    let bufferSize = 2048;
-    let AudioContext = window.AudioContext || window.webkitAudioContext;
-    let context = new AudioContext({
-      // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
-      latencyHint: "interactive",
-    });
-    let processor = context.createScriptProcessor(bufferSize, 1, 1);
-    processor.connect(context.destination);
-    context.resume();
-
     const handleSuccess = (stream) => {
       myMedia.current.srcObject = stream;
       let input = context.createMediaStreamSource(stream);
