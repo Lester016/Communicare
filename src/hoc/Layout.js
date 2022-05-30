@@ -1,28 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link, Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 const Layout = ({ user }) => {
   if (user) {
     return <Navigate to="/" />;
   }
 
-  return (
-    <div>
-      <h1>Landing Page of Communicare</h1>
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem",
-        }}
-      >
-        <Link to="/auth/login">Login</Link> |{" "}
-        <Link to="/auth/register">Register</Link>
-      </nav>
-
-      <Outlet />
-    </div>
-  );
+  return <Outlet />
 };
 
 const mapStateToProps = (state) => {
