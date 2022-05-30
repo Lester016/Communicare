@@ -11,7 +11,6 @@ import Layout from "./hoc/Layout";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
-import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
@@ -203,6 +202,7 @@ function App({ onAutoSignup, userID, email }) {
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
             answerCall={answerCall}
+            isCallAccepted={isCallAccepted}
           />
         }
       >

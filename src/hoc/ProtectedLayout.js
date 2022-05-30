@@ -2,25 +2,30 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link, Navigate, Outlet } from "react-router-dom";
 
-const ProtectedLayout = ({ user, isCallReceived, callerInfo, answerCall }) => {
+const ProtectedLayout = ({
+  user,
+  isCallReceived,
+  callerInfo,
+  answerCall,
+  isCallAccepted,
+}) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
   }
-
   return (
     <div>
       <h1>Communicare</h1>
-
       <div>
         <h4>My Media</h4>
-        {isCallReceived ? (
-          <div>
-            <h3>{callerInfo.callerEmail} is calling...</h3>
-            <button type="button" onClick={answerCall}>
-              Answer call
-            </button>
-          </div>
-        ) : null}
+        {isCallReceived &&
+          (!isCallAccepted ? (
+            <div>
+              <h3>{callerInfo.callerEmail} is calling...</h3>
+              <button type="button" onClick={answerCall}>
+                Answer call
+              </button>
+            </div>
+          ) : null)}
       </div>
 
       <nav
