@@ -232,21 +232,14 @@ function App({ onAutoSignup, userID, email }) {
           index
           element={
             <Home
+              socket={socket}
               onSubmitMessage={handleSubmitMessage}
               responseMessage={responseMessage}
+              callUser={callUser}
             />
           }
         />
-        <Route
-          path="contacts"
-          element={
-            <Contacts
-              onlineUsers={onlineUsers}
-              contactUser={callUser}
-              userID={userID}
-            />
-          }
-        />
+
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
       </Route>

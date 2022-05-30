@@ -56,8 +56,7 @@ const ProtectedLayout = ({
           paddingBottom: "1rem",
         }}
       >
-        <Link to="/">Home</Link> | <Link to="/contacts">Contacts</Link> |{" "}
-        <Link to="/transcribe">Transcribe</Link> |{" "}
+        <Link to="/">Home</Link> | <Link to="/transcribe">Transcribe</Link> |{" "}
         <Link to="/logout">Logout</Link>
       </nav>
 
