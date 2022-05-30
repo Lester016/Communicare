@@ -77,10 +77,13 @@ function App({ onAutoSignup, userID, email }) {
   }, []);
 
   useEffect(() => {
-    socket.on("enable-transcribe", ({ isEnable, transcribeFrom }) => {
-      console.log("enable-transcribe", isEnable);
-      console.log("otherPartyID", transcribeFrom);
-      socket.emit("startGoogleCloudStream", { callerID: transcribeFrom });
+    socket.on("enable-transcribe", ({ transcribeFrom, isEnable }) => {
+      console.log("IS LIVE TRANSCRIPTION ENABLE? ", isEnable);
+      if (isEnable) {
+        socket.emit("startGoogleCloudStream", { callerID: transcribeFrom });
+      } else {
+        socket.emit("endGoogleCloudStream");
+      }
     });
   }, []);
 
@@ -180,12 +183,13 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const enableTranscriptionHandler = () => {
-    setIsTranscriptionEnabled((prevState) => !prevState);
-    onTranscribe();
-  };
+    socket.emit("enable-transcribe", {
+      id: otherPartyID,
+      myId: userID,
+      isEnable: !isTranscriptionEnabled,
+    });
 
-  const onTranscribe = () => {
-    socket.emit("enable-transcribe", { id: otherPartyID, myId: userID });
+    setIsTranscriptionEnabled((prevState) => !prevState);
   };
 
   return (

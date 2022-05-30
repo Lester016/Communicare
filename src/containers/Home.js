@@ -24,6 +24,7 @@ const Home = ({
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
+  const [liveTranscription, setLiveTranscription] = useState("");
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -33,6 +34,10 @@ const Home = ({
 
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
       setContacts(response.data !== null ? response.data : []);
+    });
+
+    socket.on("transcribedMessage", ({ message }) => {
+      setLiveTranscription(message);
     });
 
     onMedia();
@@ -83,13 +88,20 @@ const Home = ({
           <>
             <div>
               {isTranscriptionEnabled ? (
-                <h5>Transcribing Text ... </h5>
+                <div>
+                  <h3>{liveTranscription && liveTranscription}</h3>
+                  <button onClick={enableTranscription}>
+                    Disable Transcription
+                  </button>
+                </div>
               ) : (
-                <h5>Transcription is off</h5>
+                <div>
+                  <h3>Transcription is off</h3>
+                  <button onClick={enableTranscription}>
+                    Enable Transcription
+                  </button>
+                </div>
               )}
-              <button onClick={enableTranscription}>
-                Enable Transcription
-              </button>
             </div>
             <button onClick={endCall}>Hang up</button>
             <video playsInline autoPlay ref={userMedia} />
