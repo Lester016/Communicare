@@ -36,7 +36,6 @@ processor.connect(context.destination);
 context.resume();
 
 function App({ onAutoSignup, userID, email }) {
-  const [responseMessage, setResponseMessage] = useState([]);
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
@@ -67,10 +66,6 @@ function App({ onAutoSignup, userID, email }) {
   }, [onAutoSignup, userID, email]);
 
   useEffect(() => {
-    socket.on("chat message", (data) =>
-      setResponseMessage((prevState) => [...prevState, data])
-    );
-
     socket.on("call-user", ({ callerID, callerEmail, signal }) => {
       setIsCallReceived(true);
       setCallSignal(signal);
@@ -101,12 +96,6 @@ function App({ onAutoSignup, userID, email }) {
       let left16 = downSampleBuffer(left, 44100, 16000);
       socket.emit("binaryData", left16);
     };
-  };
-
-  const handleSubmitMessage = (message) => {
-    if (message !== "") {
-      socket.emit("chat message", { message, userID, email });
-    }
   };
 
   const onMedia = async () => {
@@ -226,17 +215,7 @@ function App({ onAutoSignup, userID, email }) {
           />
         }
       >
-        <Route
-          index
-          element={
-            <Home
-              socket={socket}
-              onSubmitMessage={handleSubmitMessage}
-              responseMessage={responseMessage}
-              callUser={callUser}
-            />
-          }
-        />
+        <Route index element={<Home socket={socket} callUser={callUser} />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />

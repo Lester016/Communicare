@@ -3,35 +3,35 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { findContact } from "../utils/findContact";
 
-const Home = ({
-  userID,
-  socket,
-  callUser,
-  onSubmitMessage,
-  responseMessage,
-}) => {
+const firebase_url =
+  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+const Home = ({ userID, email, socket, callUser }) => {
   const [message, setMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [responseMessage, setResponseMessage] = useState([]);
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
+    socket.on("chat message", (data) =>
+      setResponseMessage((prevState) => [...prevState, data])
+    );
+    axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
+      setContacts(response.data !== null ? response.data : []);
+    });
   }, []);
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
   };
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app/contacts/${userID}.json`
-      )
-      .then((response) => {
-        setContacts(response.data !== null ? response.data : []);
-      })
-      .catch((error) => console.log("error catched"));
-  }, []);
+  const handleSubmitMessage = () => {
+    if (message !== "") {
+      socket.emit("chat message", { message, userID, email });
+    }
+    setMessage("");
+  };
 
   const addContactHandler = (contactID, contactEmail) => {
     let updatedContacts = [
@@ -39,10 +39,7 @@ const Home = ({
       { userID: contactID, email: contactEmail },
     ];
     axios
-      .put(
-        `https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app/contacts/${userID}.json`,
-        updatedContacts
-      )
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
       .then((response) => setContacts(updatedContacts))
       .catch((error) => console.log("error catched: ", error));
   };
@@ -56,10 +53,7 @@ const Home = ({
     }
 
     axios
-      .put(
-        `https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app/contacts/${userID}.json`,
-        updatedContacts
-      )
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
       .then((response) => setContacts(updatedContacts))
       .catch((error) => console.log("error catched: ", error));
   };
@@ -70,14 +64,7 @@ const Home = ({
       <div>
         <label>Your message: </label>
         <input type="text" value={message} onChange={handleChangeMessage} />
-        <button
-          onClick={() => {
-            onSubmitMessage(message);
-            setMessage("");
-          }}
-        >
-          Send
-        </button>
+        <button onClick={handleSubmitMessage}>Send</button>
       </div>
       <div>
         <h4>CONVO: </h4>
@@ -138,6 +125,7 @@ const Home = ({
 const mapStateToProps = (state) => {
   return {
     userID: state.auth.userID,
+    email: state.auth.email,
   };
 };
 
