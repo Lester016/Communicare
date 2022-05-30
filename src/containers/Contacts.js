@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { findContact } from "../utils/findContact";
 
-const Contacts = ({ onlineUsers, contactUser, userID }) => {
+const Contacts = ({ onlineUsers, callUser, userID }) => {
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
             {isInContactsHandler(onlineUsers, user.userID) ? (
               <>
                 <p>(Online)</p>
-                <button onClick={() => contactUser(user.userID)}>Call</button>
+                <button onClick={() => callUser(user.userID)}>Call</button>
               </>
             ) : (
               "(Offline)"
@@ -88,9 +89,9 @@ const Contacts = ({ onlineUsers, contactUser, userID }) => {
           {user.userID !== userID ? (
             <div>
               <p style={{ color: "brown" }}>{user.email}</p>
-              <button onClick={() => contactUser(user.userID)}>Call</button>
+              <button onClick={() => callUser(user.userID)}>Call</button>
 
-              {!isInContactsHandler(contacts, user.userID) && (
+              {!findContact(contacts, user.userID) && (
                 <button
                   onClick={() => addContactHandler(user.userID, user.email)}
                 >

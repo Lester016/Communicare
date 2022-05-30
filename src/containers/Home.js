@@ -1,32 +1,105 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { findContact } from "../utils/findContact";
+
+const firebase_url =
+  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 const Home = ({
-  onSubmitMessage,
-  responseMessage,
-  startLocalTranscription,
-  isLocalTranscriptionEnabled,
-  localTranscriptionMessage,
+  userID,
+  email,
+  socket,
+  callUser,
+  myMedia,
+  userMedia,
+  onMedia,
+  isCallAccepted,
+  isCallEnded,
+  isTranscriptionEnabled,
+  enableTranscription,
+  endCall,
 }) => {
   const [message, setMessage] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [responseMessage, setResponseMessage] = useState([]);
+
+  useEffect(() => {
+    socket.on("get-users", (users) => setOnlineUsers(users));
+    socket.on("chat message", (data) =>
+      setResponseMessage((prevState) => [...prevState, data])
+    );
+
+    axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
+      setContacts(response.data !== null ? response.data : []);
+    });
+
+    onMedia();
+  }, []);
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
+  };
+
+  const handleSubmitMessage = () => {
+    if (message !== "") {
+      socket.emit("chat message", { message, userID, email });
+    }
+    setMessage("");
+  };
+
+  const addContactHandler = (contactID, contactEmail) => {
+    let updatedContacts = [
+      ...contacts,
+      { userID: contactID, email: contactEmail },
+    ];
+    axios
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
+  };
+
+  const removeContactHandler = (item) => {
+    let updatedContacts = [...contacts];
+
+    let index = updatedContacts.findIndex((x) => x.userID === item);
+    if (index > -1) {
+      updatedContacts.splice(index, 1); // 2nd parameter means remove one item only
+    }
+
+    axios
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
   };
 
   return (
     <div>
       Home
       <div>
+        <video playsInline muted autoPlay ref={myMedia} />
+        {isCallAccepted && !isCallEnded ? (
+          <>
+            <div>
+              {isTranscriptionEnabled ? (
+                <h5>Transcribing Text ... </h5>
+              ) : (
+                <h5>Transcription is off</h5>
+              )}
+              <button onClick={enableTranscription}>
+                Enable Transcription
+              </button>
+            </div>
+            <button onClick={endCall}>Hang up</button>
+            <video playsInline autoPlay ref={userMedia} />
+          </>
+        ) : null}
+      </div>
+      <div>
         <label>Your message: </label>
         <input type="text" value={message} onChange={handleChangeMessage} />
-        <button
-          onClick={() => {
-            onSubmitMessage(message);
-            setMessage("");
-          }}
-        >
-          Send
-        </button>
+        <button onClick={handleSubmitMessage}>Send</button>
       </div>
       <div>
         <h4>CONVO: </h4>
@@ -36,30 +109,59 @@ const Home = ({
           </p>
         ))}
       </div>
-      <div>
-        <h1>TRANSCRIBE</h1>
-        <div>
-          <ul>
-            <li>
-              Speak and this tool will transcribe the words spoken into written
-              text.
-            </li>
-            <li>
-              Make sure the speaking voice is clear for a better translation
-              quality.
-            </li>
-            <li>Rotate your phone for better usage.</li>
-            <li>Click the button to start transcribing.</li>
-          </ul>
-        </div>
+      <h3>Your Contacts</h3>
+      <div style={{ border: "1px solid grey", marginBottom: 10 }}>
+        {contacts.map((user) => (
+          <div key={user.userID}>
+            <p style={{ color: "blue" }}>{user.email} </p>
+            {findContact(onlineUsers, user.userID) ? (
+              <>
+                <p>(Online)</p>
+                <button onClick={() => callUser(user.userID)}>Call</button>
+              </>
+            ) : (
+              "(Offline)"
+            )}
 
-        <button onClick={startLocalTranscription}>
-          {isLocalTranscriptionEnabled ? "Stop Transcribing" : "Transcribe now"}
-        </button>
-        <h3>{localTranscriptionMessage && localTranscriptionMessage}</h3>
+            <button onClick={() => removeContactHandler(user.userID)}>
+              Remove in contacts
+            </button>
+          </div>
+        ))}
       </div>
+      <h3>Online Users</h3>
+      {onlineUsers.map((user) => (
+        <div
+          key={user.userID}
+          style={{ border: "1px dashed grey", marginBottom: 10 }}
+        >
+          {user.userID !== userID ? (
+            <div>
+              <p style={{ color: "brown" }}>{user.email}</p>
+              <button onClick={() => callUser(user.userID)}>Call</button>
+
+              {!findContact(contacts, user.userID) && (
+                <button
+                  onClick={() => addContactHandler(user.userID, user.email)}
+                >
+                  Add into contacts
+                </button>
+              )}
+            </div>
+          ) : (
+            <p style={{ color: "green" }}>{user.email} (You)</p>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    userID: state.auth.userID,
+    email: state.auth.email,
+  };
+};
+
+export default connect(mapStateToProps)(Home);

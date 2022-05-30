@@ -14,6 +14,9 @@ import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
+import { iceConfig as iceServers } from "./constants/iceConfig";
+import Transcribe from "./containers/Transcribe";
+import { getUserMedia } from "./utils/getUserMedia";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
@@ -22,16 +25,21 @@ const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
+let bufferSize = 2048;
+let AudioContext = window.AudioContext || window.webkitAudioContext;
+let context = new AudioContext({
+  // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
+  latencyHint: "interactive",
+});
+let processor = context.createScriptProcessor(bufferSize, 1, 1);
+processor.connect(context.destination);
+context.resume();
+
 function App({ onAutoSignup, userID, email }) {
-  const [responseMessage, setResponseMessage] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
-  const [isLocalTranscriptionEnabled, setIsLocalTranscriptionEnabled] =
-    useState(false);
-  const [localTranscriptionMessage, setLocalTranscriptionMessage] =
-    useState(null);
+
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -44,33 +52,7 @@ function App({ onAutoSignup, userID, email }) {
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
-  const iceConfig = [
-    {
-      url: "stun:global.stun.twilio.com:3478?transport=udp",
-      urls: "stun:global.stun.twilio.com:3478?transport=udp",
-    },
-    {
-      url: "turn:global.turn.twilio.com:3478?transport=udp",
-      username:
-        "d97bcd97906e5dbccb68f2fa4d3603732ec0fc00de27e5add6cec240c1aa433e",
-      urls: "turn:global.turn.twilio.com:3478?transport=udp",
-      credential: "owYhQ1O40vZmVE2SORWpy7v1j/j+n7kZ0WTlOWobwjc=",
-    },
-    {
-      url: "turn:global.turn.twilio.com:3478?transport=tcp",
-      username:
-        "d97bcd97906e5dbccb68f2fa4d3603732ec0fc00de27e5add6cec240c1aa433e",
-      urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-      credential: "owYhQ1O40vZmVE2SORWpy7v1j/j+n7kZ0WTlOWobwjc=",
-    },
-    {
-      url: "turn:global.turn.twilio.com:443?transport=tcp",
-      username:
-        "d97bcd97906e5dbccb68f2fa4d3603732ec0fc00de27e5add6cec240c1aa433e",
-      urls: "turn:global.turn.twilio.com:443?transport=tcp",
-      credential: "owYhQ1O40vZmVE2SORWpy7v1j/j+n7kZ0WTlOWobwjc=",
-    },
-  ];
+  const iceConfig = [...iceServers];
 
   useEffect(() => {
     if (userID) {
@@ -84,11 +66,6 @@ function App({ onAutoSignup, userID, email }) {
   }, [onAutoSignup, userID, email]);
 
   useEffect(() => {
-    socket.on("get-users", (users) => setOnlineUsers(users));
-    socket.on("chat message", (data) =>
-      setResponseMessage((prevState) => [...prevState, data])
-    );
-
     socket.on("call-user", ({ callerID, callerEmail, signal }) => {
       setIsCallReceived(true);
       setCallSignal(signal);
@@ -98,12 +75,6 @@ function App({ onAutoSignup, userID, email }) {
       });
       setOtherPartyID(callerID);
     });
-
-    socket.on("transcribedMessage", ({ message }) => {
-      setLocalTranscriptionMessage(message);
-    });
-
-    onMedia();
   }, []);
 
   useEffect(() => {
@@ -114,81 +85,24 @@ function App({ onAutoSignup, userID, email }) {
     });
   }, []);
 
-  const startLocalTranscription = () => {
-    setIsLocalTranscriptionEnabled((prevState) => !prevState);
+  const handleSuccess = (stream) => {
+    // myMedia.current.srcObject = stream;
+    let input = context.createMediaStreamSource(stream);
+    input.connect(processor);
 
-    if (!isLocalTranscriptionEnabled) {
-      socket.emit("startGoogleCloudStream", { callerID: userID });
-
-      let bufferSize = 2048;
-      let AudioContext = window.AudioContext || window.webkitAudioContext;
-      let context = new AudioContext({
-        // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
-        latencyHint: "interactive",
-      });
-      let processor = context.createScriptProcessor(bufferSize, 1, 1);
-      processor.connect(context.destination);
-      context.resume();
-
-      const handleSuccess = (stream) => {
-        // myMedia.current.srcObject = stream;
-        let input = context.createMediaStreamSource(stream);
-        input.connect(processor);
-
-        processor.onaudioprocess = function (e) {
-          let left = e.inputBuffer.getChannelData(0);
-          // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-          let left16 = downSampleBuffer(left, 44100, 16000);
-          socket.emit("binaryData", left16);
-        };
-        setStream(stream);
-      };
-
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: true })
-        .then(handleSuccess);
-    } else {
-      setLocalTranscriptionMessage(null);
-      stopAudioOnly(stream);
-      socket.emit("endGoogleCloudStream");
-    }
-  };
-
-  const handleSubmitMessage = (message) => {
-    if (message !== "") {
-      socket.emit("chat message", { message, userID, email });
-    }
-  };
-
-  const onMedia = () => {
-    let bufferSize = 2048;
-    let AudioContext = window.AudioContext || window.webkitAudioContext;
-    let context = new AudioContext({
-      // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
-      latencyHint: "interactive",
-    });
-    let processor = context.createScriptProcessor(bufferSize, 1, 1);
-    processor.connect(context.destination);
-    context.resume();
-
-    const handleSuccess = (stream) => {
-      myMedia.current.srcObject = stream;
-      let input = context.createMediaStreamSource(stream);
-      input.connect(processor);
-
-      processor.onaudioprocess = function (e) {
-        let left = e.inputBuffer.getChannelData(0);
-        // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-        let left16 = downSampleBuffer(left, 44100, 16000);
-        socket.emit("binaryData", left16);
-      };
-
-      setStream(stream);
+    processor.onaudioprocess = function (e) {
+      let left = e.inputBuffer.getChannelData(0);
+      // let left16 = convertFloat32ToInt16(left); // old 32 to 16 function
+      let left16 = downSampleBuffer(left, 44100, 16000);
+      socket.emit("binaryData", left16);
     };
+  };
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then(handleSuccess);
+  const onMedia = async () => {
+    let stream = await getUserMedia({ video: true, audio: true });
+    myMedia.current.srcObject = stream;
+    handleSuccess(stream);
+    setStream(stream);
   };
 
   const callUser = (userToCallID) => {
@@ -266,15 +180,6 @@ function App({ onAutoSignup, userID, email }) {
     });
   };
 
-  // stop mic only
-  const stopAudioOnly = (stream) => {
-    stream.getTracks().forEach((track) => {
-      if (track.readyState === "live" && track.kind === "audio") {
-        track.stop();
-      }
-    });
-  };
-
   const enableTranscriptionHandler = () => {
     setIsTranscriptionEnabled((prevState) => !prevState);
     onTranscribe();
@@ -297,14 +202,7 @@ function App({ onAutoSignup, userID, email }) {
           <ProtectedLayout
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
-            myMedia={myMedia}
-            userMedia={userMedia}
-            isCallAccepted={isCallAccepted}
             answerCall={answerCall}
-            isCallEnded={isCallEnded}
-            endCall={endCall}
-            enableTranscription={enableTranscriptionHandler}
-            isTranscriptionEnabled={isTranscriptionEnabled}
           />
         }
       >
@@ -312,24 +210,23 @@ function App({ onAutoSignup, userID, email }) {
           index
           element={
             <Home
-              onSubmitMessage={handleSubmitMessage}
-              responseMessage={responseMessage}
-              startLocalTranscription={startLocalTranscription}
-              isLocalTranscriptionEnabled={isLocalTranscriptionEnabled}
-              localTranscriptionMessage={localTranscriptionMessage}
+              socket={socket}
+              callUser={callUser}
+              myMedia={myMedia}
+              userMedia={userMedia}
+              onMedia={onMedia}
+              isCallAccepted={isCallAccepted}
+              isCallReceived={isCallReceived}
+              callerInfo={callerInfo}
+              isCallEnded={isCallEnded}
+              endCall={endCall}
+              enableTranscription={enableTranscriptionHandler}
+              isTranscriptionEnabled={isTranscriptionEnabled}
             />
           }
         />
-        <Route
-          path="contacts"
-          element={
-            <Contacts
-              onlineUsers={onlineUsers}
-              contactUser={callUser}
-              userID={userID}
-            />
-          }
-        />
+
+        <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
       </Route>
 
