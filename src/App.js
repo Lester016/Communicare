@@ -196,8 +196,8 @@ function App({ onAutoSignup, userID, email }) {
   return (
     <Routes>
       <Route path="/auth" element={<Layout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
 
       <Route
@@ -231,10 +231,10 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts />} />
+        <Route path="/contacts" element={<Contacts />} />
 
-        <Route path="transcribe" element={<Transcribe socket={socket} />} />
-        <Route path="logout" element={<Logout />} />
+        <Route path="/transcribe" element={<Transcribe socket={socket} />} />
+        <Route path="/logout" element={<Logout />} />
       </Route>
 
       <Route path="*" element={<Fallback />} />
