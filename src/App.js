@@ -203,12 +203,7 @@ function App({ onAutoSignup, userID, email }) {
       <Route
         path="/"
         element={
-          <ProtectedLayout
-            isCallReceived={isCallReceived}
-            callerInfo={callerInfo}
-            answerCall={answerCall}
-            isCallAccepted={isCallAccepted}
-          />
+          <ProtectedLayout />
         }
       >
         <Route
@@ -217,6 +212,7 @@ function App({ onAutoSignup, userID, email }) {
             <Home
               socket={socket}
               callUser={callUser}
+              answerCall={answerCall}
               myMedia={myMedia}
               userMedia={userMedia}
               onMedia={onMedia}

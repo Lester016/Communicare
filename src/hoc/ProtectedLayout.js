@@ -27,13 +27,7 @@ const drawerItems = [
   { name: "Download mobile app (beta)", path: "#" },
 ]
 
-const ProtectedLayout = ({
-  user,
-  isCallReceived,
-  callerInfo,
-  answerCall,
-  isCallAccepted,
-}) => {
+const ProtectedLayout = ({ user }) => {
   let location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
