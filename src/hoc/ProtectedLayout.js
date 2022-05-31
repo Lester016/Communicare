@@ -19,7 +19,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const drawerItems = [
   { name: "Home", path: "/" },
-  { name: "Call", path: "/call" },
+  { name: "Contacts", path: "/contacts" },
+  { name: "Recents", path: "/recents" },
   { name: "Account Details", path: "/account" },
   { name: "Help", path: "/help" },
   { name: "What is Communicare?", path: "/communicare" },
