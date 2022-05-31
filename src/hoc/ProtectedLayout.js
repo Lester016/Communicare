@@ -123,19 +123,7 @@ const ProtectedLayout = ({ user }) => {
         </Drawer>
       </Box>
 
-      <Box
-        component="main"
-        sx={{
-          boxSizing: 'border-box',
-          flexGrow: 1,
-          width: { sm: `calc(100vw - 300px)` },
-          height: "100vh",
-          p: 4,
-          backgroundColor: "#F9FAFF",
-        }}>
-        <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
-        <Outlet />
-      </Box>
+      <Outlet />
     </Box>
   );
 };
