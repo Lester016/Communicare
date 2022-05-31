@@ -20,7 +20,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 const drawerItems = [
   { name: "Home", path: "/" },
   { name: "Contacts", path: "/contacts" },
-  { name: "Recents", path: "/recents" },
   { name: "Transcribe", path: "/transcribe" },
   { name: "Account Details", path: "/account" },
   { name: "Help", path: "/help" },
