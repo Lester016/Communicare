@@ -7,6 +7,7 @@ import { Link as RouterLink } from "react-router-dom";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import Toolbar from '@mui/material/Toolbar';
 
 import Link from '@mui/material/Link';
 
@@ -14,7 +15,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 import Typography from "../components/Typography";
@@ -122,78 +122,90 @@ const Home = ({
       ) : isCallAccepted && !isCallEnded ? (   // UI DURING A CALL
         <Typography>Test</Typography>
       ) : (                                    // HOME UI
-        <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
-          <Grid item xs={7}>
-            <Box component={Paper} sx={{ height: "100%" }}>
-              <Grid container item sx={{ height: "100%" }}>
-                <Grid item xs={6}>
-                  <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                      <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
-                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
-
-                    </Box>
-                    <TableContainer>
-                      <Table size="small">
-                        <TableBody>
-                          {contacts.map((item) => (
-                            <TableRow key={item.userID}>
-                              <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                <Typography sx={{ fontSize: "14px" }}>
-                                  {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
-                                </Typography>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                      <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
-                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
-                    </Box>
-                    <TableContainer>
-                      <Table size="small">
-                        <TableBody>
-                          {onlineUsers.map((item) => (
-                            <TableRow key={item.userID}>
-                              <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                <Typography>
-                                  {item.email} <OnlineCircle />
-                                </Typography>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
-
-          <Grid container item xs={5}>
-            <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
-              <video playsInline muted autoPlay ref={myMedia} style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                height: "100%",
-                width: "100%",
-                zIndex: "999",
-              }} />
-            </Grid>
-
+        <Box
+          component="main"
+          sx={{
+            boxSizing: 'border-box',
+            flexGrow: 1,
+            width: { sm: `calc(100vw - 300px)` },
+            height: "100vh",
+            p: 4,
+            backgroundColor: "#F9FAFF",
+          }}>
+          <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
+          <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
             <Grid item xs={7}>
+              <Box component={Paper} sx={{ height: "100%" }}>
+                <Grid container item sx={{ height: "100%" }}>
+                  <Grid item xs={6}>
+                    <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
+                        <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
+
+                      </Box>
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            {contacts.map((item) => (
+                              <TableRow key={item.userID}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
+                                  <Typography sx={{ fontSize: "14px" }}>
+                                    {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                        <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
+                      </Box>
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            {onlineUsers.map((item) => (
+                              <TableRow key={item.userID}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
+                                  <Typography>
+                                    {item.email} <OnlineCircle />
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+
+            <Grid container item xs={5}>
+              <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+                <video playsInline muted autoPlay ref={myMedia} style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  height: "100%",
+                  width: "100%",
+                  zIndex: "999",
+                }} />
+              </Grid>
+
+              <Grid item xs={7}>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </Box>
       )}
     </>
   );
