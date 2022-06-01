@@ -143,7 +143,6 @@ const Home = ({
   return (
     <>
       {isCallAccepted && !isCallEnded ? (                      // UI DURING A CALL
-
         <Box
           component="main"
           sx={{
