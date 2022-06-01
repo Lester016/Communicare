@@ -232,7 +232,7 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts />} />
+        <Route path="contacts" element={<Contacts socket={socket} userID={userID} />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
