@@ -12,6 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -30,6 +31,7 @@ import ClosedCaptionIcon from '@mui/icons-material/ClosedCaption';
 import ClosedCaptionOffIcon from '@mui/icons-material/ClosedCaptionOff';
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
+import SendIcon from '@mui/icons-material/Send';
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -64,6 +66,10 @@ const Home = ({
   const [contacts, setContacts] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
+
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
+  const [isTranscribeOn, setIsTranscribeOn] = useState(true);
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -169,7 +175,97 @@ const Home = ({
           </Stack>
         </Box>
       ) : isCallAccepted && !isCallEnded ? (   // UI DURING A CALL
-        <Typography>Test</Typography>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: { sm: `calc(100vw - 300px)` },
+            height: "100vh",
+            p: 4,
+            backgroundColor: "#F9FAFF",
+          }}>
+          <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
+          <Grid container sx={{ height: "100%", ".MuiGrid-container.MuiGrid-item": { p: 0 }, ".MuiGrid-item": { p: 2 } }}>
+            <Grid container item direction="column" xs={8}>
+              <Grid item xs={7} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+                <video playsInline muted autoPlay ref={userMedia} style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  height: "100%",
+                  width: "100%",
+                }} />
+              </Grid>
+
+              <Grid container item xs={5}>
+                <Grid item xs={8} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+                  <video playsInline muted autoPlay ref={myMedia} style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    height: "100%",
+                    width: "100%",
+                  }} />
+                </Grid>
+
+                <Grid item xs={4}>
+                  <Box component={Paper} sx={{
+                    display: "grid",
+                    width: "100%",
+                    height: "100%",
+                    gridTemplateRows: "auto auto",
+                    gridTemplateColumns: "auto auto",
+                  }}>
+                    <IconButton onClick={() => setIsCamOn(!isCamOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                      <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {isCamOn ? <VideocamIcon /> : <VideocamOffIcon />}
+                      </Box>
+                    </IconButton>
+
+                    <IconButton onClick={() => setIsMicOn(!isMicOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                      <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {isMicOn ? <MicIcon /> : <MicOffIcon />}
+                      </Box>
+                    </IconButton>
+
+                    <IconButton onClick={() => setIsTranscribeOn(!isTranscribeOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                      <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {isTranscribeOn ? <ClosedCaptionIcon /> : <ClosedCaptionOffIcon />}
+                      </Box>
+                    </IconButton>
+
+                    <IconButton sx={{ borderRadius: 0, color: "white" }}>
+                      <Box sx={{ backgroundColor: "#BB223E", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <CallEndIcon sx={{ backgroundColor: "#BB223E" }} />
+                      </Box>
+                    </IconButton>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={4}>
+              <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
+                <Box sx={{ flex: 1 }}>
+                  {responseMessage.map((data, index) => (
+                    <Typography key={index}>
+                      {console.log(data)}
+                      {data.email}: {data.message}
+                    </Typography>
+                  ))}
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <TextField multiline onChange={handleChangeMessage} sx={{flex: 1}}/>
+                  <IconButton onClick={handleSubmitMessage}>
+                    <SendIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
       ) : (                                    // HOME UI
         <Box
           component="main"
@@ -182,7 +278,7 @@ const Home = ({
           }}>
           <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>HOME</Typography>
-          <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
+          <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-container.MuiGrid-item": { p: 0 }, ".MuiGrid-item": { p: 2 } }}>
             <Grid item xs={7}>
               <Box component={Paper} sx={{ height: "100%" }}>
                 <Grid container item sx={{ height: "100%" }}>
