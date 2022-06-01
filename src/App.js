@@ -55,8 +55,8 @@ function App({ onAutoSignup, userID, email }) {
     email: "",
     date: "",
     time: "",
-    duration: "",
-    type: "",
+    duration: "-",
+    type: "call missed",
   });
   const [callDuration, setCallDuration] = useState(0);
   const [callResponseHistory, setCallResponseHistory] = useState();
@@ -161,6 +161,10 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const answerCall = () => {
+    addCallHistory(callerInfo.callerEmail, "call made");
+    setInterval(() => {
+      setCallDuration((prevState) => prevState + 1000);
+    }, 1000);
     setIsCallAccepted(true);
 
     const peer = new Peer({
@@ -224,7 +228,7 @@ function App({ onAutoSignup, userID, email }) {
       email: email,
       date: "",
       time: "",
-      duration: 0,
+      duration: "-",
       type: type,
     };
 
@@ -233,6 +237,7 @@ function App({ onAutoSignup, userID, email }) {
     data["date"] = getFormattedDate(today);
     data["time"] = getFormattedTime(today);
 
+    console.log("CALL RECORD: ", data);
     setCallRecord(data);
     axios
       .post(`${firebase_url}/call-history/${userID}.json`, data)
