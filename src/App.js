@@ -20,7 +20,7 @@ import { getUserMedia } from "./utils/getUserMedia";
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("https://communicare-server.herokuapp.com/", {
+const socket = io("http://localhost:8000/", {
   autoConnect: false,
 });
 
@@ -73,6 +73,11 @@ function App({ onAutoSignup, userID, email }) {
         callerEmail: callerEmail,
       });
       setOtherPartyID(callerID);
+    });
+
+    socket.on("end-call", () => {
+      setIsCallEnded(true);
+      window.location.reload();
     });
   }, []);
 
@@ -169,17 +174,10 @@ function App({ onAutoSignup, userID, email }) {
   const endCall = () => {
     setIsCallEnded(true);
 
-    connectionRef.current.destroy();
-    stopBothVideoAndAudio(stream);
-  };
+    socket.emit("end-call", { userID: otherPartyID });
 
-  // stop both mic and camera
-  const stopBothVideoAndAudio = (stream) => {
-    stream.getTracks().forEach((track) => {
-      if (track.readyState === "live") {
-        track.stop();
-      }
-    });
+    connectionRef.current.destroy();
+    window.location.reload();
   };
 
   const enableTranscriptionHandler = () => {
