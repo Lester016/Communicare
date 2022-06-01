@@ -11,10 +11,11 @@ import Layout from "./hoc/Layout";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
+import Contacts from "./containers/Contacts";
+import Transcribe from "./containers/Transcribe";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
-import Transcribe from "./containers/Transcribe";
 import { getUserMedia } from "./utils/getUserMedia";
 
 // Hosted
@@ -200,12 +201,7 @@ function App({ onAutoSignup, userID, email }) {
       <Route
         path="/"
         element={
-          <ProtectedLayout
-            isCallReceived={isCallReceived}
-            callerInfo={callerInfo}
-            answerCall={answerCall}
-            isCallAccepted={isCallAccepted}
-          />
+          <ProtectedLayout />
         }
       >
         <Route
@@ -214,6 +210,7 @@ function App({ onAutoSignup, userID, email }) {
             <Home
               socket={socket}
               callUser={callUser}
+              answerCall={answerCall}
               myMedia={myMedia}
               userMedia={userMedia}
               onMedia={onMedia}
@@ -227,6 +224,8 @@ function App({ onAutoSignup, userID, email }) {
             />
           }
         />
+
+        <Route path="contacts" element={<Contacts />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
