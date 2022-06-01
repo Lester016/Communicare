@@ -160,7 +160,7 @@ const Home = ({
           <Box />
 
           <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>aso@gmail.com</Typography>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.email}</Typography>
             {(isCallReceived && !isCallSent) ? (
               <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
             ) : (
