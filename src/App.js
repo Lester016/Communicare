@@ -37,6 +37,7 @@ context.resume();
 
 function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
+  const [isCallSent, setIsCallSent] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
 
@@ -110,6 +111,7 @@ function App({ onAutoSignup, userID, email }) {
 
   const callUser = (userToCallID) => {
     setOtherPartyID(userToCallID);
+    setIsCallSent(true);
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -141,6 +143,7 @@ function App({ onAutoSignup, userID, email }) {
 
   const answerCall = () => {
     setIsCallAccepted(true);
+    setIsCallSent(false);
 
     const peer = new Peer({
       initiator: false,
@@ -216,9 +219,10 @@ function App({ onAutoSignup, userID, email }) {
               myMedia={myMedia}
               userMedia={userMedia}
               onMedia={onMedia}
-              isCallAccepted={isCallAccepted}
-              isCallReceived={isCallReceived}
               callerInfo={callerInfo}
+              isCallAccepted={isCallAccepted}
+              isCallSent={isCallSent}
+              isCallReceived={isCallReceived}
               isCallEnded={isCallEnded}
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}

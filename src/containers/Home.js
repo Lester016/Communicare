@@ -39,9 +39,11 @@ const Home = ({
   myMedia,
   userMedia,
   onMedia,
-  isCallReceived,
+  //isCallSent,
+  //isCallReceived,
   isCallAccepted,
   isCallEnded,
+  callerInfo,
   isTranscriptionEnabled,
   enableTranscription,
   endCall,
@@ -51,6 +53,8 @@ const Home = ({
   const [contacts, setContacts] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
+
+  const isCallReceived = true;
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -125,7 +129,6 @@ const Home = ({
         <Box
           component="main"
           sx={{
-            boxSizing: 'border-box',
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             height: "100vh",
@@ -133,6 +136,7 @@ const Home = ({
             backgroundColor: "#F9FAFF",
           }}>
           <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>HOME</Typography>
           <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
             <Grid item xs={7}>
               <Box component={Paper} sx={{ height: "100%" }}>
