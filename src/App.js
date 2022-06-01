@@ -172,6 +172,7 @@ function App({ onAutoSignup, userID, email }) {
 
   const endCall = () => {
     setIsCallEnded(true);
+    setIsCallSent(false);
 
     connectionRef.current.destroy();
     stopBothVideoAndAudio(stream);

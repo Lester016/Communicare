@@ -7,9 +7,11 @@ import { Link as RouterLink } from "react-router-dom";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 
 import Link from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -19,6 +21,15 @@ import TableRow from '@mui/material/TableRow';
 
 import Typography from "../components/Typography";
 import Button from "../components/Button";
+
+import VideocamIcon from '@mui/icons-material/Videocam';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import ClosedCaptionIcon from '@mui/icons-material/ClosedCaption';
+import ClosedCaptionOffIcon from '@mui/icons-material/ClosedCaptionOff';
+import CallIcon from '@mui/icons-material/Call';
+import CallEndIcon from '@mui/icons-material/CallEnd';
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -35,26 +46,24 @@ const Home = ({
   email,
   socket,
   callUser,
+  endCall,
   answerCall,
   myMedia,
   userMedia,
   onMedia,
-  //isCallSent,
-  //isCallReceived,
+  isCallSent,
+  isCallReceived,
   isCallAccepted,
   isCallEnded,
   callerInfo,
   isTranscriptionEnabled,
   enableTranscription,
-  endCall,
 }) => {
   const [message, setMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
-
-  const isCallReceived = true;
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -121,8 +130,44 @@ const Home = ({
 
   return (
     <>
-      {isCallReceived ? (                      // UI WHEN A CALL IS RECEIVED
-        <Typography>Test</Typography>
+      {isCallReceived || isCallSent ? (                      // UI WHEN A CALL IS RECEIVED
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: { sm: `calc(100vw - 300px)` },
+            height: "100vh",
+            p: 4,
+            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+          <Box />
+
+          <Box sx={{ textAlign: "center" }}>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>aso@gmail.com</Typography>
+            {(isCallReceived && !isCallSent) ? (
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
+            ) : (
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>
+            )}
+          </Box>
+
+          <Stack direction="row" spacing={16}>
+            <IconButton size="large" onClick={endCall} sx={{ backgroundColor: "#BB223E", color: "white" }}>
+              <CallEndIcon />
+            </IconButton>
+
+            {(isCallReceived && !isCallSent) && (
+              <IconButton size="large" onClick={answerCall} sx={{ backgroundColor: "#22BB72", color: "white" }}>
+                <CallIcon />
+              </IconButton>
+            )}
+          </Stack>
+        </Box>
       ) : isCallAccepted && !isCallEnded ? (   // UI DURING A CALL
         <Typography>Test</Typography>
       ) : (                                    // HOME UI
