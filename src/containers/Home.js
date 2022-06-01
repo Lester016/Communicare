@@ -354,9 +354,9 @@ const Home = ({
 
               <Grid item xs={7}>
                 <Box component={Paper} sx={{ height: "100%", p: 2 }}>
-                  <Typography>TRANSCRIBE</Typography>
-                  <Box sx={{ display: "flex", flexDirection: "column", p: 1 }}>
-                    <Typography>How to use?</Typography>
+                  <Typography sx={{fontSize: "18px", fontWeight: "600"}}>TRANSCRIBE</Typography>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography sx={{color: "#22BB72", fontSize: "14px", fontWeight: "600"}}>How to use?</Typography>
 
                     <Grid container>
                       <Grid item xs={6}>
@@ -374,8 +374,10 @@ const Home = ({
                             position: "absolute",
                             left: 0,
                             top: 0,
-                            height: "auto",
+                            height: "100%",
                             width: "100%",
+                            padding: "16px",
+                            objectFit: "cover",
                           }}
                           alt="Transcription Visual"
                           src={TranscribeVisual}
