@@ -75,7 +75,6 @@ const Home = ({
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
-  const [isTranscribeOn, setIsTranscribeOn] = useState(true);
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -160,7 +159,7 @@ const Home = ({
           <Box />
 
           <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.email}</Typography>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{console.log(callerInfo)}{callerInfo.email}</Typography>
             {(isCallReceived && !isCallSent) ? (
               <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
             ) : (
@@ -202,6 +201,25 @@ const Home = ({
                   height: "100%",
                   width: "100%",
                 }} />
+
+                {liveTranscription && (
+                  <Typography sx={{
+                    position: "absolute",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    padding: "16px 24px",
+                    textAlign: "center",
+                    bottom: "32px",
+                    backgroundColor: "rgba(0, 0, 0, .4)",
+                    borderRadius: 2,
+
+                    color: "white",
+                    fontSize: "18px",
+                    fontWeight: "500",
+                  }}>
+                    {liveTranscription}
+                  </Typography>
+                )}
               </Grid>
 
               <Grid container item xs={5}>
@@ -235,9 +253,9 @@ const Home = ({
                       </Box>
                     </IconButton>
 
-                    <IconButton onClick={() => setIsTranscribeOn(!isTranscribeOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                    <IconButton onClick={enableTranscription} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
                       <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {isTranscribeOn ? <ClosedCaptionIcon /> : <ClosedCaptionOffIcon />}
+                        {isTranscriptionEnabled ? <ClosedCaptionIcon /> : <ClosedCaptionOffIcon />}
                       </Box>
                     </IconButton>
 
@@ -303,6 +321,11 @@ const Home = ({
                                   <Typography>
                                     {item.email} <OnlineCircle />
                                   </Typography>
+                                </TableCell>
+                                <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                  <IconButton aria-label="delete" size="small" onClick={callUser(item.userID)}>
+                                    <CallIcon fontSize="inherit" />
+                                  </IconButton>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -391,7 +414,8 @@ const Home = ({
             </Grid>
           </Grid>
         </Box>
-      )}
+      )
+      }
     </>
   );
 };
