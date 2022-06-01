@@ -20,6 +20,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
 import Typography from "../components/Typography";
 import Button from "../components/Button";
 
@@ -32,6 +36,8 @@ import ClosedCaptionOffIcon from '@mui/icons-material/ClosedCaptionOff';
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import SendIcon from '@mui/icons-material/Send';
+
+import TranscribeVisual from "../assets/TranscribeVisual.png";
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -257,7 +263,7 @@ const Home = ({
                   ))}
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <TextField multiline onChange={handleChangeMessage} sx={{flex: 1}}/>
+                  <TextField multiline onChange={handleChangeMessage} sx={{ flex: 1 }} />
                   <IconButton onClick={handleSubmitMessage}>
                     <SendIcon />
                   </IconButton>
@@ -278,7 +284,7 @@ const Home = ({
           }}>
           <Toolbar sx={{ display: { xs: 'block', sm: 'none' } }} />
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>HOME</Typography>
-          <Grid container direction="column" sx={{ height: "100%", ".MuiGrid-container.MuiGrid-item": { p: 0 }, ".MuiGrid-item": { p: 2 } }}>
+          <Grid container direction="column" flexWrap="nowrap" sx={{ height: "100%", ".MuiGrid-container.MuiGrid-item": { p: 0 }, ".MuiGrid-item": { p: 2 } }}>
             <Grid item xs={7}>
               <Box component={Paper} sx={{ height: "100%" }}>
                 <Grid container item sx={{ height: "100%" }}>
@@ -286,31 +292,6 @@ const Home = ({
                     <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
                       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                         <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
-                        <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
-
-                      </Box>
-                      <TableContainer>
-                        <Table size="small">
-                          <TableBody>
-                            {contacts.map((item) => (
-                              <TableRow key={item.userID}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                  <Typography sx={{ fontSize: "14px" }}>
-                                    {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
-                                  </Typography>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
                         <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
                       </Box>
                       <TableContainer>
@@ -330,23 +311,80 @@ const Home = ({
                       </TableContainer>
                     </Box>
                   </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", p: 2, borderRadius: 2 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                        <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ fontSize: "14px", fontWeight: "400", color: "#22BB72" }}>See All</Link>
+                      </Box>
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            {contacts.map((item) => (
+                              <TableRow key={item.userID}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
+                                  <Typography sx={{ fontSize: "14px" }}>
+                                    {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  </Grid>
                 </Grid>
               </Box>
             </Grid>
 
             <Grid container item xs={5}>
-              <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+              <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
                 <video playsInline muted autoPlay ref={myMedia} style={{
                   position: "absolute",
                   left: 0,
                   top: 0,
                   height: "100%",
                   width: "100%",
-                  zIndex: "999",
+                  padding: "16px",
+                  objectFit: "cover",
                 }} />
               </Grid>
 
               <Grid item xs={7}>
+                <Box component={Paper} sx={{ height: "100%", p: 2 }}>
+                  <Typography>TRANSCRIBE</Typography>
+                  <Box sx={{ display: "flex", flexDirection: "column", p: 1 }}>
+                    <Typography>How to use?</Typography>
+
+                    <Grid container>
+                      <Grid item xs={6}>
+                        <List component="ol" sx={{ listStyleType: "decimal", listStylePosition: "inside", textAlign: "left" }}>
+                          <ListItem sx={{ display: "list-item" }}>Speak and this tool will transcribe the words spoken into written text.</ListItem>
+                          <ListItem sx={{ display: "list-item" }}>Make sure the speaking voice is clear for better translation quality.</ListItem>
+                          <ListItem sx={{ display: "list-item" }}>Click the button to start transcribing.</ListItem>
+                        </List>
+                      </Grid>
+
+                      <Grid item xs={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <Box
+                          component="img"
+                          sx={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            height: "auto",
+                            width: "100%",
+                          }}
+                          alt="Transcription Visual"
+                          src={TranscribeVisual}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Button to="transcribe" component={RouterLink} sx={{ backgroundColor: "#6667AB" }}>Transcribe Now</Button>
+                  </Box>
+                </Box>
               </Grid>
             </Grid>
           </Grid>
