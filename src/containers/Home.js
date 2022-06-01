@@ -87,6 +87,7 @@ const Home = ({
     });
 
     socket.on("transcribedMessage", ({ message }) => {
+      console.log(message);
       setLiveTranscription(message);
     });
 
@@ -141,45 +142,8 @@ const Home = ({
 
   return (
     <>
-      {isCallReceived || isCallSent ? (                      // UI WHEN A CALL IS RECEIVED
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            width: { sm: `calc(100vw - 300px)` },
-            height: "100vh",
-            p: 4,
-            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+      {isCallAccepted && !isCallEnded ? (                      // UI DURING A CALL
 
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}>
-          <Box />
-
-          <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{console.log(callerInfo)}{callerInfo.email}</Typography>
-            {(isCallReceived && !isCallSent) ? (
-              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
-            ) : (
-              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>
-            )}
-          </Box>
-
-          <Stack direction="row" spacing={16}>
-            <IconButton size="large" onClick={endCall} sx={{ backgroundColor: "#BB223E", color: "white" }}>
-              <CallEndIcon />
-            </IconButton>
-
-            {(isCallReceived && !isCallSent) && (
-              <IconButton size="large" onClick={answerCall} sx={{ backgroundColor: "#22BB72", color: "white" }}>
-                <CallIcon />
-              </IconButton>
-            )}
-          </Stack>
-        </Box>
-      ) : isCallAccepted && !isCallEnded ? (   // UI DURING A CALL
         <Box
           component="main"
           sx={{
@@ -194,13 +158,17 @@ const Home = ({
           <Grid container sx={{ height: "100%", ".MuiGrid-container.MuiGrid-item": { p: 0 }, ".MuiGrid-item": { p: 2 } }}>
             <Grid container item direction="column" xs={8}>
               <Grid item xs={7} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
-                <video playsInline muted autoPlay ref={userMedia} style={{
+                <video playsInline autoPlay ref={userMedia} style={{
                   position: "absolute",
                   left: 0,
                   top: 0,
                   height: "100%",
                   width: "100%",
+                  padding: "16px",
+                  objectFit: "cover",
                 }} />
+
+                {console.log("Transcription: " + liveTranscription)}
 
                 {liveTranscription && (
                   <Typography sx={{
@@ -224,12 +192,14 @@ const Home = ({
 
               <Grid container item xs={5}>
                 <Grid item xs={8} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
-                  <video playsInline muted autoPlay ref={myMedia} style={{
+                  <video playsInline autoPlay ref={myMedia} style={{
                     position: "absolute",
                     left: 0,
                     top: 0,
                     height: "100%",
                     width: "100%",
+                    padding: "16px",
+                    objectFit: "cover",
                   }} />
                 </Grid>
 
@@ -275,7 +245,6 @@ const Home = ({
                 <Box sx={{ flex: 1 }}>
                   {responseMessage.map((data, index) => (
                     <Typography key={index}>
-                      {console.log(data)}
                       {data.email}: {data.message}
                     </Typography>
                   ))}
@@ -289,6 +258,44 @@ const Home = ({
               </Box>
             </Grid>
           </Grid>
+        </Box>
+      ) : isCallReceived || isCallSent ? (                // UI WHEN A CALL IS RECEIVED
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: { sm: `calc(100vw - 300px)` },
+            height: "100vh",
+            p: 4,
+            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+          <Box />
+
+          <Box sx={{ textAlign: "center" }}>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.callerEmail}</Typography>
+            {(isCallReceived && !isCallSent) ? (
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
+            ) : (
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>
+            )}
+          </Box>
+
+          <Stack direction="row" spacing={16}>
+            <IconButton size="large" onClick={endCall} sx={{ backgroundColor: "#BB223E", color: "white" }}>
+              <CallEndIcon />
+            </IconButton>
+
+            {(isCallReceived && !isCallSent) && (
+              <IconButton size="large" onClick={answerCall} sx={{ backgroundColor: "#22BB72", color: "white" }}>
+                <CallIcon />
+              </IconButton>
+            )}
+          </Stack>
         </Box>
       ) : (                                    // HOME UI
         <Box
@@ -323,7 +330,7 @@ const Home = ({
                                   </Typography>
                                 </TableCell>
                                 <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
-                                  <IconButton aria-label="delete" size="small" onClick={callUser(item.userID)}>
+                                  <IconButton size="small" onClick={() => callUser(item.userID)}>
                                     <CallIcon fontSize="inherit" />
                                   </IconButton>
                                 </TableCell>
@@ -364,7 +371,7 @@ const Home = ({
 
             <Grid container item xs={5}>
               <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
-                <video playsInline muted autoPlay ref={myMedia} style={{
+                <video playsInline autoPlay ref={myMedia} style={{
                   position: "absolute",
                   left: 0,
                   top: 0,
@@ -433,7 +440,7 @@ export default connect(mapStateToProps)(Home);
 <div>
   Home
   <div>
-    <video playsInline muted autoPlay ref={myMedia} />
+    <video playsInline autoPlay ref={myMedia} />
     {isCallAccepted && !isCallEnded ? (
       <>
         <div>
