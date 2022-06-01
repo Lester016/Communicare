@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
+import axios from "axios";
 
 import * as actions from "./store/actions";
 import Fallback from "./containers/Fallback";
@@ -16,11 +17,13 @@ import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
 import Transcribe from "./containers/Transcribe";
 import { getUserMedia } from "./utils/getUserMedia";
+import { getFormattedDate } from "./utils/getFormattedDate";
+import { getFormattedTime } from "./utils/getFormattedTime";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("http://localhost:8000/", {
+const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
@@ -38,7 +41,7 @@ function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
-
+  const [otherPartyID, setOtherPartyID] = useState(null);
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -46,7 +49,14 @@ function App({ onAutoSignup, userID, email }) {
     callerID: "",
     callerEmail: "",
   });
-  const [otherPartyID, setOtherPartyID] = useState(null);
+  const [callHistory, setCallHistory] = useState({
+    email: "",
+    date: "",
+    time: "",
+    duration: "",
+    type: "",
+  });
+  const [callResponseHistory, setCallResponseHistory] = useState();
 
   const myMedia = useRef();
   const userMedia = useRef();
@@ -112,7 +122,8 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
-  const callUser = (userToCallID) => {
+  const callUser = (userToCallID, email) => {
+    addCallHistory(email);
     setOtherPartyID(userToCallID);
     const peer = new Peer({
       initiator: true,
@@ -188,6 +199,34 @@ function App({ onAutoSignup, userID, email }) {
     });
 
     setIsTranscriptionEnabled((prevState) => !prevState);
+  };
+
+  const addCallHistory = (email, type = "call missed") => {
+    let data = {
+      email: email,
+      date: "",
+      time: "",
+      duration: 0,
+      type: type,
+    };
+
+    let today = new Date();
+
+    data["date"] = getFormattedDate(today);
+    data["time"] = getFormattedTime(today);
+
+    console.log("CALL HISTORY: ", data);
+
+    const firebase_url =
+      "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+    axios
+      .post(`${firebase_url}/call-history/${userID}.json`, data)
+      .then((response) => {
+        console.log("callResponseHistory: ", response.data.name);
+        setCallResponseHistory(response.data.name);
+      })
+      .catch((error) => console.log("error catched: ", error));
   };
 
   return (

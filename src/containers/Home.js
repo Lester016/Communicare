@@ -129,7 +129,9 @@ const Home = ({
             {findContact(onlineUsers, user.userID) ? (
               <>
                 <p>(Online)</p>
-                <button onClick={() => callUser(user.userID)}>Call</button>
+                <button onClick={() => callUser(user.userID, user.email)}>
+                  Call
+                </button>
               </>
             ) : (
               "(Offline)"
@@ -150,7 +152,9 @@ const Home = ({
           {user.userID !== userID ? (
             <div>
               <p style={{ color: "brown" }}>{user.email}</p>
-              <button onClick={() => callUser(user.userID)}>Call</button>
+              <button onClick={() => callUser(user.userID, user.email)}>
+                Call
+              </button>
 
               {!findContact(contacts, user.userID) && (
                 <button
