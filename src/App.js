@@ -27,6 +27,8 @@ const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
+const firebase_url =
+  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 let bufferSize = 2048;
 let AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext({
@@ -49,13 +51,14 @@ function App({ onAutoSignup, userID, email }) {
     callerID: "",
     callerEmail: "",
   });
-  const [callHistory, setCallHistory] = useState({
+  const [callRecord, setCallRecord] = useState({
     email: "",
     date: "",
     time: "",
     duration: "",
     type: "",
   });
+  const [callDuration, setCallDuration] = useState(0);
   const [callResponseHistory, setCallResponseHistory] = useState();
 
   const myMedia = useRef();
@@ -149,6 +152,9 @@ function App({ onAutoSignup, userID, email }) {
     socket.on("call-accepted", ({ signal }) => {
       setIsCallAccepted(true);
       peer.signal(signal);
+      setInterval(() => {
+        setCallDuration((prevState) => prevState + 1000);
+      }, 1000);
     });
 
     connectionRef.current = peer;
@@ -184,11 +190,23 @@ function App({ onAutoSignup, userID, email }) {
 
   const endCall = () => {
     setIsCallEnded(true);
+    let updatedCallRecord = { ...callRecord };
+    updatedCallRecord["duration"] = callDuration;
+    updatedCallRecord["type"] = "call made";
 
-    socket.emit("end-call", { userID: otherPartyID });
+    console.log("UPDATED CLAL RECORD: ", updatedCallRecord);
 
-    connectionRef.current.destroy();
-    window.location.reload();
+    axios
+      .put(
+        `${firebase_url}/call-history/${userID}/${callResponseHistory}.json`,
+        updatedCallRecord
+      )
+      .then((response) => {
+        socket.emit("end-call", { userID: otherPartyID });
+        connectionRef.current.destroy();
+        window.location.reload();
+      })
+      .catch(() => console.log("SOMETHING WENT WRONG WHEN ENDING THE CALL"));
   };
 
   const enableTranscriptionHandler = () => {
@@ -215,11 +233,7 @@ function App({ onAutoSignup, userID, email }) {
     data["date"] = getFormattedDate(today);
     data["time"] = getFormattedTime(today);
 
-    console.log("CALL HISTORY: ", data);
-
-    const firebase_url =
-      "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
-
+    setCallRecord(data);
     axios
       .post(`${firebase_url}/call-history/${userID}.json`, data)
       .then((response) => {
@@ -240,6 +254,7 @@ function App({ onAutoSignup, userID, email }) {
         path="/"
         element={
           <ProtectedLayout
+            callDuration={callDuration}
             isCallReceived={isCallReceived}
             callerInfo={callerInfo}
             answerCall={answerCall}

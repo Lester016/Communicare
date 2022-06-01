@@ -36,6 +36,12 @@ const Home = ({
       setContacts(response.data !== null ? response.data : []);
     });
 
+    axios
+      .get(`${firebase_url}/call-history/${userID}.json`)
+      .then((response) => {
+        console.log("call history: ", response.data);
+      });
+
     socket.on("transcribedMessage", ({ message }) => {
       setLiveTranscription(message);
     });

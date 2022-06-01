@@ -8,6 +8,7 @@ const ProtectedLayout = ({
   callerInfo,
   answerCall,
   isCallAccepted,
+  callDuration,
 }) => {
   if (!user) {
     return <Navigate to="/auth/login" />;
@@ -15,6 +16,7 @@ const ProtectedLayout = ({
   return (
     <div>
       <h1>Communicare</h1>
+      <h1>{callDuration}</h1>
       <div>
         <h4>My Media</h4>
         {isCallReceived &&
