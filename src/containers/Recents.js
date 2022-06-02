@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Toolbar from '@mui/material/Toolbar';
 
-import Link from '@mui/material/Link';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -28,14 +24,13 @@ import Typography from "../components/Typography";
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-const Recents = ({ socket, userID }) => {
+const Recents = ({ userID }) => {
     const [recents, setRecents] = useState([]);
     const [searchRecents, setSearchRecents] = useState("");
 
     useEffect(() => {
         console.log(userID);
         axios.get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
-            //console.log(Object.values(response.data));
             setRecents(response.data !== null ? Object.values(response.data) : []);
         });
     }, []);
