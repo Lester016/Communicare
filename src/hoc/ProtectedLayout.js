@@ -17,14 +17,13 @@ import Link from '@mui/material/Link';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
+import Button from "../components/Button";
+
 const drawerItems = [
   { name: "Home", path: "/" },
   { name: "Contacts", path: "/contacts" },
   { name: "Transcribe", path: "/transcribe" },
   { name: "Account Details", path: "/account" },
-  { name: "Help", path: "/help" },
-  { name: "What is Communicare?", path: "/communicare" },
-  { name: "Download mobile app (beta)", path: "#" },
 ]
 
 const ProtectedLayout = ({ user }) => {
@@ -57,14 +56,8 @@ const ProtectedLayout = ({ user }) => {
         ))}
       </List>
       <Divider />
-      <List>
-        <Link to={'/logout'} component={RouterLink} underline="none" sx={{ color: "white" }}>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText disableTypography={true} primary={'Logout'} sx={{ fontWeight: "700" }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+      <List sx={{ mt: "auto", mb: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Button to="transcribe" component={RouterLink} sx={{ width: "260px", backgroundColor: "#EAEFFF", borderRadius: 50, color: "#6667AB", fontWeight: "600", py: "2px"}}>LOGOUT</Button>
       </List>
     </>
   );
