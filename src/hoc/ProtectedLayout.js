@@ -22,8 +22,8 @@ import Button from "../components/Button";
 const drawerItems = [
   { name: "Home", path: "/" },
   { name: "Contacts", path: "/contacts" },
+  { name: "Recents", path: "/recents" },
   { name: "Transcribe", path: "/transcribe" },
-  { name: "Account Details", path: "/account" },
 ]
 
 const ProtectedLayout = ({ user }) => {
