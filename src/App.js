@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
+import axios from "axios";
 
 import * as actions from "./store/actions";
 import Fallback from "./containers/Fallback";
@@ -17,6 +18,8 @@ import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
 import { getUserMedia } from "./utils/getUserMedia";
+import { getFormattedDate } from "./utils/getFormattedDate";
+import { getFormattedTime } from "./utils/getFormattedTime";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
@@ -25,6 +28,8 @@ const socket = io("https://communicare-server.herokuapp.com/", {
   autoConnect: false,
 });
 
+const firebase_url =
+  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 let bufferSize = 2048;
 let AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext({
@@ -40,7 +45,7 @@ function App({ onAutoSignup, userID, email }) {
   const [isCallSent, setIsCallSent] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
-
+  const [otherPartyID, setOtherPartyID] = useState(null);
   const [callSignal, setCallSignal] = useState();
   const [isCallAccepted, setIsCallAccepted] = useState(false);
   const [isCallEnded, setIsCallEnded] = useState(false);
@@ -48,7 +53,15 @@ function App({ onAutoSignup, userID, email }) {
     callerID: "",
     callerEmail: "",
   });
-  const [otherPartyID, setOtherPartyID] = useState(null);
+  const [callRecord, setCallRecord] = useState({
+    email: "",
+    date: "",
+    time: "",
+    duration: "-",
+    type: "call missed",
+  });
+  const [callDuration, setCallDuration] = useState(0);
+  const [callResponseHistory, setCallResponseHistory] = useState();
 
   const myMedia = useRef();
   const userMedia = useRef();
@@ -75,6 +88,11 @@ function App({ onAutoSignup, userID, email }) {
         callerEmail: callerEmail,
       });
       setOtherPartyID(callerID);
+    });
+
+    socket.on("end-call", () => {
+      setIsCallEnded(true);
+      window.location.reload();
     });
   }, []);
 
@@ -109,7 +127,8 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
-  const callUser = (userToCallID) => {
+  const callUser = (userToCallID, email) => {
+    addCallHistory(email);
     setOtherPartyID(userToCallID);
     setIsCallSent(true);
     const peer = new Peer({
@@ -136,12 +155,19 @@ function App({ onAutoSignup, userID, email }) {
     socket.on("call-accepted", ({ signal }) => {
       setIsCallAccepted(true);
       peer.signal(signal);
+      setInterval(() => {
+        setCallDuration((prevState) => prevState + 1000);
+      }, 1000);
     });
 
     connectionRef.current = peer;
   };
 
   const answerCall = () => {
+    addCallHistory(callerInfo.callerEmail, "call made");
+    setInterval(() => {
+      setCallDuration((prevState) => prevState + 1000);
+    }, 1000);
     setIsCallAccepted(true);
     setIsCallSent(false);
 
@@ -174,17 +200,23 @@ function App({ onAutoSignup, userID, email }) {
     setIsCallEnded(true);
     setIsCallSent(false);
 
-    connectionRef.current.destroy();
-    stopBothVideoAndAudio(stream);
-  };
+    let updatedCallRecord = { ...callRecord };
+    updatedCallRecord["duration"] = callDuration;
+    updatedCallRecord["type"] = "call made";
 
-  // stop both mic and camera
-  const stopBothVideoAndAudio = (stream) => {
-    stream.getTracks().forEach((track) => {
-      if (track.readyState === "live") {
-        track.stop();
-      }
-    });
+    console.log("UPDATED CLAL RECORD: ", updatedCallRecord);
+
+    axios
+      .put(
+        `${firebase_url}/call-history/${userID}/${callResponseHistory}.json`,
+        updatedCallRecord
+      )
+      .then((response) => {
+        socket.emit("end-call", { userID: otherPartyID });
+        connectionRef.current.destroy();
+        window.location.reload();
+      })
+      .catch(() => console.log("SOMETHING WENT WRONG WHEN ENDING THE CALL"));
   };
 
   const enableTranscriptionHandler = () => {
@@ -195,6 +227,31 @@ function App({ onAutoSignup, userID, email }) {
     });
 
     setIsTranscriptionEnabled((prevState) => !prevState);
+  };
+
+  const addCallHistory = (email, type = "call missed") => {
+    let data = {
+      email: email,
+      date: "",
+      time: "",
+      duration: "-",
+      type: type,
+    };
+
+    let today = new Date();
+
+    data["date"] = getFormattedDate(today);
+    data["time"] = getFormattedTime(today);
+
+    console.log("CALL RECORD: ", data);
+    setCallRecord(data);
+    axios
+      .post(`${firebase_url}/call-history/${userID}.json`, data)
+      .then((response) => {
+        console.log("callResponseHistory: ", response.data.name);
+        setCallResponseHistory(response.data.name);
+      })
+      .catch((error) => console.log("error catched: ", error));
   };
 
   return (
@@ -225,6 +282,7 @@ function App({ onAutoSignup, userID, email }) {
               isCallSent={isCallSent}
               isCallReceived={isCallReceived}
               isCallEnded={isCallEnded}
+              callDuration={callDuration}
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
