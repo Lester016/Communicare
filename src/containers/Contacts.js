@@ -10,12 +10,15 @@ import Toolbar from '@mui/material/Toolbar';
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
+
+import SearchIcon from '@mui/icons-material/Search';
 
 import Typography from "../components/Typography";
 
@@ -68,9 +71,20 @@ const Contacts = ({ socket, userID }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
-              <TextField size="small" onChange={(e) => setSearchOnlines(e.target.value)} />
+              <TextField
+                variant="standard"
+                size="small"
+                value={searchOnlines}
+                placeholder="Search..."
+                onChange={(e) => setSearchOnlines(e.target.value)}
+                InputProps={{
+                  disableUnderline: true,
+                  endAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                }}
+                sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
+              />
             </Box>
-            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1 }}>
+            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
               <Table size="small" sx={{ position: "relative", height: "100%" }}>
                 <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
                   {(searchOnlines !== "" ? onlineUsers.filter((row) => {
@@ -94,9 +108,20 @@ const Contacts = ({ socket, userID }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
-              <TextField size="small" onChange={(e) => setSearchContacts(e.target.value)} />
+              <TextField
+                variant="standard"
+                size="small"
+                value={searchContacts}
+                placeholder="Search..."
+                onChange={(e) => setSearchContacts(e.target.value)}
+                InputProps={{
+                  disableUnderline: true,
+                  endAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                }}
+                sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
+              />
             </Box>
-            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1 }}>
+            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
               <Table size="small" sx={{ position: "relative", height: "100%" }}>
                 <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
                   {(searchContacts !== "" ? contacts.filter((row) => {
