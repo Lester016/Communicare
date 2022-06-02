@@ -64,6 +64,7 @@ const Home = ({
   isCallAccepted,
   isCallEnded,
   callerInfo,
+  callDuration,
   isTranscriptionEnabled,
   enableTranscription,
 }) => {
