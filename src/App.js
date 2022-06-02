@@ -123,7 +123,11 @@ function App({ onAutoSignup, userID, email }) {
 
   const onMedia = async () => {
     let stream = await getUserMedia({ video: true, audio: true });
-    myMedia.current.srcObject = stream;
+    try {
+      myMedia.current.srcObject = stream;
+    } catch(e) {
+      console.log(e);
+    }
     handleSuccess(stream);
     setStream(stream);
   };

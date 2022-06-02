@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import { findContact } from "../utils/findContact";
 import { Link as RouterLink } from "react-router-dom";
@@ -39,8 +39,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import TranscribeVisual from "../assets/TranscribeVisual.png";
 
-const firebase_url =
-  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
+const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 const OnlineCircle = () => {
   return (
@@ -88,19 +87,24 @@ const Home = ({
       setContacts(response.data !== null ? response.data : []);
     });
 
+    /*
     axios
       .get(`${firebase_url}/call-history/${userID}.json`)
       .then((response) => {
         console.log("call history: ", response.data);
       });
+    */
 
     socket.on("transcribedMessage", ({ message }) => {
-      console.log(message);
       setLiveTranscription(message);
     });
 
-    onMedia();
+    //onMedia();
   }, []);
+
+  useEffect(() => {
+    onMedia();
+  }, [isCallAccepted, isCallEnded]) 
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
@@ -150,35 +154,6 @@ const Home = ({
 
   return (
     <>
-      <Grid container item xs={5}>
-        <Grid
-          item
-          xs={5}
-          sx={{
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            overflow: "hidden",
-          }}
-        >
-          <video
-            playsInline
-            muted
-            autoPlay
-            ref={myMedia}
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              height: "100%",
-              width: "100%",
-              padding: "16px",
-              objectFit: "cover",
-            }}
-          />
-        </Grid>
-      </Grid>
       {isCallAccepted && !isCallEnded ? ( // UI DURING A CALL
         <Box
           component="main"
@@ -214,8 +189,8 @@ const Home = ({
                 }}
               >
                 <video
-                  playsInline
-                  autoPlay
+                  playsInline={true}
+                  autoPlay={true}
                   ref={userMedia}
                   style={{
                     position: "absolute",
@@ -251,7 +226,34 @@ const Home = ({
               </Grid>
 
               <Grid container item xs={5}>
-                <Grid item xs={4}>
+                <Grid
+                  item
+                  xs={7}
+                  sx={{
+                    position: "relative",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  <video
+                    playsInline={true}
+                    muted={true}
+                    autoPlay={true}
+                    ref={myMedia}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      height: "100%",
+                      width: "100%",
+                      padding: "16px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={5}>
                   <Box
                     component={Paper}
                     sx={{
@@ -442,7 +444,6 @@ const Home = ({
                     placeholder="Type your message here..."
                     multiline
                     onChange={handleChangeMessage}
-                    multilineColor="green"
                     color="green"
                     InputProps={{
                       disableUnderline: true,
@@ -685,6 +686,33 @@ const Home = ({
             </Grid>
 
             <Grid container item xs={5}>
+              <Grid
+                item
+                xs={5}
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                }}
+              >
+                <video
+                  playsInline={true}
+                  muted={true}
+                  autoPlay={true}
+                  ref={myMedia}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    height: "100%",
+                    width: "100%",
+                    padding: "16px",
+                    objectFit: "cover",
+                  }}
+                />
+              </Grid>
               <Grid item xs={7}>
                 <Box component={Paper} sx={{ height: "100%", p: 2 }}>
                   <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
