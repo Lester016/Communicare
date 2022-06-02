@@ -31,7 +31,9 @@ const OnlineCircle = () => {
 
 const Contacts = ({ socket, userID }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [contacts, setContacts] = useState([])
+  const [contacts, setContacts] = useState([]);
+  const [searchOnlines, setSearchOnlines] = useState("");
+  const [searchContacts, setSearchContacts] = useState("");
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -39,7 +41,7 @@ const Contacts = ({ socket, userID }) => {
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
       setContacts(response.data !== null ? response.data : []);
     });
-  });
+  }, []);
 
   const isInContactsHandler = (array, item) => {
     for (let index = 0; index < array.length; index++) {
@@ -66,12 +68,14 @@ const Contacts = ({ socket, userID }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
-              <TextField size="small" />
+              <TextField size="small" onChange={(e) => setSearchOnlines(e.target.value)} />
             </Box>
             <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1 }}>
-              <Table size="small">
-                <TableBody>
-                  {onlineUsers.map((item) => (
+              <Table size="small" sx={{ position: "relative", height: "100%" }}>
+                <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                  {(searchOnlines !== "" ? onlineUsers.filter((row) => {
+                    return row.email.toLowerCase().includes(searchOnlines.toLowerCase());
+                  }) : onlineUsers).map((item) => (
                     <TableRow key={item.userID}>
                       <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
                         <Typography>
@@ -90,15 +94,17 @@ const Contacts = ({ socket, userID }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
-              <TextField size="small" />
+              <TextField size="small" onChange={(e) => setSearchContacts(e.target.value)} />
             </Box>
             <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1 }}>
-              <Table size="small">
-                <TableBody>
-                  {contacts.map((item) => (
+              <Table size="small" sx={{ position: "relative", height: "100%" }}>
+                <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                  {(searchContacts !== "" ? contacts.filter((row) => {
+                    return row.email.toLowerCase().includes(searchContacts.toLowerCase());
+                  }) : contacts).map((item) => (
                     <TableRow key={item.userID}>
                       <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                        <Typography sx={{ fontSize: "14px" }}>
+                        <Typography>
                           {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
                         </Typography>
                       </TableCell>
