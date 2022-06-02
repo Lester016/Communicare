@@ -22,39 +22,11 @@ import TableRow from '@mui/material/TableRow';
 
 import SearchIcon from '@mui/icons-material/Search';
 import CallMadeIcon from '@mui/icons-material/CallMade';
+import CallMissedIcon from '@mui/icons-material/CallMissed';
 
 import Typography from "../components/Typography";
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
-
-const dummyData = [
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
-]
 
 const Recents = ({ socket, userID }) => {
     const [recents, setRecents] = useState([]);
@@ -97,44 +69,46 @@ const Recents = ({ socket, userID }) => {
                             />
                         </Box>
                         <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
-                            <Table size="small" sx={{ position: "relative" }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell></TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell align="right">Date</TableCell>
-                                        <TableCell align="right">Time</TableCell>
-                                        <TableCell align="right">Duration</TableCell>
-                                        <TableCell align="right">Type of Call</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody sx={{ overflowY: "scroll" }}>
-                                    {(searchRecents !== "" ? recents.filter((row) => {
-                                        return row.email.toLowerCase().includes(searchRecents.toLowerCase());
-                                    }) : dummyData).map((item) => (
-                                        <TableRow key={item.userID}>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <CallMadeIcon />
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>{item.email}</Typography>
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
-                                                <Typography>{item.date}</Typography>
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
-                                                <Typography>{item.time}</Typography>
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
-                                                <Typography>{item.duration}</Typography>
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
-                                                <Typography>{item.type}</Typography>
-                                            </TableCell>
+                            <Box sx={{ position: "relative", height: "100%", overflowY: "auto" }}>
+                                <Table size="small" stickyHeader sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                                    <TableHead sx={{ backgroundColor: "#EAEFFF" }}>
+                                        <TableRow sx={{ backgroundColor: "#EAEFFF" }}>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }} padding="checkbox"></TableCell>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }}>Email</TableCell>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }} align="right">Date</TableCell>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }} align="right">Time</TableCell>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }} align="right">Duration</TableCell>
+                                            <TableCell sx={{ color: "#6667AB", fontSize: "16px", fontWeight: "700", backgroundColor: "#EAEFFF" }} align="right">Type of Call</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHead>
+                                    <TableBody sx={{ overflowY: "scroll", }}>
+                                        {(searchRecents !== "" ? recents.filter((row) => {
+                                            return row.email.toLowerCase().includes(searchRecents.toLowerCase());
+                                        }) : recents).map((item) => (
+                                            <TableRow key={item.userID}>
+                                                <TableCell scope="row" align="center" sx={{ borderBottom: "none" }}>
+                                                    {item.type === "call made?" ? <CallMadeIcon sx={{ color: "#22BB72" }} /> : <CallMissedIcon sx={{ color: "#BB223E" }} />}
+                                                </TableCell>
+                                                <TableCell scope="row" sx={{ borderBottom: "none" }}>
+                                                    <Typography>{item.email}</Typography>
+                                                </TableCell>
+                                                <TableCell scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                    <Typography>{item.date}</Typography>
+                                                </TableCell>
+                                                <TableCell scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                    <Typography>{item.time}</Typography>
+                                                </TableCell>
+                                                <TableCell scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                    <Typography>{item.duration}</Typography>
+                                                </TableCell>
+                                                <TableCell scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                    <Typography>{item.type}</Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Box>
                         </TableContainer>
                     </Box>
                 </Grid>
