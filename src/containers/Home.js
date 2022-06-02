@@ -104,7 +104,7 @@ const Home = ({
 
   useEffect(() => {
     onMedia();
-  }, [isCallAccepted, isCallEnded]) 
+  }, [isCallAccepted, isCallEnded])
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
@@ -154,23 +154,20 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( // UI DURING A CALL
-        <Box
-          component="main"
+      {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
+        <Box component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             height: "100vh",
-            p: 4,
             backgroundColor: "#F9FAFF",
+            p: 4,
           }}
         >
           <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
-            IN CALL
-          </Typography>
-          <Grid
-            container
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
+
+          <Grid container
             sx={{
               height: "100%",
               ".MuiGrid-container.MuiGrid-item": { p: 0 },
@@ -178,16 +175,7 @@ const Home = ({
             }}
           >
             <Grid container item direction="column" xs={8}>
-              <Grid
-                item
-                xs={7}
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              <Grid item xs={7} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
                 <video
                   playsInline={true}
                   autoPlay={true}
@@ -203,16 +191,30 @@ const Home = ({
                   }}
                 />
 
+                <Typography
+                  sx={{
+                    position: "absolute",
+                    padding: "16px 24px",
+                    top: 0, left: 0,
+                    ml: "16px", mt: "16px",
+                    backgroundColor: "rgba(0, 0, 0, .5)",
+                    borderBottomRightRadius: 16,
+
+                    color: "white",
+                    fontSize: "18px",
+                    fontWeight: "500",
+                  }}
+                >
+                  {callDuration}
+                </Typography>
+
                 {liveTranscription && (
                   <Typography
                     sx={{
                       position: "absolute",
-                      marginLeft: "auto",
-                      marginRight: "auto",
                       padding: "16px 24px",
-                      textAlign: "center",
                       bottom: "32px",
-                      backgroundColor: "rgba(0, 0, 0, .4)",
+                      backgroundColor: "rgba(0, 0, 0, .5)",
                       borderRadius: 2,
 
                       color: "white",
@@ -226,17 +228,8 @@ const Home = ({
               </Grid>
 
               <Grid container item xs={5}>
-                <Grid
-                  item
-                  xs={7}
-                  sx={{
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    overflow: "hidden",
-                  }}
-                >
+                <Grid item xs={7}
+                  sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden", }}>
                   <video
                     playsInline={true}
                     muted={true}
@@ -253,19 +246,18 @@ const Home = ({
                     }}
                   />
                 </Grid>
+
                 <Grid item xs={5}>
-                  <Box
-                    component={Paper}
+                  <Box component={Paper}
                     sx={{
-                      display: "grid",
                       width: "100%",
                       height: "100%",
+                      display: "grid",
                       gridTemplateRows: "auto auto",
                       gridTemplateColumns: "auto auto",
                     }}
                   >
-                    <IconButton
-                      onClick={() => setIsCamOn(!isCamOn)}
+                    <IconButton onClick={() => setIsCamOn(!isCamOn)}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",
@@ -285,11 +277,7 @@ const Home = ({
                       >
                         {isCamOn ? <VideocamIcon /> : <VideocamOffIcon />}
                       </Box>
-                      <Typography
-                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
-                      >
-                        Video
-                      </Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }} > Video </Typography>
                     </IconButton>
 
                     <IconButton
@@ -313,11 +301,7 @@ const Home = ({
                       >
                         {isMicOn ? <MicIcon /> : <MicOffIcon />}
                       </Box>
-                      <Typography
-                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
-                      >
-                        Video
-                      </Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }} > Mic </Typography>
                     </IconButton>
                     <IconButton
                       onClick={enableTranscription}
@@ -338,15 +322,9 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isTranscriptionEnabled ? (
-                          <ClosedCaptionIcon />
-                        ) : (
-                          <ClosedCaptionOffIcon />
-                        )}
+                        {isTranscriptionEnabled ? (<ClosedCaptionIcon />) : (<ClosedCaptionOffIcon />)}
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
-                        Transcribe
-                      </Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>Transcribe</Typography>
                     </IconButton>
 
                     <IconButton
@@ -369,9 +347,7 @@ const Home = ({
                       >
                         <CallEndIcon sx={{ backgroundColor: "#BB223E" }} />
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
-                        Hang Up
-                      </Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>Hang Up</Typography>
                     </IconButton>
                   </Box>
                 </Grid>
@@ -387,12 +363,8 @@ const Home = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>
-                  In-Call Messages
-                </Typography>
-                <Box
-                  sx={{ position: "relative", height: "100%", width: "100%" }}
-                >
+                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
+                <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
                   <Box
                     sx={{
                       position: "absolute",
@@ -407,26 +379,23 @@ const Home = ({
                       p: 2,
                     }}
                   >
-                    {responseMessage
-                      .slice(0)
-                      .reverse()
-                      .map((data, index) => (
-                        <Typography
-                          key={index}
-                          sx={{
-                            color: email === data.email ? "white" : "#6667AB",
-                            alignSelf: email === data.email ? "end" : "start",
-                            backgroundColor:
-                              email === data.email ? "#6667AB" : "#EAEFFF",
-                            borderRadius: 1.5,
-                            my: "6px",
-                            px: "12px",
-                            py: "8px",
-                          }}
-                        >
-                          {data.message}
-                        </Typography>
-                      ))}
+                    {responseMessage.slice(0).reverse().map((data, index) => (
+                      <Typography
+                        key={index}
+                        sx={{
+                          color: email === data.email ? "white" : "#6667AB",
+                          alignSelf: email === data.email ? "end" : "start",
+                          backgroundColor:
+                            email === data.email ? "#6667AB" : "#EAEFFF",
+                          borderRadius: 1.5,
+                          my: "6px",
+                          px: "12px",
+                          py: "8px",
+                        }}
+                      >
+                        {data.message}
+                      </Typography>
+                    ))}
                   </Box>
                 </Box>
                 <Box
@@ -464,44 +433,30 @@ const Home = ({
             </Grid>
           </Grid>
         </Box>
-      ) : isCallReceived || isCallSent ? ( // UI WHEN A CALL IS RECEIVED
+
+      ) : isCallReceived || isCallSent ? ( // ========================================== UI WHEN A CALL IS RECEIVED/SENT ==========================================
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             height: "100vh",
-            p: 4,
-            background:
-              "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
-
+            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             alignItems: "center",
+            p: 4,
           }}
         >
           <Box />
 
           <Box sx={{ textAlign: "center" }}>
-            <Typography
-              sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}
-            >
-              {callerInfo.callerEmail}
-            </Typography>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.callerEmail}</Typography>
             {isCallReceived && !isCallSent ? (
-              <Typography
-                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
-              >
-                is calling...
-              </Typography>
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
             ) : (
-              <Typography
-                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
-              >
-                Ringing...
-              </Typography>
-            )}
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>)}
           </Box>
 
           <Stack direction="row" spacing={16}>
@@ -524,8 +479,7 @@ const Home = ({
             )}
           </Stack>
         </Box>
-      ) : (
-        // HOME UI
+      ) : ( // ========================================== HOME UI ==========================================
         <Box
           component="main"
           sx={{
@@ -537,9 +491,8 @@ const Home = ({
           }}
         >
           <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
-            HOME
-          </Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>HOME</Typography>
+
           <Grid
             container
             direction="column"
@@ -569,11 +522,7 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Online
-                        </Typography>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -638,11 +587,7 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Contacts
-                        </Typography>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -686,9 +631,7 @@ const Home = ({
             </Grid>
 
             <Grid container item xs={5}>
-              <Grid
-                item
-                xs={5}
+              <Grid item xs={5}
                 sx={{
                   position: "relative",
                   display: "flex",
@@ -715,20 +658,9 @@ const Home = ({
               </Grid>
               <Grid item xs={7}>
                 <Box component={Paper} sx={{ height: "100%", p: 2 }}>
-                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
-                    TRANSCRIBE
-                  </Typography>
+                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>TRANSCRIBE</Typography>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography
-                      sx={{
-                        color: "#22BB72",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                      }}
-                    >
-                      How to use?
-                    </Typography>
-
+                    <Typography sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", }}>How to use?</Typography>
                     <Grid container>
                       <Grid item xs={6}>
                         <List
@@ -753,16 +685,7 @@ const Home = ({
                         </List>
                       </Grid>
 
-                      <Grid
-                        item
-                        xs={6}
-                        sx={{
-                          position: "relative",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
+                      <Grid item xs={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
                         <Box
                           component="img"
                           sx={{
@@ -779,13 +702,7 @@ const Home = ({
                         />
                       </Grid>
                     </Grid>
-                    <Button
-                      to="transcribe"
-                      component={RouterLink}
-                      sx={{ backgroundColor: "#6667AB" }}
-                    >
-                      Transcribe Now
-                    </Button>
+                    <Button to="transcribe" component={RouterLink} sx={{ backgroundColor: "#6667AB" }}>Transcribe Now</Button>
                   </Box>
                 </Box>
               </Grid>
@@ -805,92 +722,3 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(Home);
-
-/*
-<div>
-  Home
-  <div>
-    <video playsInline autoPlay ref={myMedia} />
-    {isCallAccepted && !isCallEnded ? (
-      <>
-        <div>
-          {isTranscriptionEnabled ? (
-            <div>
-              <h3>{liveTranscription && liveTranscription}</h3>
-              <button onClick={enableTranscription}>
-                Disable Transcription
-              </button>
-            </div>
-          ) : (
-            <div>
-              <h3>Transcription is off</h3>
-              <button onClick={enableTranscription}>
-                Enable Transcription
-              </button>
-            </div>
-          )}
-        </div>
-        <button onClick={endCall}>Hang up</button>
-        <video playsInline autoPlay ref={userMedia} />
-      </>
-    ) : null}
-  </div>
-  <div>
-    <label>Your message: </label>
-    <input type="text" value={message} onChange={handleChangeMessage} />
-    <button onClick={handleSubmitMessage}>Send</button>
-  </div>
-  <div>
-    <h4>CONVO: </h4>
-    {responseMessage.map((data, index) => (
-      <p key={index}>
-        {data.email}: {data.message}
-      </p>
-    ))}
-  </div>
-  <h3>Your Contacts</h3>
-  <div style={{ border: "1px solid grey", marginBottom: 10 }}>
-    {contacts.map((user) => (
-      <div key={user.userID}>
-        <p style={{ color: "blue" }}>{user.email} </p>
-        {findContact(onlineUsers, user.userID) ? (
-          <>
-            <p>(Online)</p>
-            <button onClick={() => callUser(user.userID)}>Call</button>
-          </>
-        ) : (
-          "(Offline)"
-        )}
-
-        <button onClick={() => removeContactHandler(user.userID)}>
-          Remove in contacts
-        </button>
-      </div>
-    ))}
-  </div>
-  <h3>Online Users</h3>
-  {onlineUsers.map((user) => (
-    <div
-      key={user.userID}
-      style={{ border: "1px dashed grey", marginBottom: 10 }}
-    >
-      {user.userID !== userID ? (
-        <div>
-          <p style={{ color: "brown" }}>{user.email}</p>
-          <button onClick={() => callUser(user.userID)}>Call</button>
-
-          {!findContact(contacts, user.userID) && (
-            <button
-              onClick={() => addContactHandler(user.userID, user.email)}
-            >
-              Add into contacts
-            </button>
-          )}
-        </div>
-      ) : (
-        <p style={{ color: "green" }}>{user.email} (You)</p>
-      )}
-    </div>
-  ))}
-</div>
-*/
