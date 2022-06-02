@@ -142,7 +142,7 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? (                      // UI DURING A CALL
+      {true ? (                      // UI DURING A CALL
         <Box
           component="main"
           sx={{
@@ -166,8 +166,6 @@ const Home = ({
                   padding: "16px",
                   objectFit: "cover",
                 }} />
-
-                {console.log("Transcription: " + liveTranscription)}
 
                 {liveTranscription && (
                   <Typography sx={{
