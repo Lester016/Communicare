@@ -22,9 +22,6 @@ const drawerItems = [
   { name: "Contacts", path: "/contacts" },
   { name: "Transcribe", path: "/transcribe" },
   { name: "Account Details", path: "/account" },
-  { name: "Help", path: "/help" },
-  { name: "What is Communicare?", path: "/communicare" },
-  { name: "Download mobile app (beta)", path: "#" },
 ]
 
 const ProtectedLayout = ({ user }) => {
