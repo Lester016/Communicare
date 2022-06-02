@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from "react-router-dom";
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -19,6 +20,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 
 import SearchIcon from '@mui/icons-material/Search';
+import CallIcon from "@mui/icons-material/Call";
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import Typography from "../components/Typography";
 
@@ -32,11 +36,13 @@ const OnlineCircle = () => {
   )
 }
 
-const Contacts = ({ socket, userID }) => {
+const Contacts = ({ socket, userID, callUser }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [searchOnlines, setSearchOnlines] = useState("");
   const [searchContacts, setSearchContacts] = useState("");
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
@@ -45,6 +51,31 @@ const Contacts = ({ socket, userID }) => {
       setContacts(response.data !== null ? response.data : []);
     });
   }, []);
+
+  const addContactHandler = (contactID, contactEmail) => {
+    let updatedContacts = [
+      ...contacts,
+      { userID: contactID, email: contactEmail },
+    ];
+    axios
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
+  };
+
+  const removeContactHandler = (item) => {
+    let updatedContacts = [...contacts];
+
+    let index = updatedContacts.findIndex((x) => x.userID === item);
+    if (index > -1) {
+      updatedContacts.splice(index, 1); // 2nd parameter means remove one item only
+    }
+
+    axios
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
+  };
 
   const isInContactsHandler = (array, item) => {
     for (let index = 0; index < array.length; index++) {
@@ -90,11 +121,31 @@ const Contacts = ({ socket, userID }) => {
                   {(searchOnlines !== "" ? onlineUsers.filter((row) => {
                     return row.email.toLowerCase().includes(searchOnlines.toLowerCase());
                   }) : onlineUsers).map((item) => (
-                    <TableRow key={item.userID}>
+                    <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
                       <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                        <Typography>
-                          {item.email} <OnlineCircle />
-                        </Typography>
+                        <Typography>{item.email} <OnlineCircle /></Typography>
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="right"
+                        sx={{ borderBottom: "none" }}
+                      >
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            navigate("/");
+                            callUser(item.userID)
+                          }}
+                        >
+                          <CallIcon fontSize="inherit" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => addContactHandler(item.userID, item.email)}
+                        >
+                          <AddIcon fontSize="inherit" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -127,11 +178,32 @@ const Contacts = ({ socket, userID }) => {
                   {(searchContacts !== "" ? contacts.filter((row) => {
                     return row.email.toLowerCase().includes(searchContacts.toLowerCase());
                   }) : contacts).map((item) => (
-                    <TableRow key={item.userID}>
+                    <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
                       <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                        <Typography>
-                          {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
-                        </Typography>
+                        <Typography> {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />} </Typography>
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="right"
+                        sx={{ borderBottom: "none" }}
+                      >
+                        {isInContactsHandler(onlineUsers, item.userID) && (
+                          <IconButton
+                            size="small"
+                            onClick={() => {
+                              navigate("/");
+                              callUser(item.userID)
+                            }}
+                          >
+                            <CallIcon fontSize="inherit" />
+                          </IconButton>)}
+                        <IconButton
+                          size="small"
+                          onClick={() => removeContactHandler(item.userID)}
+                        >
+                          <DeleteIcon fontSize="inherit" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -1,7 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { findContact } from "../utils/findContact";
 import { Link as RouterLink } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -22,7 +21,7 @@ import TableRow from "@mui/material/TableRow";
 
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+//import ListItemText from "@mui/material/ListItemText";
 
 import Typography from "../components/Typography";
 import Button from "../components/Button";
@@ -115,31 +114,6 @@ const Home = ({
       socket.emit("chat message", { message, userID, email });
     }
     setMessage("");
-  };
-
-  const addContactHandler = (contactID, contactEmail) => {
-    let updatedContacts = [
-      ...contacts,
-      { userID: contactID, email: contactEmail },
-    ];
-    axios
-      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
-      .then((response) => setContacts(updatedContacts))
-      .catch((error) => console.log("error catched: ", error));
-  };
-
-  const removeContactHandler = (item) => {
-    let updatedContacts = [...contacts];
-
-    let index = updatedContacts.findIndex((x) => x.userID === item);
-    if (index > -1) {
-      updatedContacts.splice(index, 1); // 2nd parameter means remove one item only
-    }
-
-    axios
-      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
-      .then((response) => setContacts(updatedContacts))
-      .catch((error) => console.log("error catched: ", error));
   };
 
   const isInContactsHandler = (array, item) => {
