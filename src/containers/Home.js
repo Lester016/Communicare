@@ -191,7 +191,7 @@ const Home = ({
 
               <Grid container item xs={5}>
                 <Grid item xs={8} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
-                  <video playsInline autoPlay ref={myMedia} style={{
+                  <video playsInline muted autoPlay ref={myMedia} style={{
                     position: "absolute",
                     left: 0,
                     top: 0,
@@ -353,7 +353,7 @@ const Home = ({
                             {contacts.map((item) => (
                               <TableRow key={item.userID}>
                                 <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                  <Typography sx={{ fontSize: "14px" }}>
+                                  <Typography>
                                     {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
                                   </Typography>
                                 </TableCell>
@@ -370,7 +370,7 @@ const Home = ({
 
             <Grid container item xs={5}>
               <Grid item xs={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
-                <video playsInline autoPlay ref={myMedia} style={{
+                <video playsInline muted autoPlay ref={myMedia} style={{
                   position: "absolute",
                   left: 0,
                   top: 0,
