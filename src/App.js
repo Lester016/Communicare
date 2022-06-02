@@ -12,10 +12,12 @@ import Layout from "./hoc/Layout";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
+import Contacts from "./containers/Contacts";
+import Recents from "./containers/Recents";
+import Transcribe from "./containers/Transcribe";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
-import Transcribe from "./containers/Transcribe";
 import { getUserMedia } from "./utils/getUserMedia";
 import { getFormattedDate } from "./utils/getFormattedDate";
 import { getFormattedTime } from "./utils/getFormattedTime";
@@ -41,6 +43,7 @@ context.resume();
 
 function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
+  const [isCallSent, setIsCallSent] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
   const [otherPartyID, setOtherPartyID] = useState(null);
@@ -128,6 +131,7 @@ function App({ onAutoSignup, userID, email }) {
   const callUser = (userToCallID, email) => {
     addCallHistory(email);
     setOtherPartyID(userToCallID);
+    setIsCallSent(true);
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -166,6 +170,7 @@ function App({ onAutoSignup, userID, email }) {
       setCallDuration((prevState) => prevState + 1000);
     }, 1000);
     setIsCallAccepted(true);
+    setIsCallSent(false);
 
     const peer = new Peer({
       initiator: false,
@@ -194,6 +199,8 @@ function App({ onAutoSignup, userID, email }) {
 
   const endCall = () => {
     setIsCallEnded(true);
+    setIsCallSent(false);
+
     let updatedCallRecord = { ...callRecord };
     updatedCallRecord["duration"] = callDuration;
     updatedCallRecord["type"] = "call made";
@@ -258,13 +265,7 @@ function App({ onAutoSignup, userID, email }) {
       <Route
         path="/"
         element={
-          <ProtectedLayout
-            callDuration={callDuration}
-            isCallReceived={isCallReceived}
-            callerInfo={callerInfo}
-            answerCall={answerCall}
-            isCallAccepted={isCallAccepted}
-          />
+          <ProtectedLayout />
         }
       >
         <Route
@@ -273,19 +274,25 @@ function App({ onAutoSignup, userID, email }) {
             <Home
               socket={socket}
               callUser={callUser}
+              answerCall={answerCall}
               myMedia={myMedia}
               userMedia={userMedia}
               onMedia={onMedia}
-              isCallAccepted={isCallAccepted}
-              isCallReceived={isCallReceived}
               callerInfo={callerInfo}
+              isCallAccepted={isCallAccepted}
+              isCallSent={isCallSent}
+              isCallReceived={isCallReceived}
               isCallEnded={isCallEnded}
+              callDuration={callDuration}
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
             />
           }
         />
+
+        <Route path="contacts" element={<Contacts socket={socket} userID={userID} />} />
+        <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
