@@ -208,28 +208,31 @@ const Home = ({
                     gridTemplateRows: "auto auto",
                     gridTemplateColumns: "auto auto",
                   }}>
-                    <IconButton onClick={() => setIsCamOn(!isCamOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                    <IconButton onClick={() => setIsCamOn(!isCamOn)} sx={{ borderRadius: 0, color: "#7D7EAA", display: "flex", flexDirection: "column" }}>
                       <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         {isCamOn ? <VideocamIcon /> : <VideocamOffIcon />}
                       </Box>
+                      <Typography sx={{color: "#22BB72", fontSize: "14px", mt: "6px"}}>Video</Typography>
                     </IconButton>
 
-                    <IconButton onClick={() => setIsMicOn(!isMicOn)} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                    <IconButton onClick={() => setIsMicOn(!isMicOn)} sx={{ borderRadius: 0, color: "#7D7EAA", display: "flex", flexDirection: "column" }}>
                       <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         {isMicOn ? <MicIcon /> : <MicOffIcon />}
                       </Box>
+                      <Typography sx={{color: "#22BB72", fontSize: "14px", mt: "6px"}}>Video</Typography>
                     </IconButton>
-
-                    <IconButton onClick={enableTranscription} sx={{ borderRadius: 0, color: "#7D7EAA" }}>
+                    <IconButton onClick={enableTranscription} sx={{ borderRadius: 0, color: "#7D7EAA", display: "flex", flexDirection: "column" }}>
                       <Box sx={{ backgroundColor: "#ECECEC", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         {isTranscriptionEnabled ? <ClosedCaptionIcon /> : <ClosedCaptionOffIcon />}
                       </Box>
+                      <Typography sx={{color: "#22BB72", fontSize: "14px"}}>Transcribe</Typography>
                     </IconButton>
 
-                    <IconButton sx={{ borderRadius: 0, color: "white" }}>
+                    <IconButton sx={{ borderRadius: 0, color: "white", display: "flex", flexDirection: "column" }}>
                       <Box sx={{ backgroundColor: "#BB223E", p: 2, borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <CallEndIcon sx={{ backgroundColor: "#BB223E" }} />
                       </Box>
+                      <Typography sx={{color: "#22BB72", fontSize: "14px"}}>Hang Up</Typography>
                     </IconButton>
                   </Box>
                 </Grid>
@@ -237,19 +240,43 @@ const Home = ({
             </Grid>
 
             <Grid item xs={4}>
-              <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
-                <Box sx={{ flex: 1 }}>
-                  {responseMessage.map((data, index) => (
-                    <Typography key={index}>
-                      {data.email}: {data.message}
-                    </Typography>
-                  ))}
+                <Box sx={{ position: "relative", height: "100%", width: "100%", }}>
+                  <Box sx={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, overflow: "auto", display: "flex", flexDirection: "column-reverse", alignItems: "flex-start", p: 2 }}>
+                    {responseMessage.slice(0).reverse().map((data, index) => (
+                      <Typography key={index}
+                        sx={{
+                          color: email === data.email ? "white" : "#6667AB",
+                          alignSelf: email === data.email ? "end" : "start",
+                          backgroundColor: email === data.email ? "#6667AB" : "#EAEFFF",
+                          borderRadius: 1.5,
+                          my: "6px",
+                          px: "12px",
+                          py: "8px"
+                        }}>
+                        {data.message}
+                      </Typography>
+                    ))}
+                  </Box>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <TextField multiline onChange={handleChangeMessage} sx={{ flex: 1 }} />
+                <Box sx={{ display: "flex", alignItems: "center", p: 1, "& > *": { m: 1 } }}>
+                  <TextField
+                    variant="standard"
+                    size="small"
+                    value={message}
+                    placeholder="Type your message here..."
+                    multiline
+                    onChange={handleChangeMessage}
+                    multilineColor="green"
+                    color="green"
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+
+                    sx={{ flex: 1, p: 1, backgroundColor: "#EAEFFF", borderRadius: "8px", textarea: { color: "#6667AB" } }} />
                   <IconButton onClick={handleSubmitMessage}>
-                    <SendIcon />
+                    <SendIcon sx={{color: "#6667AB"}}/>
                   </IconButton>
                 </Box>
               </Box>
