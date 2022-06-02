@@ -291,7 +291,7 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts />} />
+        <Route path="contacts" element={<Contacts socket={socket} userID={userID} />} />
         <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />

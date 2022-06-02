@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
+import { connect } from "react-redux";
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -26,33 +27,46 @@ import Typography from "../components/Typography";
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-const OnlineCircle = () => {
-    return (
-        <svg style={{ width: "8px", height: "8px", marginLeft: "8px" }}>
-            <circle cx={4} cy={4} r={4} fill="#22BB72" />
-        </svg>
-    )
-}
+const dummyData = [
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+    { date: "June 2, 2022", duration: "-", email: "test@test.com", time: "17:40", type: "call missed" },
+]
 
 const Recents = ({ socket, userID }) => {
     const [recents, setRecents] = useState([]);
     const [searchRecents, setSearchRecents] = useState("");
 
     useEffect(() => {
+        console.log(userID);
         axios.get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
-            setRecents(response.data !== null ? response.data : []);
+            //console.log(Object.values(response.data));
+            setRecents(response.data !== null ? Object.values(response.data) : []);
         });
     }, []);
-
-    const isInContactsHandler = (array, item) => {
-        for (let index = 0; index < array.length; index++) {
-            const element = array[index].userID;
-
-            if (element === item) {
-                return true;
-            }
-        }
-    };
 
     return (
         <Box
@@ -74,7 +88,7 @@ const Recents = ({ socket, userID }) => {
                                 size="small"
                                 value={searchRecents}
                                 placeholder="Search..."
-                                onChange={(e) => searchRecents(e.target.value)}
+                                onChange={(e) => setSearchRecents(e.target.value)}
                                 InputProps={{
                                     disableUnderline: true,
                                     endAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
@@ -83,49 +97,39 @@ const Recents = ({ socket, userID }) => {
                             />
                         </Box>
                         <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
-                            <Table size="small" sx={{ position: "relative", height: "100%" }}>
+                            <Table size="small" sx={{ position: "relative" }}>
                                 <TableHead>
                                     <TableRow>
                                         <TableCell></TableCell>
                                         <TableCell>Email</TableCell>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Time</TableCell>
-                                        <TableCell>Duration</TableCell>
-                                        <TableCell>Type of Call</TableCell>
+                                        <TableCell align="right">Date</TableCell>
+                                        <TableCell align="right">Time</TableCell>
+                                        <TableCell align="right">Duration</TableCell>
+                                        <TableCell align="right">Type of Call</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                                <TableBody sx={{ overflowY: "scroll" }}>
                                     {(searchRecents !== "" ? recents.filter((row) => {
                                         return row.email.toLowerCase().includes(searchRecents.toLowerCase());
-                                    }) : recents).map((item) => (
+                                    }) : dummyData).map((item) => (
                                         <TableRow key={item.userID}>
                                             <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
                                                 <CallMadeIcon />
                                             </TableCell>
                                             <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>
-                                                    {item.email}
-                                                </Typography>
+                                                <Typography>{item.email}</Typography>
                                             </TableCell>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>
-                                                    {item.date}
-                                                </Typography>
+                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                <Typography>{item.date}</Typography>
                                             </TableCell>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>
-                                                    {item.time}
-                                                </Typography>
+                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                <Typography>{item.time}</Typography>
                                             </TableCell>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>
-                                                    {item.duration}
-                                                </Typography>
+                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                <Typography>{item.duration}</Typography>
                                             </TableCell>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                                                <Typography>
-                                                    {item.type}
-                                                </Typography>
+                                            <TableCell component="th" scope="row" align="right" sx={{ borderBottom: "none" }}>
+                                                <Typography>{item.type}</Typography>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -139,4 +143,10 @@ const Recents = ({ socket, userID }) => {
     )
 }
 
-export default Recents
+const mapStateToProps = (state) => {
+    return {
+        userID: state.auth.userID,
+    };
+};
+
+export default connect(mapStateToProps)(Recents)
