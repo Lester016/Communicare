@@ -57,7 +57,7 @@ const ProtectedLayout = ({ user }) => {
       </List>
       <Divider />
       <List sx={{ mt: "auto", mb: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Button to="transcribe" component={RouterLink} sx={{ width: "260px", backgroundColor: "#EAEFFF", borderRadius: 50, color: "#6667AB", fontWeight: "600", py: "2px"}}>LOGOUT</Button>
+        <Button to="logout" component={RouterLink} sx={{ width: "260px", backgroundColor: "#EAEFFF", borderRadius: 50, color: "#6667AB", fontWeight: "600", py: "2px"}}>LOGOUT</Button>
       </List>
     </>
   );
