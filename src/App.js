@@ -13,6 +13,7 @@ import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
 import Contacts from "./containers/Contacts";
+import Recents from "./containers/Recents";
 import Transcribe from "./containers/Transcribe";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
@@ -291,6 +292,7 @@ function App({ onAutoSignup, userID, email }) {
         />
 
         <Route path="contacts" element={<Contacts />} />
+        <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />
