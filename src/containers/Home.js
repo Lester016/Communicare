@@ -520,19 +520,17 @@ const Home = ({
             )}
           </Stack>
         </Box>
-      ) : (
-        // ========================================== HOME UI ==========================================
+      ) : ( // ========================================== HOME UI ==========================================
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
-            height: "100vh",
-            p: 4,
             backgroundColor: "#F9FAFF",
+            p: 4,
           }}
         >
-          <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
+          <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
             HOME
           </Typography>
@@ -540,21 +538,19 @@ const Home = ({
           <Grid
             container
             direction="column"
-            flexWrap="nowrap"
             sx={{
-              height: "100%",
               ".MuiGrid-container.MuiGrid-item": { p: 0 },
               ".MuiGrid-item": { p: 2 },
             }}
           >
-            <Grid item xs={7}>
-              <Box component={Paper} sx={{ height: "100%" }}>
+            <Grid item xs={7} sx={{ width: "100%" }}>
+              <Box component={Paper}>
                 <Grid container item sx={{ height: "100%" }}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={6}>
                     <Box
                       sx={{
-                        backgroundColor: "#EAEFFF",
                         height: "100%",
+                        backgroundColor: "#EAEFFF",
                         p: 2,
                         borderRadius: 2,
                       }}
@@ -584,50 +580,54 @@ const Home = ({
                           See All
                         </Link>
                       </Box>
-                      <TableContainer>
-                        <Table size="small">
-                          <TableBody>
-                            {onlineUsers.map((item) => (
-                              <TableRow key={item.userID}>
-                                <TableCell
-                                  component="th"
-                                  scope="row"
-                                  sx={{ borderBottom: "none" }}
-                                >
-                                  <Typography>
-                                    {item.email} <OnlineCircle />
-                                  </Typography>
-                                </TableCell>
-                                {item.userID !== userID && (
+                      {onlineUsers.length > 0 ? (
+                        <TableContainer>
+                          <Table size="small">
+                            <TableBody>
+                              {onlineUsers.slice(0, 8).map((item, index) => (
+                                <TableRow key={index}>
                                   <TableCell
                                     component="th"
                                     scope="row"
-                                    align="right"
                                     sx={{ borderBottom: "none" }}
                                   >
-                                    <IconButton
-                                      size="small"
-                                      onClick={() =>
-                                        callUser(item.userID, item.email)
-                                      }
-                                    >
-                                      <CallIcon fontSize="inherit" />
-                                    </IconButton>
+                                    <Typography>
+                                      {item.email} <OnlineCircle />
+                                    </Typography>
                                   </TableCell>
-                                )}
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
+                                  {item.userID !== userID && (
+                                    <TableCell
+                                      component="th"
+                                      scope="row"
+                                      align="right"
+                                      sx={{ borderBottom: "none" }}
+                                    >
+                                      <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                          callUser(item.userID, item.email)
+                                        }
+                                      >
+                                        <CallIcon fontSize="inherit" />
+                                      </IconButton>
+                                    </TableCell>
+                                  )}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <Typography sx={{ px: "16px", py: "6px" }}>No online users...</Typography>
+                      )}
                     </Box>
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={6}>
                     <Box
                       sx={{
-                        backgroundColor: "#EAEFFF",
                         height: "100%",
+                        backgroundColor: "#EAEFFF",
                         p: 2,
                         borderRadius: 2,
                       }}
@@ -639,11 +639,7 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Contacts
-                        </Typography>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -657,69 +653,57 @@ const Home = ({
                           See All
                         </Link>
                       </Box>
-                      <TableContainer>
-                        <Table size="small">
-                          <TableBody>
-                            {contacts.map((item) => (
-                              <TableRow key={item.userID}>
-                                <TableCell
-                                  component="th"
-                                  scope="row"
-                                  sx={{ borderBottom: "none" }}
-                                >
-                                  <Typography>
-                                    {item.email}{" "}
-                                    {isInContactsHandler(
-                                      onlineUsers,
-                                      item.userID
-                                    ) && <OnlineCircle />}
-                                  </Typography>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
+                      {contacts.length > 0 ? (
+                        <TableContainer>
+                          <Table size="small">
+                            <TableBody>
+                              {contacts.map((item) => (
+                                <TableRow key={item.userID}>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>
+                                      {item.email}{" "}
+                                      {isInContactsHandler(
+                                        onlineUsers,
+                                        item.userID
+                                      ) && <OnlineCircle />}
+                                    </Typography>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <Typography sx={{ px: "16px", py: "6px" }}>No contacts...</Typography>
+                      )}
                     </Box>
                   </Grid>
                 </Grid>
               </Box>
             </Grid>
 
-            <Grid container item xs={5}>
-              <Grid
-                item
-                xs={5}
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  overflow: "hidden",
-                }}
-              >
+            <Grid container item xs={5} sx={{ width: "100%" }}>
+              <Grid item xs={12} lg={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
                 <video
                   playsInline={true}
                   muted={true}
                   autoPlay={true}
                   ref={myMedia}
                   style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    height: "100%",
                     width: "100%",
-                    padding: "16px",
-                    objectFit: "contain",
+                    height: "auto",
+                    borderRadius: "25px",
                   }}
                 />
               </Grid>
-              <Grid item xs={7}>
-                <Box component={Paper} sx={{ height: "100%", p: 2 }}>
-                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
-                    TRANSCRIBE
-                  </Typography>
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Grid item xs={12} lg={7}>
+                <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column", p: 2 }}>
+                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>TRANSCRIBE</Typography>
+                  <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <Typography
                       sx={{
                         color: "#22BB72",
@@ -757,13 +741,9 @@ const Home = ({
                         <Box
                           component="img"
                           sx={{
-                            position: "absolute",
-                            left: 0,
-                            top: 0,
-                            height: "100%",
+                            height: "auto",
                             width: "100%",
                             padding: "16px",
-                            objectFit: "contain",
                           }}
                           alt="Transcription Visual"
                           src={TranscribeVisual}
