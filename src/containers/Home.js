@@ -130,7 +130,7 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
+      {true ? ( // ========================================== UI DURING A CALL ========================================== isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -142,9 +142,7 @@ const Home = ({
           }}
         >
           <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
-            IN CALL
-          </Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
 
           <Grid
             container
