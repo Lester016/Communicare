@@ -130,7 +130,7 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
+      {true ? ( // ========================================== UI DURING A CALL ========================================== isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -142,7 +142,7 @@ const Home = ({
           }}
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
-          
+
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
 
           <Grid
@@ -156,12 +156,12 @@ const Home = ({
             <Grid container item direction="column" xs={12} md={8}>
               <Grid
                 item
+                xs={7}
                 sx={{
-                  flex: 1,
-                  position: "relative",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  overflow: "hidden",
                 }}
               >
                 <video
@@ -169,10 +169,10 @@ const Home = ({
                   autoPlay={true}
                   ref={userMedia}
                   style={{
-                    height: "auto",
+                    height: "100%",
                     width: "100%",
-                    padding: "16px",
                     objectFit: "contain",
+                    backgroundColor: "gray",
                   }}
                 />
 
@@ -214,11 +214,12 @@ const Home = ({
                 )}
               </Grid>
 
-              <Grid container item>
+              <Grid container item xs={5}>
                 <Grid
                   item
-                  xs={7}
+                  xs={9}
                   sx={{
+                    position: "relative",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -231,7 +232,8 @@ const Home = ({
                     autoPlay={true}
                     ref={myMedia}
                     style={{
-                      height: "auto",
+                      position: "absolute",
+                      height: "100%",
                       width: "100%",
                       padding: "16px",
                       objectFit: "cover",
@@ -239,7 +241,7 @@ const Home = ({
                   />
                 </Grid>
 
-                <Grid item xs={5}>
+                <Grid item xs={3}>
                   <Box
                     component={Paper}
                     sx={{
@@ -247,66 +249,8 @@ const Home = ({
                       height: "100%",
                       display: "grid",
                       gridTemplateRows: "auto auto",
-                      gridTemplateColumns: "auto auto",
                     }}
                   >
-                    <IconButton
-                      onClick={() => setIsCamOn(!isCamOn)}
-                      sx={{
-                        borderRadius: 0,
-                        color: "#7D7EAA",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          backgroundColor: "#ECECEC",
-                          p: 2,
-                          borderRadius: 3,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {isCamOn ? <VideocamIcon /> : <VideocamOffIcon />}
-                      </Box>
-                      <Typography
-                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
-                      >
-                        {" "}
-                        Video{" "}
-                      </Typography>
-                    </IconButton>
-
-                    <IconButton
-                      onClick={() => setIsMicOn(!isMicOn)}
-                      sx={{
-                        borderRadius: 0,
-                        color: "#7D7EAA",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          backgroundColor: "#ECECEC",
-                          p: 2,
-                          borderRadius: 3,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {isMicOn ? <MicIcon /> : <MicOffIcon />}
-                      </Box>
-                      <Typography
-                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
-                      >
-                        {" "}
-                        Mic{" "}
-                      </Typography>
-                    </IconButton>
                     <IconButton
                       onClick={enableTranscription}
                       sx={{
