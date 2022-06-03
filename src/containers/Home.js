@@ -21,15 +21,10 @@ import TableRow from "@mui/material/TableRow";
 
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-//import ListItemText from "@mui/material/ListItemText";
 
 import Typography from "../components/Typography";
 import Button from "../components/Button";
 
-import VideocamIcon from "@mui/icons-material/Videocam";
-import VideocamOffIcon from "@mui/icons-material/VideocamOff";
-import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";
 import ClosedCaptionIcon from "@mui/icons-material/ClosedCaption";
 import ClosedCaptionOffIcon from "@mui/icons-material/ClosedCaptionOff";
 import CallIcon from "@mui/icons-material/Call";
@@ -75,9 +70,6 @@ const Home = ({
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
 
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
-
   useEffect(() => {
     socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
@@ -88,19 +80,9 @@ const Home = ({
       setContacts(response.data !== null ? response.data : []);
     });
 
-    /*
-    axios
-      .get(`${firebase_url}/call-history/${userID}.json`)
-      .then((response) => {
-        console.log("call history: ", response.data);
-      });
-    */
-
     socket.on("transcribedMessage", ({ message }) => {
       setLiveTranscription(message);
     });
-
-    //onMedia();
   }, []);
 
   useEffect(() => {
