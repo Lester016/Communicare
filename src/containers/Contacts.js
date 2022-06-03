@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -90,8 +91,8 @@ const Contacts = ({ socket, userID, callUser }) => {
     }
   };
 
-  const handleDialogOpen = () => {setDialogOpen(true)}
-  const handleDialogClose = () => {setDialogOpen(false);};
+  const handleDialogOpen = () => { setDialogOpen(true) }
+  const handleDialogClose = () => { setDialogOpen(false); };
 
   return (
     <Box
@@ -109,7 +110,7 @@ const Contacts = ({ socket, userID, callUser }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500", marginRight: "auto" }}>Contacts</Typography>
-              <Button variant="text" onClick={handleDialogOpen}>Add Contact</Button>
+              <Button variant="text" onClick={handleDialogOpen} sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", letterSpacing: "0px" }}>Add Contact</Button>
               <TextField
                 variant="standard"
                 size="small"
@@ -234,9 +235,15 @@ const Contacts = ({ socket, userID, callUser }) => {
         </Grid>
       </Grid>
 
-      <AddContactDialog dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
+      <AddContactDialog dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} onlineUsers={onlineUsers} contacts={contacts} addContactHandler={addContactHandler} />
     </Box>
   )
 }
 
-export default Contacts
+const mapStateToProps = (state) => {
+  return {
+    userID: state.auth.userID,
+  };
+};
+
+export default connect(mapStateToProps)(Contacts);
