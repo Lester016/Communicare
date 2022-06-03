@@ -636,7 +636,7 @@ const Home = ({
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <Typography sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", }}>How to use?</Typography>
                     <Grid container>
-                      <Grid item xs={6}>
+                      <Grid item lg={6}>
                         <List
                           component="ol"
                           sx={{
@@ -645,21 +645,21 @@ const Home = ({
                             textAlign: "left",
                           }}
                         >
-                          <ListItem sx={{ display: "list-item" }}>
+                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
                             Speak and this tool will transcribe the words spoken
                             into written text.
                           </ListItem>
-                          <ListItem sx={{ display: "list-item" }}>
+                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
                             Make sure the speaking voice is clear for better
                             translation quality.
                           </ListItem>
-                          <ListItem sx={{ display: "list-item" }}>
+                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
                             Click the button to start transcribing.
                           </ListItem>
                         </List>
                       </Grid>
 
-                      <Grid item xs={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+                      <Grid item lg={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
                         <Box
                           component="img"
                           sx={{
