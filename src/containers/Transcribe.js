@@ -80,22 +80,72 @@ const Transcribe = ({ userID, socket }) => {
         height: "100vh",
         p: 4,
         backgroundColor: "#F9FAFF",
-      }}>
-      <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "left", p: 2 }}>
-        <Typography sx={{ fontSize: "24px", fontWeight: "600" }}>Transcribe</Typography>
+      }}
+    >
+      <Box
+        component={Paper}
+        sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "left",
+          p: 2,
+        }}
+      >
+        <Typography sx={{ fontSize: "24px", fontWeight: "600" }}>
+          Transcribe
+        </Typography>
 
-        <List component="ul" sx={{ listStylePosition: "inside", textAlign: "left", color: "#22BB72", fontSize: "16px", fontWeight: "600" }}>
-          <ListItem sx={{ display: "list-item" }}>Speak and this tool will transcribe the words spoken into written text.</ListItem>
-          <ListItem sx={{ display: "list-item" }}>Make sure the speaking voice is clear for a better translation quality.</ListItem>
-          <ListItem sx={{ display: "list-item" }}>Rotate your phone for better usage.</ListItem>
-          <ListItem sx={{ display: "list-item" }}>Click the button to start transcribing.</ListItem>
+        <List
+          component="ul"
+          sx={{
+            listStylePosition: "inside",
+            textAlign: "left",
+            color: "#22BB72",
+            fontSize: "16px",
+            fontWeight: "600",
+          }}
+        >
+          <ListItem sx={{ display: "list-item" }}>
+            Speak and this tool will transcribe the words spoken into written
+            text.
+          </ListItem>
+          <ListItem sx={{ display: "list-item" }}>
+            Make sure the speaking voice is clear for a better translation
+            quality.
+          </ListItem>
+          <ListItem sx={{ display: "list-item" }}>
+            Rotate your phone for better usage.
+          </ListItem>
+          <ListItem sx={{ display: "list-item" }}>
+            Click the button to start transcribing.
+          </ListItem>
         </List>
 
-        <Button onClick={startLocalTranscription} sx={{ width: "200px", backgroundColor: isTranscribeEnabled ? "#6667AB" : "#BB223E" }}>Transcribe: {isTranscribeEnabled ? "On" : "Off"}</Button>
+        <Button
+          onClick={startLocalTranscription}
+          sx={{
+            width: "200px",
+            backgroundColor: isTranscribeEnabled ? "#6667AB" : "#BB223E",
+          }}
+        >
+          Transcribe: {isTranscribeEnabled ? "On" : "Off"}
+        </Button>
 
         <Box sx={{ flex: 1, width: "100%", p: 4 }}>
-          <Box sx={{ width: "100%", height: "100%", backgroundColor: "#EAEFFF", borderRadius: 4, p: 4 }}>
-            <Typography sx={{fontSize: "24px", fontWeight: "500"}}>{message}</Typography>
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#EAEFFF",
+              borderRadius: 4,
+              p: 4,
+            }}
+          >
+            <Typography sx={{ fontSize: "24px", fontWeight: "500" }}>
+              {message}
+            </Typography>
           </Box>
         </Box>
       </Box>

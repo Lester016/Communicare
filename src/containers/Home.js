@@ -37,6 +37,7 @@ import CallEndIcon from "@mui/icons-material/CallEnd";
 import SendIcon from "@mui/icons-material/Send";
 
 import TranscribeVisual from "../assets/TranscribeVisual.png";
+import { millisecondsToTime } from "../utils/millisecondsToTime";
 
 const firebase_url =
   "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -195,7 +196,7 @@ const Home = ({
                     fontWeight: "500",
                   }}
                 >
-                  {callDuration}
+                  {millisecondsToTime(callDuration)}
                 </Typography>
 
                 {liveTranscription && (
