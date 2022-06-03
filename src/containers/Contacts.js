@@ -97,67 +97,11 @@ const Contacts = ({ socket, userID, callUser }) => {
         p: 4,
         backgroundColor: "#F9FAFF",
       }}>
+      <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
       <Grid container sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
-              <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
-              <TextField
-                variant="standard"
-                size="small"
-                value={searchOnlines}
-                placeholder="Search..."
-                onChange={(e) => setSearchOnlines(e.target.value)}
-                InputProps={{
-                  disableUnderline: true,
-                  endAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                }}
-                sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
-              />
-            </Box>
-            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
-              <Table size="small" sx={{ position: "relative", height: "100%" }}>
-                <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-                  {(searchOnlines !== "" ? onlineUsers.filter((row) => {
-                    return row.email.toLowerCase().includes(searchOnlines.toLowerCase());
-                  }) : onlineUsers).map((item) => (
-                    <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
-                      <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                        <Typography>{item.email} <OnlineCircle /></Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="right"
-                        sx={{ borderBottom: "none" }}
-                      >
-                        <IconButton
-                          size="small"
-                          onClick={() => {
-                            navigate("/");
-                            callUser(item.userID)
-                          }}
-                        >
-                          <CallIcon fontSize="inherit" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => addContactHandler(item.userID, item.email)}
-                        >
-                          <AddIcon fontSize="inherit" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </Grid>
-
-        <Grid item xs={6}>
-          <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
               <TextField
                 variant="standard"
@@ -172,23 +116,87 @@ const Contacts = ({ socket, userID, callUser }) => {
                 sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
               />
             </Box>
-            <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
-              <Table size="small" sx={{ position: "relative", height: "100%" }}>
-                <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-                  {(searchContacts !== "" ? contacts.filter((row) => {
-                    return row.email.toLowerCase().includes(searchContacts.toLowerCase());
-                  }) : contacts).map((item) => (
-                    <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
-                      <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
-                        <Typography> {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />} </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="right"
-                        sx={{ borderBottom: "none" }}
-                      >
-                        {isInContactsHandler(onlineUsers, item.userID) && (
+            {contacts.length > 0 ? (
+              <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
+                <Table size="small" sx={{ position: "relative", height: "100%" }}>
+                  <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                    {(searchContacts !== "" ? contacts.filter((row) => {
+                      return row.email.toLowerCase().includes(searchContacts.toLowerCase());
+                    }) : contacts).map((item) => (
+                      <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
+                          <Typography> {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />} </Typography>
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="right"
+                          sx={{ borderBottom: "none" }}
+                        >
+                          {isInContactsHandler(onlineUsers, item.userID) && (
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                navigate("/");
+                                callUser(item.userID)
+                              }}
+                            >
+                              <CallIcon fontSize="inherit" />
+                            </IconButton>)}
+                          <IconButton
+                            size="small"
+                            onClick={() => removeContactHandler(item.userID)}
+                          >
+                            <DeleteIcon fontSize="inherit" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Box sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
+                <Typography sx={{ px: "16px", py: "6px" }}>No contacts...</Typography>
+              </Box>
+            )}
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
+              <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
+              <TextField
+                variant="standard"
+                size="small"
+                value={searchOnlines}
+                placeholder="Search..."
+                onChange={(e) => setSearchOnlines(e.target.value)}
+                InputProps={{
+                  disableUnderline: true,
+                  endAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                }}
+                sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
+              />
+            </Box>
+            {onlineUsers.length > 0 ? (
+              <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
+                <Table size="small" sx={{ position: "relative", height: "100%" }}>
+                  <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                    {(searchOnlines !== "" ? onlineUsers.filter((row) => {
+                      return row.email.toLowerCase().includes(searchOnlines.toLowerCase());
+                    }) : onlineUsers).map((item) => (
+                      <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
+                          <Typography>{item.email} <OnlineCircle /></Typography>
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="right"
+                          sx={{ borderBottom: "none" }}
+                        >
                           <IconButton
                             size="small"
                             onClick={() => {
@@ -197,19 +205,24 @@ const Contacts = ({ socket, userID, callUser }) => {
                             }}
                           >
                             <CallIcon fontSize="inherit" />
-                          </IconButton>)}
-                        <IconButton
-                          size="small"
-                          onClick={() => removeContactHandler(item.userID)}
-                        >
-                          <DeleteIcon fontSize="inherit" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => addContactHandler(item.userID, item.email)}
+                          >
+                            <AddIcon fontSize="inherit" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Box sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
+                <Typography sx={{ px: "16px", py: "6px" }}>No online users...</Typography>
+              </Box>
+            )}
           </Box>
         </Grid>
       </Grid>
