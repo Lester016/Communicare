@@ -25,6 +25,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import Typography from "../components/Typography";
+import Button from '../components/Button';
+import AddContactDialog from '../components/AddContactDialog';
 
 const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -41,6 +43,7 @@ const Contacts = ({ socket, userID, callUser }) => {
   const [contacts, setContacts] = useState([]);
   const [searchOnlines, setSearchOnlines] = useState("");
   const [searchContacts, setSearchContacts] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   let navigate = useNavigate();
 
@@ -87,6 +90,9 @@ const Contacts = ({ socket, userID, callUser }) => {
     }
   };
 
+  const handleDialogOpen = () => {setDialogOpen(true)}
+  const handleDialogClose = () => {setDialogOpen(false);};
+
   return (
     <Box
       component="main"
@@ -102,7 +108,8 @@ const Contacts = ({ socket, userID, callUser }) => {
         <Grid item xs={12} md={6}>
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
-              <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+              <Typography sx={{ fontSize: "18px", fontWeight: "500", marginRight: "auto" }}>Contacts</Typography>
+              <Button variant="text" onClick={handleDialogOpen}>Add Contact</Button>
               <TextField
                 variant="standard"
                 size="small"
@@ -226,6 +233,8 @@ const Contacts = ({ socket, userID, callUser }) => {
           </Box>
         </Grid>
       </Grid>
+
+      <AddContactDialog dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
     </Box>
   )
 }

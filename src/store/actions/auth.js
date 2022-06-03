@@ -24,8 +24,8 @@ export const authFailed = (error) => {
 };
 
 export const register = (email, password) => {
-  let url =
-    "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCqLt1akVbJI8TOxP3HMTCXgsV9DHBoXww";
+  let register_url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCqLt1akVbJI8TOxP3HMTCXgsV9DHBoXww";
+  let dbase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app/users.json";
 
   const config = {
     headers: {
@@ -35,15 +35,26 @@ export const register = (email, password) => {
 
   return (dispatch) => {
     dispatch(authStart());
+
     axios
-      .post(url, { email, password }, config)
-      .then((res) => {
-        localStorage.setItem("token", res.data.idToken);
-        localStorage.setItem("userID", res.data.localId);
-        localStorage.setItem("email", res.data.email);
-        console.log(res.data);
+      .post(register_url, { email, password }, config)
+      .then((resRegister) => {
+        localStorage.setItem("token", resRegister.data.idToken);
+        localStorage.setItem("userID", resRegister.data.localId);
+        localStorage.setItem("email", resRegister.data.email);
+        console.log(resRegister);
+
+        axios
+          .post(dbase_url, { email: resRegister.data.email, userID: resRegister.data.localId })
+          .then((resWrite) => {
+            console.log(resWrite);
+          })
+          .catch((error) => {
+            dispatch(authFailed(error.response.data.error.message))
+          })
+
         dispatch(
-          authSuccess(res.data.idToken, res.data.localId, res.data.email)
+          authSuccess(resRegister.data.idToken, resRegister.data.localId, resRegister.data.email)
         );
       })
       .catch((error) => {
