@@ -79,7 +79,7 @@ const Recents = ({ userID }) => {
                                     <TableBody sx={{ overflowY: "scroll", }}>
                                         {(searchRecents !== "" ? recents.filter((row) => {
                                             return row.email.toLowerCase().includes(searchRecents.toLowerCase());
-                                        }) : recents).map((item) => (
+                                        }) : recents).slice(0).reverse().map((item) => (
                                             <TableRow key={item.userID}>
                                                 <TableCell scope="row" align="center" sx={{ borderBottom: "none" }}>
                                                     {item.type === "call made?" ? <CallMadeIcon sx={{ color: "#22BB72" }} /> : <CallMissedIcon sx={{ color: "#BB223E" }} />}
