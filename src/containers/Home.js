@@ -37,8 +37,10 @@ import CallEndIcon from "@mui/icons-material/CallEnd";
 import SendIcon from "@mui/icons-material/Send";
 
 import TranscribeVisual from "../assets/TranscribeVisual.png";
+import { millisecondsToTime } from "../utils/millisecondsToTime";
 
-const firebase_url = "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
+const firebase_url =
+  "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 const OnlineCircle = () => {
   return (
@@ -103,7 +105,7 @@ const Home = ({
 
   useEffect(() => {
     onMedia();
-  }, [isCallAccepted, isCallEnded])
+  }, [isCallAccepted, isCallEnded]);
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
@@ -129,7 +131,8 @@ const Home = ({
   return (
     <>
       {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
-        <Box component="main"
+        <Box
+          component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
@@ -139,9 +142,12 @@ const Home = ({
           }}
         >
           <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
+            IN CALL
+          </Typography>
 
-          <Grid container
+          <Grid
+            container
             sx={{
               height: "100%",
               ".MuiGrid-container.MuiGrid-item": { p: 0 },
@@ -149,7 +155,16 @@ const Home = ({
             }}
           >
             <Grid container item direction="column" xs={8}>
-              <Grid item xs={7} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+              <Grid
+                item
+                xs={7}
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <video
                   playsInline={true}
                   autoPlay={true}
@@ -169,8 +184,10 @@ const Home = ({
                   sx={{
                     position: "absolute",
                     padding: "16px 24px",
-                    top: 0, left: 0,
-                    ml: "16px", mt: "16px",
+                    top: 0,
+                    left: 0,
+                    ml: "16px",
+                    mt: "16px",
                     backgroundColor: "rgba(0, 0, 0, .5)",
                     borderBottomRightRadius: 16,
 
@@ -179,7 +196,7 @@ const Home = ({
                     fontWeight: "500",
                   }}
                 >
-                  {callDuration}
+                  {millisecondsToTime(callDuration)}
                 </Typography>
 
                 {liveTranscription && (
@@ -202,8 +219,17 @@ const Home = ({
               </Grid>
 
               <Grid container item xs={5}>
-                <Grid item xs={7}
-                  sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden", }}>
+                <Grid
+                  item
+                  xs={7}
+                  sx={{
+                    position: "relative",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    overflow: "hidden",
+                  }}
+                >
                   <video
                     playsInline={true}
                     muted={true}
@@ -222,7 +248,8 @@ const Home = ({
                 </Grid>
 
                 <Grid item xs={5}>
-                  <Box component={Paper}
+                  <Box
+                    component={Paper}
                     sx={{
                       width: "100%",
                       height: "100%",
@@ -231,7 +258,8 @@ const Home = ({
                       gridTemplateColumns: "auto auto",
                     }}
                   >
-                    <IconButton onClick={() => setIsCamOn(!isCamOn)}
+                    <IconButton
+                      onClick={() => setIsCamOn(!isCamOn)}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",
@@ -251,7 +279,12 @@ const Home = ({
                       >
                         {isCamOn ? <VideocamIcon /> : <VideocamOffIcon />}
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }} > Video </Typography>
+                      <Typography
+                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
+                      >
+                        {" "}
+                        Video{" "}
+                      </Typography>
                     </IconButton>
 
                     <IconButton
@@ -275,7 +308,12 @@ const Home = ({
                       >
                         {isMicOn ? <MicIcon /> : <MicOffIcon />}
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }} > Mic </Typography>
+                      <Typography
+                        sx={{ color: "#22BB72", fontSize: "14px", mt: "6px" }}
+                      >
+                        {" "}
+                        Mic{" "}
+                      </Typography>
                     </IconButton>
                     <IconButton
                       onClick={enableTranscription}
@@ -296,9 +334,15 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isTranscriptionEnabled ? (<ClosedCaptionIcon />) : (<ClosedCaptionOffIcon />)}
+                        {isTranscriptionEnabled ? (
+                          <ClosedCaptionIcon />
+                        ) : (
+                          <ClosedCaptionOffIcon />
+                        )}
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>Transcribe</Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
+                        Transcribe
+                      </Typography>
                     </IconButton>
 
                     <IconButton
@@ -321,7 +365,9 @@ const Home = ({
                       >
                         <CallEndIcon sx={{ backgroundColor: "#BB223E" }} />
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>Hang Up</Typography>
+                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
+                        Hang Up
+                      </Typography>
                     </IconButton>
                   </Box>
                 </Grid>
@@ -337,8 +383,12 @@ const Home = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
-                <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
+                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>
+                  In-Call Messages
+                </Typography>
+                <Box
+                  sx={{ position: "relative", height: "100%", width: "100%" }}
+                >
                   <Box
                     sx={{
                       position: "absolute",
@@ -353,23 +403,26 @@ const Home = ({
                       p: 2,
                     }}
                   >
-                    {responseMessage.slice(0).reverse().map((data, index) => (
-                      <Typography
-                        key={index}
-                        sx={{
-                          color: email === data.email ? "white" : "#6667AB",
-                          alignSelf: email === data.email ? "end" : "start",
-                          backgroundColor:
-                            email === data.email ? "#6667AB" : "#EAEFFF",
-                          borderRadius: 1.5,
-                          my: "6px",
-                          px: "12px",
-                          py: "8px",
-                        }}
-                      >
-                        {data.message}
-                      </Typography>
-                    ))}
+                    {responseMessage
+                      .slice(0)
+                      .reverse()
+                      .map((data, index) => (
+                        <Typography
+                          key={index}
+                          sx={{
+                            color: email === data.email ? "white" : "#6667AB",
+                            alignSelf: email === data.email ? "end" : "start",
+                            backgroundColor:
+                              email === data.email ? "#6667AB" : "#EAEFFF",
+                            borderRadius: 1.5,
+                            my: "6px",
+                            px: "12px",
+                            py: "8px",
+                          }}
+                        >
+                          {data.message}
+                        </Typography>
+                      ))}
                   </Box>
                 </Box>
                 <Box
@@ -407,7 +460,6 @@ const Home = ({
             </Grid>
           </Grid>
         </Box>
-
       ) : isCallReceived || isCallSent ? ( // ========================================== UI WHEN A CALL IS RECEIVED/SENT ==========================================
         <Box
           component="main"
@@ -415,7 +467,8 @@ const Home = ({
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             height: "100vh",
-            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+            background:
+              "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -426,11 +479,24 @@ const Home = ({
           <Box />
 
           <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.callerEmail}</Typography>
+            <Typography
+              sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}
+            >
+              {callerInfo.callerEmail}
+            </Typography>
             {isCallReceived && !isCallSent ? (
-              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
+              <Typography
+                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
+              >
+                is calling...
+              </Typography>
             ) : (
-              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>)}
+              <Typography
+                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
+              >
+                Ringing...
+              </Typography>
+            )}
           </Box>
 
           <Stack direction="row" spacing={16}>
@@ -453,7 +519,8 @@ const Home = ({
             )}
           </Stack>
         </Box>
-      ) : ( // ========================================== HOME UI ==========================================
+      ) : (
+        // ========================================== HOME UI ==========================================
         <Box
           component="main"
           sx={{
@@ -465,7 +532,9 @@ const Home = ({
           }}
         >
           <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>HOME</Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
+            HOME
+          </Typography>
 
           <Grid
             container
@@ -496,7 +565,11 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
+                        <Typography
+                          sx={{ fontSize: "18px", fontWeight: "500" }}
+                        >
+                          Online
+                        </Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -524,19 +597,23 @@ const Home = ({
                                     {item.email} <OnlineCircle />
                                   </Typography>
                                 </TableCell>
-                                <TableCell
-                                  component="th"
-                                  scope="row"
-                                  align="right"
-                                  sx={{ borderBottom: "none" }}
-                                >
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => callUser(item.userID)}
+                                {item.userID !== userID && (
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    align="right"
+                                    sx={{ borderBottom: "none" }}
                                   >
-                                    <CallIcon fontSize="inherit" />
-                                  </IconButton>
-                                </TableCell>
+                                    <IconButton
+                                      size="small"
+                                      onClick={() =>
+                                        callUser(item.userID, item.email)
+                                      }
+                                    >
+                                      <CallIcon fontSize="inherit" />
+                                    </IconButton>
+                                  </TableCell>
+                                )}
                               </TableRow>
                             ))}
                           </TableBody>
@@ -561,7 +638,11 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                        <Typography
+                          sx={{ fontSize: "18px", fontWeight: "500" }}
+                        >
+                          Contacts
+                        </Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -605,7 +686,9 @@ const Home = ({
             </Grid>
 
             <Grid container item xs={5}>
-              <Grid item xs={5}
+              <Grid
+                item
+                xs={5}
                 sx={{
                   position: "relative",
                   display: "flex",
@@ -632,9 +715,19 @@ const Home = ({
               </Grid>
               <Grid item xs={7}>
                 <Box component={Paper} sx={{ height: "100%", p: 2 }}>
-                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>TRANSCRIBE</Typography>
+                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
+                    TRANSCRIBE
+                  </Typography>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", }}>How to use?</Typography>
+                    <Typography
+                      sx={{
+                        color: "#22BB72",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      How to use?
+                    </Typography>
                     <Grid container>
                       <Grid item lg={6}>
                         <List
@@ -659,7 +752,20 @@ const Home = ({
                         </List>
                       </Grid>
 
+<<<<<<< HEAD
                       <Grid item lg={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+=======
+                      <Grid
+                        item
+                        xs={6}
+                        sx={{
+                          position: "relative",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+>>>>>>> ab5847aeff094cb3f0ea309b30766a5e1efe08ef
                         <Box
                           component="img"
                           sx={{
@@ -676,7 +782,13 @@ const Home = ({
                         />
                       </Grid>
                     </Grid>
-                    <Button to="transcribe" component={RouterLink} sx={{ backgroundColor: "#6667AB" }}>Transcribe Now</Button>
+                    <Button
+                      to="transcribe"
+                      component={RouterLink}
+                      sx={{ backgroundColor: "#6667AB" }}
+                    >
+                      Transcribe Now
+                    </Button>
                   </Box>
                 </Box>
               </Grid>
