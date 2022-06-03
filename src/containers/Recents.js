@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import Toolbar from '@mui/material/Toolbar';
 
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -29,7 +30,6 @@ const Recents = ({ userID }) => {
     const [searchRecents, setSearchRecents] = useState("");
 
     useEffect(() => {
-        console.log(userID);
         axios.get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
             setRecents(response.data !== null ? Object.values(response.data) : []);
         });
@@ -45,6 +45,8 @@ const Recents = ({ userID }) => {
                 p: 4,
                 backgroundColor: "#F9FAFF",
             }}>
+            <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
+
             <Grid container sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
                 <Grid item xs={12}>
                     <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
