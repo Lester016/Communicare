@@ -130,7 +130,7 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ========================================== isCallAccepted && !isCallEnded
+      {true ? ( // ========================================== UI DURING A CALL ========================================== isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -141,7 +141,8 @@ const Home = ({
             p: 4,
           }}
         >
-          <Toolbar sx={{ display: { xs: "block", sm: "none" } }} />
+          <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
+          
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
 
           <Grid
@@ -152,11 +153,11 @@ const Home = ({
               ".MuiGrid-item": { p: 2 },
             }}
           >
-            <Grid container item direction="column" xs={8}>
+            <Grid container item direction="column" xs={12} md={8}>
               <Grid
                 item
-                xs={7}
                 sx={{
+                  flex: 1,
                   position: "relative",
                   display: "flex",
                   justifyContent: "center",
@@ -168,13 +169,10 @@ const Home = ({
                   autoPlay={true}
                   ref={userMedia}
                   style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    height: "100%",
+                    height: "auto",
                     width: "100%",
                     padding: "16px",
-                    objectFit: "cover",
+                    objectFit: "contain",
                   }}
                 />
 
@@ -216,12 +214,11 @@ const Home = ({
                 )}
               </Grid>
 
-              <Grid container item xs={5}>
+              <Grid container item>
                 <Grid
                   item
                   xs={7}
                   sx={{
-                    position: "relative",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -234,10 +231,7 @@ const Home = ({
                     autoPlay={true}
                     ref={myMedia}
                     style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      height: "100%",
+                      height: "auto",
                       width: "100%",
                       padding: "16px",
                       objectFit: "cover",
@@ -373,7 +367,7 @@ const Home = ({
               </Grid>
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
               <Box
                 component={Paper}
                 sx={{
@@ -382,12 +376,8 @@ const Home = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>
-                  In-Call Messages
-                </Typography>
-                <Box
-                  sx={{ position: "relative", height: "100%", width: "100%" }}
-                >
+                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
+                <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
                   <Box
                     sx={{
                       position: "absolute",
@@ -694,7 +684,7 @@ const Home = ({
                   style={{
                     width: "100%",
                     height: "auto",
-                    borderRadius: "25px",
+                    borderRadius: "24px",
                   }}
                 />
               </Grid>
