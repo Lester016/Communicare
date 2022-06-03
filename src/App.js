@@ -21,6 +21,7 @@ import { iceConfig as iceServers } from "./constants/iceConfig";
 import { getUserMedia } from "./utils/getUserMedia";
 import { getFormattedDate } from "./utils/getFormattedDate";
 import { getFormattedTime } from "./utils/getFormattedTime";
+import { millisecondsToTime } from "./utils/millisecondsToTime";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
@@ -125,7 +126,7 @@ function App({ onAutoSignup, userID, email }) {
     let stream = await getUserMedia({ video: true, audio: true });
     try {
       myMedia.current.srcObject = stream;
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
     handleSuccess(stream);
@@ -235,11 +236,12 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const addCallHistory = (email, type = "call missed") => {
+    let duration = millisecondsToTime(callDuration);
     let data = {
       email: email,
       date: "",
       time: "",
-      duration: "-",
+      duration: duration,
       type: type,
     };
 
@@ -266,12 +268,7 @@ function App({ onAutoSignup, userID, email }) {
         <Route path="register" element={<Register />} />
       </Route>
 
-      <Route
-        path="/"
-        element={
-          <ProtectedLayout />
-        }
-      >
+      <Route path="/" element={<ProtectedLayout />}>
         <Route
           index
           element={
@@ -295,7 +292,12 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts socket={socket} userID={userID} callUser={callUser}/>} />
+        <Route
+          path="contacts"
+          element={
+            <Contacts socket={socket} userID={userID} callUser={callUser} />
+          }
+        />
         <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
