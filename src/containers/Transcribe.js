@@ -5,6 +5,7 @@ import { getUserMedia } from "../utils/getUserMedia";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import Toolbar from "@mui/material/Toolbar";
 
 import List from "@mui/material/Box";
 import ListItem from "@mui/material/Box";
@@ -82,6 +83,8 @@ const Transcribe = ({ userID, socket }) => {
         backgroundColor: "#F9FAFF",
       }}
     >
+      <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
+
       <Box
         component={Paper}
         sx={{
@@ -127,7 +130,7 @@ const Transcribe = ({ userID, socket }) => {
           onClick={startLocalTranscription}
           sx={{
             width: "200px",
-            backgroundColor: isTranscribeEnabled ? "#6667AB" : "#BB223E",
+            backgroundColor: isTranscribeEnabled ? "#22BB72" : "#BB223E",
           }}
         >
           Transcribe: {isTranscribeEnabled ? "On" : "Off"}
