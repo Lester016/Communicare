@@ -67,10 +67,10 @@ const ProtectedLayout = ({ user }) => {
       <AppBar
         position="fixed"
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          width: { sm: `calc(100% - 300px)` },
+          display: { xs: 'block', md: 'none' },
+          width: { md: `calc(100% - 300px)` },
           backgroundColor: "#6667AB",
-          ml: { sm: `300px` },
+          ml: { md: `300px` },
         }}
       >
         <Toolbar>
@@ -79,7 +79,7 @@ const ProtectedLayout = ({ user }) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { md: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -87,7 +87,7 @@ const ProtectedLayout = ({ user }) => {
       </AppBar>
       <Box
         component="nav"
-        sx={{ width: { sm: 300 }, flexShrink: { sm: 0 } }}
+        sx={{ width: { md: 300 }, flexShrink: { md: 0 } }}
         aria-label="mailbox folders"
       >
         <Drawer
@@ -98,7 +98,7 @@ const ProtectedLayout = ({ user }) => {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 300, backgroundColor: "#6667AB", },
           }}
         >
@@ -107,7 +107,7 @@ const ProtectedLayout = ({ user }) => {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 300, backgroundColor: "#6667AB", },
           }}
           open

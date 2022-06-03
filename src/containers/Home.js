@@ -626,7 +626,7 @@ const Home = ({
                     height: "100%",
                     width: "100%",
                     padding: "16px",
-                    objectFit: "cover",
+                    objectFit: "contain",
                   }}
                 />
               </Grid>
@@ -669,7 +669,7 @@ const Home = ({
                             height: "100%",
                             width: "100%",
                             padding: "16px",
-                            objectFit: "cover",
+                            objectFit: "contain",
                           }}
                           alt="Transcription Visual"
                           src={TranscribeVisual}
