@@ -292,12 +292,7 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route
-          path="contacts"
-          element={
-            <Contacts socket={socket} userID={userID} callUser={callUser} />
-          }
-        />
+        <Route path="contacts" element={<Contacts socket={socket} callUser={callUser} />} />
         <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
