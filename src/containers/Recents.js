@@ -50,7 +50,7 @@ const Recents = ({ userID }) => {
             <Grid container sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
                 <Grid item xs={12}>
                     <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
                             <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Recents</Typography>
                             <TextField
                                 variant="standard"
