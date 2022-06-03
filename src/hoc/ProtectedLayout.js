@@ -41,7 +41,7 @@ const ProtectedLayout = ({ user }) => {
   const drawer = (
     <>
       <Box sx={{ height: "300px", backgroundColor: "#EAEFFF", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Typography sx={{ color: "#6667AB", fontSize: "24px", fontWeight: "700" }}>Communicare</Typography>
+        <Typography sx={{ color: "#6667AB", fontSize: "24px", fontWeight: "700" }}>CommuniCare</Typography>
       </Box>
 
       <List disablePadding={true}>
