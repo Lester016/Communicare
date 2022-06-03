@@ -236,11 +236,12 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const addCallHistory = (email, type = "call missed") => {
+    let duration = millisecondsToTime(callDuration);
     let data = {
       email: email,
       date: "",
       time: "",
-      duration: millisecondsToTime(callDuration),
+      duration: duration,
       type: type,
     };
 
