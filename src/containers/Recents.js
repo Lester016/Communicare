@@ -84,7 +84,7 @@ const Recents = ({ userID }) => {
                                         }) : recents).slice(0).reverse().map((item) => (
                                             <TableRow key={item.userID}>
                                                 <TableCell scope="row" align="center" sx={{ borderBottom: "none" }}>
-                                                    {item.type === "call made?" ? <CallMadeIcon sx={{ color: "#22BB72" }} /> : <CallMissedIcon sx={{ color: "#BB223E" }} />}
+                                                    {item.type === "call made" ? <CallMadeIcon sx={{ color: "#22BB72" }} /> : <CallMissedIcon sx={{ color: "#BB223E" }} />}
                                                 </TableCell>
                                                 <TableCell scope="row" sx={{ borderBottom: "none" }}>
                                                     <Typography>{item.email}</Typography>
