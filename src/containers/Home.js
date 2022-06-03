@@ -346,6 +346,7 @@ const Home = ({
                     </IconButton>
 
                     <IconButton
+                      onClick={endCall}
                       sx={{
                         borderRadius: 0,
                         color: "white",
@@ -752,20 +753,7 @@ const Home = ({
                         </List>
                       </Grid>
 
-<<<<<<< HEAD
                       <Grid item lg={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
-=======
-                      <Grid
-                        item
-                        xs={6}
-                        sx={{
-                          position: "relative",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
->>>>>>> ab5847aeff094cb3f0ea309b30766a5e1efe08ef
                         <Box
                           component="img"
                           sx={{
