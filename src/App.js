@@ -23,7 +23,7 @@ import { getFormattedTime } from "./utils/getFormattedTime";
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("https://communicare-server.herokuapp.com/", {
+const socket = io("http://localhost:8000/", {
   autoConnect: false,
 });
 

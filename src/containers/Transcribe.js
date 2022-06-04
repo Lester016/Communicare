@@ -19,8 +19,8 @@ const Transcribe = ({ userID, socket }) => {
   const [stream, setStream] = useState();
 
   useEffect(() => {
-    socket.on("transcribedMessage", ({ message }) => {
-      setMessage(message);
+    socket.on("transcribedMessage", (data) => {
+      setMessage(data.results[0].alternatives[0].transcript);
     });
   }, []);
 

@@ -42,8 +42,8 @@ const Home = ({
         console.log("call history: ", response.data);
       });
 
-    socket.on("transcribedMessage", ({ message }) => {
-      setLiveTranscription(message);
+    socket.on("transcribedMessage", (data) => {
+      setLiveTranscription(data.results[0].alternatives[0].transcript);
     });
 
     onMedia();
