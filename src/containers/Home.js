@@ -49,6 +49,7 @@ const Home = ({
   userID,
   email,
   socket,
+  onlineUsers,
   callUser,
   endCall,
   answerCall,
@@ -65,18 +66,18 @@ const Home = ({
   enableTranscription,
 }) => {
   const [message, setMessage] = useState("");
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [onlineContacts, setOnlineContacts] = useState([])
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
 
   useEffect(() => {
-    socket.on("get-users", (users) => setOnlineUsers(users));
     socket.on("chat message", (data) =>
       setResponseMessage((prevState) => [...prevState, data])
     );
 
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
+      console.log("This is getting contacts")
       setContacts(response.data !== null ? response.data : []);
     });
 
@@ -88,6 +89,18 @@ const Home = ({
   useEffect(() => {
     onMedia();
   }, [isCallAccepted, isCallEnded]);
+
+  useEffect(() => {
+    setOnlineContacts(filterOnlineContacts(contacts, onlineUsers))
+  }, [onlineUsers, contacts])
+
+  const filterOnlineContacts = (array1, array2) => {
+    return array1.filter((array1Item) => {
+      return array2.some((array2Item) => {
+        return array2Item.userID === array1Item.userID && array2Item.email === array1Item.email
+      });
+    })
+  }
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
@@ -108,19 +121,6 @@ const Home = ({
         return true;
       }
     }
-  };
-
-  const isAnyoneOnline = (array1, array2) => {
-    let res = array1.filter((array1Item) => {
-      return array2.some((array2Item) => {
-        return array2Item.userid === array1Item.userid && array2Item.projectid === array1Item.projectid;
-      });
-    })
-
-    console.log(res);
-
-    if (res) return true
-    else return false
   };
 
   return (
@@ -582,43 +582,42 @@ const Home = ({
                           See All
                         </Link>
                       </Box>
-                      {isAnyoneOnline(contacts, onlineUsers).length > 0 ? (
+                      {onlineContacts.length > 0 ? (
                         <TableContainer>
                           <Table size="small">
                             <TableBody>
-                              {onlineUsers.slice(0, 8).map((item) => (
-                                isInContactsHandler(contacts, item.userID) && (
-                                  <TableRow key={item.userID}>
+                              {onlineContacts.slice(0, 8).map((item) => (
+                                <TableRow key={item.userID}>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>
+                                      {item.email} <OnlineCircle />
+                                    </Typography>
+                                  </TableCell>
+                                  {item.userID !== userID && (
                                     <TableCell
                                       component="th"
                                       scope="row"
+                                      align="right"
                                       sx={{ borderBottom: "none" }}
                                     >
-                                      <Typography>
-                                        {item.email} <OnlineCircle />
-                                      </Typography>
-                                    </TableCell>
-                                    {item.userID !== userID && (
-                                      <TableCell
-                                        component="th"
-                                        scope="row"
-                                        align="right"
-                                        sx={{ borderBottom: "none" }}
+                                      <IconButton
+                                        size="small"
+                                        sx={{ color: "#22BB72" }}
+                                        onClick={() =>
+                                          callUser(item.userID, item.email)
+                                        }
                                       >
-                                        <IconButton
-                                          size="small"
-                                          sx={{ color: "#22BB72" }}
-                                          onClick={() =>
-                                            callUser(item.userID, item.email)
-                                          }
-                                        >
-                                          <CallIcon fontSize="inherit" />
-                                        </IconButton>
-                                      </TableCell>
-                                    )}
-                                  </TableRow>
-                                )
-                              ))}
+                                        <CallIcon fontSize="inherit" />
+                                      </IconButton>
+                                    </TableCell>
+                                  )}
+                                </TableRow>
+                              )
+                              )}
                             </TableBody>
                           </Table>
                         </TableContainer>

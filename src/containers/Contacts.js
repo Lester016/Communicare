@@ -39,9 +39,9 @@ const OnlineCircle = () => {
   )
 }
 
-const Contacts = ({ socket, userID, callUser }) => {
-  const [onlineUsers, setOnlineUsers] = useState([]);
+const Contacts = ({ socket, userID, onlineUsers, callUser }) => {
   const [contacts, setContacts] = useState([]);
+  const [onlineContacts, setOnlineContacts] = useState([])
   const [searchOnlines, setSearchOnlines] = useState("");
   const [searchContacts, setSearchContacts] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,8 +49,6 @@ const Contacts = ({ socket, userID, callUser }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("get-users", (users) => setOnlineUsers(users));
-
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
       setContacts(response.data !== null ? response.data : []);
     });
@@ -80,6 +78,18 @@ const Contacts = ({ socket, userID, callUser }) => {
       .then((response) => setContacts(updatedContacts))
       .catch((error) => console.log("error catched: ", error));
   };
+
+  useEffect(() => {
+    setOnlineContacts(filterOnlineContacts(contacts, onlineUsers))
+  }, [onlineUsers, contacts])
+
+  const filterOnlineContacts = (array1, array2) => {
+    return array1.filter((array1Item) => {
+      return array2.some((array2Item) => {
+        return array2Item.userID === array1Item.userID && array2Item.email === array1Item.email
+      });
+    })
+  }
 
   const isInContactsHandler = (array, item) => {
     for (let index = 0; index < array.length; index++) {
@@ -144,6 +154,7 @@ const Contacts = ({ socket, userID, callUser }) => {
                           {isInContactsHandler(onlineUsers, item.userID) && (
                             <IconButton
                               size="small"
+                              sx={{ color: "#22BB72" }}
                               onClick={() => {
                                 navigate("/");
                                 callUser(item.userID)
@@ -153,6 +164,7 @@ const Contacts = ({ socket, userID, callUser }) => {
                             </IconButton>)}
                           <IconButton
                             size="small"
+                            sx={{ color: "#BB223E" }}
                             onClick={() => removeContactHandler(item.userID)}
                           >
                             <DeleteIcon fontSize="inherit" />
@@ -188,13 +200,11 @@ const Contacts = ({ socket, userID, callUser }) => {
                 sx={{ px: 2, py: "4px", border: "2px solid #22BB72", borderRadius: 5, input: { p: 0 } }}
               />
             </Box>
-            {onlineUsers.length > 0 ? (
+            {onlineContacts.length > 0 ? (
               <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }}>
                 <Table size="small" sx={{ position: "relative", height: "100%" }}>
                   <TableBody sx={{ overflowY: "auto", position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-                    {(searchOnlines !== "" ? onlineUsers.filter((row) => {
-                      return row.email.toLowerCase().includes(searchOnlines.toLowerCase());
-                    }) : onlineUsers).map((item) => (
+                    {onlineContacts.map((item) => (
                       <TableRow key={item.userID} sx={{ display: "inline-table", width: "100%" }}>
                         <TableCell component="th" scope="row" sx={{ borderBottom: "none" }}>
                           <Typography>{item.email} <OnlineCircle /></Typography>

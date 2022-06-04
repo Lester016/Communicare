@@ -43,7 +43,6 @@ const AddContactDialog = ({ userID, dialogOpen, handleDialogClose, onlineUsers, 
 
     useEffect(() => {
         axios.get(`${firebase_url}/users.json`).then((response) => {
-            console.log(Object.values(response.data));
             setUsers(response.data !== null ? Object.values(response.data) : []);
         });
     }, []);

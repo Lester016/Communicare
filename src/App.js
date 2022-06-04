@@ -65,6 +65,8 @@ function App({ onAutoSignup, userID, email }) {
   const [callDuration, setCallDuration] = useState(0);
   const [callResponseHistory, setCallResponseHistory] = useState();
 
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
@@ -107,6 +109,10 @@ function App({ onAutoSignup, userID, email }) {
         socket.emit("endGoogleCloudStream");
       }
     });
+  }, []);
+
+  useEffect(() => {
+    socket.on("get-users", (users) => setOnlineUsers(users));
   }, []);
 
   const handleSuccess = (stream) => {
@@ -274,6 +280,7 @@ function App({ onAutoSignup, userID, email }) {
           element={
             <Home
               socket={socket}
+              onlineUsers={onlineUsers}
               callUser={callUser}
               answerCall={answerCall}
               myMedia={myMedia}
@@ -292,7 +299,7 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts socket={socket} callUser={callUser} />} />
+        <Route path="contacts" element={<Contacts socket={socket} onlineUsers={onlineUsers} callUser={callUser} />} />
         <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
