@@ -89,7 +89,9 @@ const Home = ({
     <div>
       Home
       <div>
-        <video playsInline muted autoPlay ref={myMedia} />
+        <div class="card" style={{ maxWidth: 1300 }}>
+          <video class="card-img" playsInline muted autoPlay ref={myMedia} />
+        </div>
         {isCallAccepted && !isCallEnded ? (
           <>
             <div>
