@@ -181,6 +181,7 @@ function App({ onAutoSignup, userID, email }) {
       setCallDuration((prevState) => prevState + 1000);
     }, 1000);
     setIsCallAccepted(true);
+    setIsCallReceived(false);
     setIsCallSent(false);
 
     const peer = new Peer({
@@ -210,6 +211,7 @@ function App({ onAutoSignup, userID, email }) {
 
   const endCall = () => {
     setIsCallEnded(true);
+    setIsCallAccepted(false);
     setIsCallSent(false);
 
     let updatedCallRecord = { ...callRecord };

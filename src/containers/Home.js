@@ -33,6 +33,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import TranscribeVisual from "../assets/TranscribeVisual.png";
 import { millisecondsToTime } from "../utils/millisecondsToTime";
+import useAudio from "../utils/useAudio";
 
 const firebase_url =
   "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -70,6 +71,8 @@ const Home = ({
   const [onlineContacts, setOnlineContacts] = useState([])
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
+
+  const ringtone = useAudio(require("../assets/Selecta Ringtone.mp3"), (isCallReceived || (isCallSent && !isCallAccepted)));
 
   useEffect(() => {
     socket.on("chat message", (data) =>
@@ -457,6 +460,7 @@ const Home = ({
             p: 4,
           }}
         >
+
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
             HOME
