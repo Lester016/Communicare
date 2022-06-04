@@ -38,6 +38,7 @@ import SendIcon from "@mui/icons-material/Send";
 import TranscribeVisual from "../assets/TranscribeVisual.png";
 import { millisecondsToTime } from "../utils/millisecondsToTime";
 import useAudio from "../utils/useAudio";
+import AddContactDialog from "../components/AddContactDialog";
 
 const firebase_url =
   "https://communicare-4a0ec-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -77,6 +78,8 @@ const Home = ({
   const [onlineContacts, setOnlineContacts] = useState([])
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -143,6 +146,20 @@ const Home = ({
     }
   };
 
+  const addContactHandler = (contactID, contactEmail) => {
+    let updatedContacts = [
+      ...contacts,
+      { userID: contactID, email: contactEmail },
+    ];
+    axios
+      .put(`${firebase_url}/contacts/${userID}.json`, updatedContacts)
+      .then((response) => setContacts(updatedContacts))
+      .catch((error) => console.log("error catched: ", error));
+  };
+
+  const handleDialogOpen = () => { setDialogOpen(true) }
+  const handleDialogClose = () => { setDialogOpen(false); };
+
   return (
     <>
       {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
@@ -158,7 +175,7 @@ const Home = ({
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
 
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL</Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL {'>'} {callerInfo.callerEmail}</Typography>
 
           <Grid
             container
@@ -591,16 +608,26 @@ const Home = ({
                       <Box
                         sx={{
                           display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "flex-end",
+                          alignItems: "center",
                         }}
                       >
                         <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+
+                        <Typography
+                          onClick={() => setDialogOpen(!dialogOpen)}
+                          sx={{
+                            paddingLeft: "12px",
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            color: "#22BB72",
+                            cursor: "pointer",
+                          }}>Add Contact</Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
                           underline="none"
                           sx={{
+                            marginLeft: "auto",
                             fontSize: "14px",
                             fontWeight: "400",
                             color: "#22BB72",
@@ -745,8 +772,9 @@ const Home = ({
                   ref={myMedia}
                   style={{
                     width: "100%",
-                    height: "auto",
+                    height: "100%",
                     borderRadius: "24px",
+                    objectFit: "cover",
                   }}
                 />
               </Grid>
@@ -812,6 +840,8 @@ const Home = ({
               </Grid>
             </Grid>
           </Grid>
+
+          <AddContactDialog dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} onlineUsers={onlineUsers} contacts={contacts} addContactHandler={addContactHandler} />
         </Box>
       )}
     </>
