@@ -25,6 +25,10 @@ import ListItem from "@mui/material/ListItem";
 import Typography from "../components/Typography";
 import Button from "../components/Button";
 
+import VideocamIcon from '@mui/icons-material/Videocam';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
 import ClosedCaptionIcon from "@mui/icons-material/ClosedCaption";
 import ClosedCaptionOffIcon from "@mui/icons-material/ClosedCaptionOff";
 import CallIcon from "@mui/icons-material/Call";
@@ -65,12 +69,17 @@ const Home = ({
   callDuration,
   isTranscriptionEnabled,
   enableTranscription,
+  toggleCamera,
+  toggleMicrophone,
 }) => {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
   const [onlineContacts, setOnlineContacts] = useState([])
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
+
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
 
   const ringtone = useAudio(require("../assets/Selecta Ringtone.mp3"), (isCallReceived || (isCallSent && !isCallAccepted)));
 
@@ -80,7 +89,6 @@ const Home = ({
     );
 
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
-      console.log("This is getting contacts")
       setContacts(response.data !== null ? response.data : []);
     });
 
@@ -91,7 +99,16 @@ const Home = ({
 
   useEffect(() => {
     onMedia();
-  }, [isCallAccepted, isCallEnded]);
+  }, [isCallAccepted, isCallEnded, isCameraOn]);
+
+  useEffect(() => {
+    toggleCamera(isCameraOn)
+  }, [isCameraOn])
+
+  useEffect(() => {
+    toggleMicrophone(isMicOn)
+  }, [isMicOn])
+
 
   useEffect(() => {
     setOnlineContacts(filterOnlineContacts(contacts, onlineUsers))
@@ -151,11 +168,12 @@ const Home = ({
               ".MuiGrid-item": { p: 2 },
             }}
           >
-            <Grid container item direction="column" xs={12} md={8}>
+            <Grid container item direction="column" flexWrap="nowrap" xs={12} md={8}>
               <Grid
                 item
                 xs={7}
                 sx={{
+                  position: "relative",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -169,8 +187,9 @@ const Home = ({
                   style={{
                     height: "100%",
                     width: "100%",
-                    objectFit: "contain",
-                    backgroundColor: "gray",
+                    objectFit: "cover",
+                    borderRadius: "24px",
+                    backgroundColor: "#b5b5b5",
                   }}
                 />
 
@@ -184,6 +203,7 @@ const Home = ({
                     mt: "16px",
                     backgroundColor: "rgba(0, 0, 0, .5)",
                     borderBottomRightRadius: 16,
+                    borderTopLeftRadius: "24px",
 
                     color: "white",
                     fontSize: "18px",
@@ -215,40 +235,123 @@ const Home = ({
               <Grid container item xs={5}>
                 <Grid
                   item
-                  xs={9}
+                  xs={8}
                   sx={{
                     position: "relative",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    overflow: "hidden",
                   }}
                 >
-                  <video
-                    playsInline={true}
-                    muted={true}
-                    autoPlay={true}
-                    ref={myMedia}
-                    style={{
+                  <Box sx={{ height: "100%", width: "100%", backgroundColor: "#b5b5b5", borderRadius: "24px", overflow: "hidden", }}>
+                    {isCameraOn && (
+                      <video
+                        playsInline={true}
+                        muted={true}
+                        autoPlay={true}
+                        ref={myMedia}
+                        style={{
+                          position: "absolute",
+                          height: "100%",
+                          width: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  </Box>
+
+                  <Typography
+                    sx={{
                       position: "absolute",
-                      height: "100%",
-                      width: "100%",
-                      padding: "16px",
-                      objectFit: "cover",
+                      padding: "16px 24px",
+                      bottom: 0,
+                      left: 0,
+                      ml: "16px",
+                      mb: "16px",
+                      backgroundColor: "rgba(0, 0, 0, .5)",
+                      borderTopRightRadius: 16,
+                      borderBottomLeftRadius: "24px",
+
+                      color: "white",
+                      fontSize: "18px",
+                      fontWeight: "500",
                     }}
-                  />
+                  >
+                    You
+                  </Typography>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                   <Box
                     component={Paper}
                     sx={{
                       width: "100%",
                       height: "100%",
                       display: "grid",
-                      gridTemplateRows: "auto auto",
+                      gridTemplateColumns: "50% 50%",
+                      gridTemplateRows: "50% 50%",
                     }}
                   >
+                    <IconButton
+                      onClick={() => setIsCameraOn(!isCameraOn)}
+                      sx={{
+                        borderRadius: 0,
+                        color: "#7D7EAA",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          backgroundColor: "#ECECEC",
+                          p: 2,
+                          borderRadius: 3,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isCameraOn ? (
+                          <VideocamIcon />
+                        ) : (
+                          <VideocamOffIcon />
+                        )}
+                      </Box>
+                      <Typography sx={{ color: isCameraOn ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                        Camera: {isCameraOn ? "On" : "Off"}
+                      </Typography>
+                    </IconButton>
+
+                    <IconButton
+                      onClick={() => setIsMicOn(!isMicOn)}
+                      sx={{
+                        borderRadius: 0,
+                        color: "#7D7EAA",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          backgroundColor: "#ECECEC",
+                          p: 2,
+                          borderRadius: 3,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isMicOn ? (
+                          <MicIcon />
+                        ) : (
+                          <MicOffIcon />
+                        )}
+                      </Box>
+                      <Typography sx={{ color: isMicOn ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                        Mic: {isMicOn ? "On" : "Off"}
+                      </Typography>
+                    </IconButton>
+
                     <IconButton
                       onClick={enableTranscription}
                       sx={{
@@ -274,8 +377,8 @@ const Home = ({
                           <ClosedCaptionOffIcon />
                         )}
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
-                        Transcribe
+                      <Typography sx={{ color: isTranscriptionEnabled ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                        Transcribe: {isTranscriptionEnabled ? "On" : "Off"}
                       </Typography>
                     </IconButton>
 
@@ -300,7 +403,7 @@ const Home = ({
                       >
                         <CallEndIcon sx={{ backgroundColor: "#BB223E" }} />
                       </Box>
-                      <Typography sx={{ color: "#22BB72", fontSize: "14px" }}>
+                      <Typography sx={{ color: "#BB223E", fontSize: "14px" }}>
                         Hang Up
                       </Typography>
                     </IconButton>
@@ -460,7 +563,6 @@ const Home = ({
             p: 4,
           }}
         >
-
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
           <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
             HOME

@@ -139,6 +139,26 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
+  const toggleCamera = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach(track => {
+        if (track.kind === 'video') track.enabled = toggle
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const toggleMicrophone = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach(track => {
+        if (track.kind === 'audio') track.enabled = toggle
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   const callUser = (userToCallID, email) => {
     addCallHistory(email);
     setOtherPartyID(userToCallID);
@@ -297,6 +317,8 @@ function App({ onAutoSignup, userID, email }) {
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
+              toggleCamera={toggleCamera}
+              toggleMicrophone={toggleMicrophone}
             />
           }
         />
