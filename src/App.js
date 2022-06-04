@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import * as actions from "./store/actions";
 import Fallback from "./containers/Fallback";
