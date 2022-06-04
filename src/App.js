@@ -26,7 +26,7 @@ import { millisecondsToTime } from "./utils/millisecondsToTime";
 // Hosted
 // https://communicare-server.herokuapp.com/
 // http://localhost:8000/
-const socket = io("https://communicare-server.herokuapp.com/", {
+const socket = io("http://localhost:8000/", {
   autoConnect: false,
 });
 
@@ -141,23 +141,23 @@ function App({ onAutoSignup, userID, email }) {
 
   const toggleCamera = (toggle) => {
     try {
-      myMedia.current.srcObject.getTracks().forEach(track => {
-        if (track.kind === 'video') track.enabled = toggle
-      })
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "video") track.enabled = toggle;
+      });
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const toggleMicrophone = (toggle) => {
     try {
-      myMedia.current.srcObject.getTracks().forEach(track => {
-        if (track.kind === 'audio') track.enabled = toggle
-      })
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "audio") track.enabled = toggle;
+      });
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const callUser = (userToCallID, email) => {
     addCallHistory(email);
@@ -235,7 +235,7 @@ function App({ onAutoSignup, userID, email }) {
     setIsCallSent(false);
 
     let updatedCallRecord = { ...callRecord };
-    updatedCallRecord["duration"] = callDuration;
+    updatedCallRecord["duration"] = millisecondsToTime(callDuration);
     updatedCallRecord["type"] = "call made";
 
     console.log("UPDATED CLAL RECORD: ", updatedCallRecord);
@@ -323,7 +323,16 @@ function App({ onAutoSignup, userID, email }) {
           }
         />
 
-        <Route path="contacts" element={<Contacts socket={socket} onlineUsers={onlineUsers} callUser={callUser} />} />
+        <Route
+          path="contacts"
+          element={
+            <Contacts
+              socket={socket}
+              onlineUsers={onlineUsers}
+              callUser={callUser}
+            />
+          }
+        />
         <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />

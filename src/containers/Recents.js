@@ -229,11 +229,7 @@ const Recents = ({ userID }) => {
                             align="right"
                             sx={{ borderBottom: "none" }}
                           >
-                            <Typography>
-                              {typeof item.duration === "number"
-                                ? millisecondsToTime(item.duration)
-                                : item.duration}
-                            </Typography>
+                            <Typography>{item.duration}</Typography>
                           </TableCell>
                           <TableCell
                             scope="row"
