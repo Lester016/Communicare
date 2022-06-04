@@ -110,6 +110,19 @@ const Home = ({
     }
   };
 
+  const isAnyoneOnline = (array1, array2) => {
+    let res = array1.filter((array1Item) => {
+      return array2.some((array2Item) => {
+        return array2Item.userid === array1Item.userid && array2Item.projectid === array1Item.projectid;
+      });
+    })
+
+    console.log(res);
+
+    if (res) return true
+    else return false
+  };
+
   return (
     <>
       {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
@@ -476,11 +489,7 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Online
-                        </Typography>
+                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -494,22 +503,23 @@ const Home = ({
                           See All
                         </Link>
                       </Box>
-                      {onlineUsers.length > 0 ? (
+                      {contacts.length > 0 ? (
                         <TableContainer>
                           <Table size="small">
                             <TableBody>
-                              {onlineUsers.slice(0, 8).map((item, index) => (
-                                <TableRow key={index}>
+                              {contacts.slice(0, 8).map((item) => (
+                                <TableRow key={item.userID}>
                                   <TableCell
                                     component="th"
                                     scope="row"
                                     sx={{ borderBottom: "none" }}
                                   >
                                     <Typography>
-                                      {item.email} <OnlineCircle />
+                                      {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
                                     </Typography>
                                   </TableCell>
-                                  {item.userID !== userID && (
+
+                                  {isInContactsHandler(onlineUsers, item.userID) && (
                                     <TableCell
                                       component="th"
                                       scope="row"
@@ -518,6 +528,7 @@ const Home = ({
                                     >
                                       <IconButton
                                         size="small"
+                                        sx={{ color: "#22BB72" }}
                                         onClick={() =>
                                           callUser(item.userID, item.email)
                                         }
@@ -532,7 +543,7 @@ const Home = ({
                           </Table>
                         </TableContainer>
                       ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>No online users...</Typography>
+                        <Typography sx={{ px: "16px", py: "6px" }}>No contacts...</Typography>
                       )}
                     </Box>
                   </Grid>
@@ -553,7 +564,11 @@ const Home = ({
                           alignItems: "flex-end",
                         }}
                       >
-                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                        <Typography
+                          sx={{ fontSize: "18px", fontWeight: "500" }}
+                        >
+                          Online
+                        </Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -567,32 +582,48 @@ const Home = ({
                           See All
                         </Link>
                       </Box>
-                      {contacts.length > 0 ? (
+                      {isAnyoneOnline(contacts, onlineUsers).length > 0 ? (
                         <TableContainer>
                           <Table size="small">
                             <TableBody>
-                              {contacts.map((item) => (
-                                <TableRow key={item.userID}>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    sx={{ borderBottom: "none" }}
-                                  >
-                                    <Typography>
-                                      {item.email}{" "}
-                                      {isInContactsHandler(
-                                        onlineUsers,
-                                        item.userID
-                                      ) && <OnlineCircle />}
-                                    </Typography>
-                                  </TableCell>
-                                </TableRow>
+                              {onlineUsers.slice(0, 8).map((item) => (
+                                isInContactsHandler(contacts, item.userID) && (
+                                  <TableRow key={item.userID}>
+                                    <TableCell
+                                      component="th"
+                                      scope="row"
+                                      sx={{ borderBottom: "none" }}
+                                    >
+                                      <Typography>
+                                        {item.email} <OnlineCircle />
+                                      </Typography>
+                                    </TableCell>
+                                    {item.userID !== userID && (
+                                      <TableCell
+                                        component="th"
+                                        scope="row"
+                                        align="right"
+                                        sx={{ borderBottom: "none" }}
+                                      >
+                                        <IconButton
+                                          size="small"
+                                          sx={{ color: "#22BB72" }}
+                                          onClick={() =>
+                                            callUser(item.userID, item.email)
+                                          }
+                                        >
+                                          <CallIcon fontSize="inherit" />
+                                        </IconButton>
+                                      </TableCell>
+                                    )}
+                                  </TableRow>
+                                )
                               ))}
                             </TableBody>
                           </Table>
                         </TableContainer>
                       ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>No contacts...</Typography>
+                        <Typography sx={{ px: "16px", py: "6px" }}>No online users...</Typography>
                       )}
                     </Box>
                   </Grid>
