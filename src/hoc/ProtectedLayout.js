@@ -40,8 +40,9 @@ const ProtectedLayout = ({ user }) => {
 
   const drawer = (
     <>
-      <Box sx={{ height: "300px", backgroundColor: "#EAEFFF", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Typography sx={{ color: "#6667AB", fontSize: "24px", fontWeight: "700" }}>CommuniCare</Typography>
+      <Box sx={{ height: "300px", backgroundColor: "#fff", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <Box component="img" src={require("../assets/logo.png")} sx={{height: "250px", width: "250px", margin: "-64px",}}/>
+        <Typography sx={{ color: "#6667AB", fontSize: "28px", fontWeight: "700" }}>CommuniCare</Typography>
       </Box>
 
       <List disablePadding={true}>
@@ -57,7 +58,7 @@ const ProtectedLayout = ({ user }) => {
       </List>
       <Divider />
       <List sx={{ mt: "auto", mb: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Button to="logout" component={RouterLink} sx={{ width: "260px", backgroundColor: "#EAEFFF", borderRadius: 50, color: "#6667AB", fontWeight: "600", py: "2px"}}>LOGOUT</Button>
+        <Button to="logout" component={RouterLink} sx={{ width: "260px", backgroundColor: "#EAEFFF", borderRadius: 50, color: "#6667AB", fontWeight: "600", py: "2px" }}>LOGOUT</Button>
       </List>
     </>
   );
