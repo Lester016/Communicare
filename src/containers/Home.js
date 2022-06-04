@@ -25,10 +25,10 @@ import ListItem from "@mui/material/ListItem";
 import Typography from "../components/Typography";
 import Button from "../components/Button";
 
-import VideocamIcon from '@mui/icons-material/Videocam';
-import VideocamOffIcon from '@mui/icons-material/VideocamOff';
-import MicIcon from '@mui/icons-material/Mic';
-import MicOffIcon from '@mui/icons-material/MicOff';
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
 import ClosedCaptionIcon from "@mui/icons-material/ClosedCaption";
 import ClosedCaptionOffIcon from "@mui/icons-material/ClosedCaptionOff";
 import CallIcon from "@mui/icons-material/Call";
@@ -75,7 +75,7 @@ const Home = ({
 }) => {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
-  const [onlineContacts, setOnlineContacts] = useState([])
+  const [onlineContacts, setOnlineContacts] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
 
@@ -84,7 +84,10 @@ const Home = ({
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
 
-  const ringtone = useAudio(require("../assets/Selecta Ringtone.mp3"), (isCallReceived || (isCallSent && !isCallAccepted)));
+  const ringtone = useAudio(
+    require("../assets/Selecta Ringtone.mp3"),
+    isCallReceived || (isCallSent && !isCallAccepted)
+  );
 
   useEffect(() => {
     socket.on("chat message", (data) =>
@@ -95,8 +98,8 @@ const Home = ({
       setContacts(response.data !== null ? response.data : []);
     });
 
-    socket.on("transcribedMessage", ({ message }) => {
-      setLiveTranscription(message);
+    socket.on("transcribedMessage", (data) => {
+      setLiveTranscription(data.results[0].alternatives[0].transcript);
     });
   }, []);
 
@@ -105,25 +108,27 @@ const Home = ({
   }, [isCallAccepted, isCallEnded, isCameraOn]);
 
   useEffect(() => {
-    toggleCamera(isCameraOn)
-  }, [isCameraOn])
+    toggleCamera(isCameraOn);
+  }, [isCameraOn]);
 
   useEffect(() => {
-    toggleMicrophone(isMicOn)
-  }, [isMicOn])
-
+    toggleMicrophone(isMicOn);
+  }, [isMicOn]);
 
   useEffect(() => {
-    setOnlineContacts(filterOnlineContacts(contacts, onlineUsers))
-  }, [onlineUsers, contacts])
+    setOnlineContacts(filterOnlineContacts(contacts, onlineUsers));
+  }, [onlineUsers, contacts]);
 
   const filterOnlineContacts = (array1, array2) => {
     return array1.filter((array1Item) => {
       return array2.some((array2Item) => {
-        return array2Item.userID === array1Item.userID && array2Item.email === array1Item.email
+        return (
+          array2Item.userID === array1Item.userID &&
+          array2Item.email === array1Item.email
+        );
       });
-    })
-  }
+    });
+  };
 
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
@@ -157,8 +162,12 @@ const Home = ({
       .catch((error) => console.log("error catched: ", error));
   };
 
-  const handleDialogOpen = () => { setDialogOpen(true) }
-  const handleDialogClose = () => { setDialogOpen(false); };
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   return (
     <>
@@ -175,7 +184,9 @@ const Home = ({
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
 
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL {'>'} {callerInfo.callerEmail}</Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
+            IN CALL {">"} {callerInfo.callerEmail}
+          </Typography>
 
           <Grid
             container
@@ -185,7 +196,14 @@ const Home = ({
               ".MuiGrid-item": { p: 2 },
             }}
           >
-            <Grid container item direction="column" flexWrap="nowrap" xs={12} md={8}>
+            <Grid
+              container
+              item
+              direction="column"
+              flexWrap="nowrap"
+              xs={12}
+              md={8}
+            >
               <Grid
                 item
                 xs={7}
@@ -260,7 +278,15 @@ const Home = ({
                     alignItems: "center",
                   }}
                 >
-                  <Box sx={{ height: "100%", width: "100%", backgroundColor: "#b5b5b5", borderRadius: "24px", overflow: "hidden", }}>
+                  <Box
+                    sx={{
+                      height: "100%",
+                      width: "100%",
+                      backgroundColor: "#b5b5b5",
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                    }}
+                  >
                     {isCameraOn && (
                       <video
                         playsInline={true}
@@ -328,13 +354,14 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isCameraOn ? (
-                          <VideocamIcon />
-                        ) : (
-                          <VideocamOffIcon />
-                        )}
+                        {isCameraOn ? <VideocamIcon /> : <VideocamOffIcon />}
                       </Box>
-                      <Typography sx={{ color: isCameraOn ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                      <Typography
+                        sx={{
+                          color: isCameraOn ? "#22BB72" : "#BB223E",
+                          fontSize: "14px",
+                        }}
+                      >
                         Camera: {isCameraOn ? "On" : "Off"}
                       </Typography>
                     </IconButton>
@@ -358,13 +385,14 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isMicOn ? (
-                          <MicIcon />
-                        ) : (
-                          <MicOffIcon />
-                        )}
+                        {isMicOn ? <MicIcon /> : <MicOffIcon />}
                       </Box>
-                      <Typography sx={{ color: isMicOn ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                      <Typography
+                        sx={{
+                          color: isMicOn ? "#22BB72" : "#BB223E",
+                          fontSize: "14px",
+                        }}
+                      >
                         Mic: {isMicOn ? "On" : "Off"}
                       </Typography>
                     </IconButton>
@@ -394,7 +422,12 @@ const Home = ({
                           <ClosedCaptionOffIcon />
                         )}
                       </Box>
-                      <Typography sx={{ color: isTranscriptionEnabled ? "#22BB72" : "#BB223E", fontSize: "14px" }}>
+                      <Typography
+                        sx={{
+                          color: isTranscriptionEnabled ? "#22BB72" : "#BB223E",
+                          fontSize: "14px",
+                        }}
+                      >
                         Transcribe: {isTranscriptionEnabled ? "On" : "Off"}
                       </Typography>
                     </IconButton>
@@ -438,8 +471,12 @@ const Home = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>In-Call Messages</Typography>
-                <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
+                <Typography sx={{ backgroundColor: "#F9FAFF", p: 2 }}>
+                  In-Call Messages
+                </Typography>
+                <Box
+                  sx={{ position: "relative", height: "100%", width: "100%" }}
+                >
                   <Box
                     sx={{
                       position: "absolute",
@@ -570,7 +607,8 @@ const Home = ({
             )}
           </Stack>
         </Box>
-      ) : ( // ========================================== HOME UI ==========================================
+      ) : (
+        // ========================================== HOME UI ==========================================
         <Box
           component="main"
           sx={{
@@ -611,7 +649,11 @@ const Home = ({
                           alignItems: "center",
                         }}
                       >
-                        <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                        <Typography
+                          sx={{ fontSize: "18px", fontWeight: "500" }}
+                        >
+                          Contacts
+                        </Typography>
 
                         <Typography
                           onClick={() => setDialogOpen(!dialogOpen)}
@@ -621,7 +663,10 @@ const Home = ({
                             fontWeight: "600",
                             color: "#22BB72",
                             cursor: "pointer",
-                          }}>Add Contact</Typography>
+                          }}
+                        >
+                          Add Contact
+                        </Typography>
                         <Link
                           to={"/contacts"}
                           component={RouterLink}
@@ -648,11 +693,18 @@ const Home = ({
                                     sx={{ borderBottom: "none" }}
                                   >
                                     <Typography>
-                                      {item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}
+                                      {item.email}{" "}
+                                      {isInContactsHandler(
+                                        onlineUsers,
+                                        item.userID
+                                      ) && <OnlineCircle />}
                                     </Typography>
                                   </TableCell>
 
-                                  {isInContactsHandler(onlineUsers, item.userID) && (
+                                  {isInContactsHandler(
+                                    onlineUsers,
+                                    item.userID
+                                  ) && (
                                     <TableCell
                                       component="th"
                                       scope="row"
@@ -676,7 +728,9 @@ const Home = ({
                           </Table>
                         </TableContainer>
                       ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>No contacts...</Typography>
+                        <Typography sx={{ px: "16px", py: "6px" }}>
+                          No contacts...
+                        </Typography>
                       )}
                     </Box>
                   </Grid>
@@ -749,13 +803,14 @@ const Home = ({
                                     </TableCell>
                                   )}
                                 </TableRow>
-                              )
-                              )}
+                              ))}
                             </TableBody>
                           </Table>
                         </TableContainer>
                       ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>No online users...</Typography>
+                        <Typography sx={{ px: "16px", py: "6px" }}>
+                          No online users...
+                        </Typography>
                       )}
                     </Box>
                   </Grid>
@@ -764,7 +819,17 @@ const Home = ({
             </Grid>
 
             <Grid container item xs={5} sx={{ width: "100%" }}>
-              <Grid item xs={12} lg={5} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+              <Grid
+                item
+                xs={12}
+                lg={5}
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <video
                   playsInline={true}
                   muted={true}
@@ -779,9 +844,26 @@ const Home = ({
                 />
               </Grid>
               <Grid item xs={12} lg={7}>
-                <Box component={Paper} sx={{ height: "100%", display: "flex", flexDirection: "column", p: 2 }}>
-                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>TRANSCRIBE</Typography>
-                  <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <Box
+                  component={Paper}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    p: 2,
+                  }}
+                >
+                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
+                    TRANSCRIBE
+                  </Typography>
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography
                       sx={{
                         color: "#22BB72",
@@ -801,21 +883,42 @@ const Home = ({
                             textAlign: "left",
                           }}
                         >
-                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          <ListItem
+                            sx={{ display: "list-item" }}
+                            dense
+                            disableGutters
+                          >
                             Speak and this tool will transcribe the words spoken
                             into written text.
                           </ListItem>
-                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          <ListItem
+                            sx={{ display: "list-item" }}
+                            dense
+                            disableGutters
+                          >
                             Make sure the speaking voice is clear for better
                             translation quality.
                           </ListItem>
-                          <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          <ListItem
+                            sx={{ display: "list-item" }}
+                            dense
+                            disableGutters
+                          >
                             Click the button to start transcribing.
                           </ListItem>
                         </List>
                       </Grid>
 
-                      <Grid item lg={6} sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", }}>
+                      <Grid
+                        item
+                        lg={6}
+                        sx={{
+                          position: "relative",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
                         <Box
                           component="img"
                           sx={{
@@ -841,7 +944,13 @@ const Home = ({
             </Grid>
           </Grid>
 
-          <AddContactDialog dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} onlineUsers={onlineUsers} contacts={contacts} addContactHandler={addContactHandler} />
+          <AddContactDialog
+            dialogOpen={dialogOpen}
+            handleDialogClose={handleDialogClose}
+            onlineUsers={onlineUsers}
+            contacts={contacts}
+            addContactHandler={addContactHandler}
+          />
         </Box>
       )}
     </>

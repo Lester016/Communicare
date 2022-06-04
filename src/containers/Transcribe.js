@@ -29,8 +29,8 @@ const Transcribe = ({ userID, socket }) => {
   const [stream, setStream] = useState();
 
   useEffect(() => {
-    socket.on("transcribedMessage", ({ message }) => {
-      setMessage(message);
+    socket.on("transcribedMessage", (data) => {
+      setMessage(data.results[0].alternatives[0].transcript);
     });
   }, []);
 
@@ -137,11 +137,12 @@ const Transcribe = ({ userID, socket }) => {
         </Button>
 
         <Box sx={{ flex: 1, width: "100%", p: 4 }}>
-          <Box sx={{ position: "relative", height: "100%", }}>
+          <Box sx={{ position: "relative", height: "100%" }}>
             <Box
               sx={{
                 position: "absolute",
-                top: 0, left: 0,
+                top: 0,
+                left: 0,
                 height: "100%",
                 width: "100%",
                 backgroundColor: "#EAEFFF",
@@ -150,7 +151,13 @@ const Transcribe = ({ userID, socket }) => {
                 p: 4,
               }}
             >
-              <Typography sx={{ fontSize: "24px", fontWeight: "500", wordWrap: "break-word" }}>
+              <Typography
+                sx={{
+                  fontSize: "24px",
+                  fontWeight: "500",
+                  wordWrap: "break-word",
+                }}
+              >
                 {message}
               </Typography>
             </Box>
