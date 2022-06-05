@@ -120,7 +120,7 @@ const Contacts = ({ socket, userID, onlineUsers, callUser }) => {
           <Box component={Paper} sx={{ height: "100%", p: 2, borderRadius: 2, display: "flex", flexDirection: "column" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2, pb: 2 }}>
               <Typography sx={{ fontSize: "18px", fontWeight: "500", marginRight: "auto" }}>Contacts</Typography>
-              <Button variant="text" onClick={handleDialogOpen} sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", letterSpacing: "0px" }}>Add Contact</Button>
+              <Button variant="text" onClick={handleDialogOpen} sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", letterSpacing: "0px" }}>Add New Contact</Button>
               <TextField
                 variant="standard"
                 size="small"

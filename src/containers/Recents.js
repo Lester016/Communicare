@@ -34,6 +34,7 @@ const Recents = ({ userID }) => {
     axios
       .get(`${firebase_url}/call-history/${userID}.json`)
       .then((response) => {
+        console.log(response);
         setRecents(response.data !== null ? Object.values(response.data) : []);
       });
   }, []);

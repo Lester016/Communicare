@@ -110,6 +110,7 @@ const Home = ({
 
     axios
       .get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
+        console.log(response);
         setRecents(response.data !== null ? Object.values(response.data) : []);
       });
   }, []);
@@ -301,9 +302,9 @@ const Home = ({
                   You
                 </Typography>
               </Grid>
-              <Grid item xs={12} lg={4} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <Grid item xs={12} lg={4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Grid container component={Paper}>
-                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
                       onClick={() => setIsCameraOn(!isCameraOn)}
                       sx={{
@@ -336,7 +337,7 @@ const Home = ({
                     </IconButton>
                   </Grid>
 
-                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
                       onClick={() => setIsMicOn(!isMicOn)}
                       sx={{
@@ -369,7 +370,7 @@ const Home = ({
                     </IconButton>
                   </Grid>
 
-                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
                       onClick={enableTranscription}
                       sx={{
@@ -406,7 +407,7 @@ const Home = ({
                     </IconButton>
                   </Grid>
 
-                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
                       onClick={endCall}
                       sx={{
@@ -663,19 +664,8 @@ const Home = ({
 
                     {recents.length > 0 ? (
                       <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }} >
-                        <Box sx={{ position: "relative", height: "100%", overflowY: "auto" }}>
-                          <Table
-                            size="small"
-                            stickyHeader
-                            sx={{
-                              overflowY: "auto",
-                              position: "absolute",
-                              left: 0,
-                              right: 0,
-                              top: 0,
-                              bottom: 0,
-                            }}
-                          >
+                        <Box sx={{ height: "100%", overflowY: "auto" }}>
+                          <Table size="small" stickyHeader>
                             <TableHead sx={{ backgroundColor: "#EAEFFF" }}>
                               <TableRow sx={{ backgroundColor: "#EAEFFF" }}>
                                 <TableCell
@@ -746,6 +736,7 @@ const Home = ({
                             <TableBody sx={{ overflowY: "scroll" }}>
                               {recents.slice(0, 8).reverse().map((item) => (
                                 <TableRow key={item.userID}>
+                                  {console.log(item)}
                                   <TableCell
                                     scope="row"
                                     align="center"
