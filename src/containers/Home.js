@@ -182,7 +182,7 @@ const Home = ({
 
   return (
     <>
-      {true ? ( //isCallAccepted && !isCallEnded
+      {isCallAccepted && !isCallEnded ? ( //isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -301,7 +301,7 @@ const Home = ({
                   You
                 </Typography>
               </Grid>
-              <Grid item xs={12} lg={4}>
+              <Grid item xs={12} lg={4} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Grid container component={Paper}>
                   <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <IconButton
