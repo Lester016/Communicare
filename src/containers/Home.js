@@ -75,8 +75,8 @@ const Home = ({
   callDuration,
   isTranscriptionEnabled,
   enableTranscription,
-  toggleCamera,
-  toggleMicrophone,
+  handleToggleCamera,
+  handleToggleMicrophone,
 }) => {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
@@ -118,6 +118,7 @@ const Home = ({
     onMedia();
   }, [isCallAccepted, isCallEnded, isCameraOn]);
 
+  /*
   useEffect(() => {
     toggleCamera(isCameraOn);
   }, [isCameraOn]);
@@ -125,6 +126,7 @@ const Home = ({
   useEffect(() => {
     toggleMicrophone(isMicOn);
   }, [isMicOn]);
+  */
 
   useEffect(() => {
     setOnlineContacts(filterOnlineContacts(contacts, onlineUsers));
@@ -305,7 +307,7 @@ const Home = ({
                 <Grid container component={Paper}>
                   <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
-                      onClick={() => setIsCameraOn(!isCameraOn)}
+                      onClick={handleToggleCamera}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",
@@ -338,7 +340,7 @@ const Home = ({
 
                   <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
-                      onClick={() => setIsMicOn(!isMicOn)}
+                      onClick={handleToggleMicrophone}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",

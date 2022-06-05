@@ -67,6 +67,9 @@ function App({ onAutoSignup, userID, email }) {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
+
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
@@ -139,6 +142,10 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
+  const handleToggleCamera = () => {
+    setIsCameraOn(!isCameraOn);
+    toggleCamera(!isCameraOn);
+  }
   const toggleCamera = (toggle) => {
     try {
       myMedia.current.srcObject.getTracks().forEach((track) => {
@@ -148,8 +155,12 @@ function App({ onAutoSignup, userID, email }) {
       console.log(e);
     }
   };
-
+  const handleToggleMicrophone = () => {
+    setIsMicOn(!isMicOn);
+    toggleMicrophone(!isMicOn);
+  }
   const toggleMicrophone = (toggle) => {
+    
     try {
       myMedia.current.srcObject.getTracks().forEach((track) => {
         if (track.kind === "audio") track.enabled = toggle;
@@ -317,8 +328,8 @@ function App({ onAutoSignup, userID, email }) {
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
-              toggleCamera={toggleCamera}
-              toggleMicrophone={toggleMicrophone}
+              handleToggleCamera={handleToggleCamera}
+              handleToggleMicrophone={handleToggleMicrophone}
             />
           }
         />
