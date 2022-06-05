@@ -14,6 +14,7 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 
 import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -34,6 +35,10 @@ import ClosedCaptionOffIcon from "@mui/icons-material/ClosedCaptionOff";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import SendIcon from "@mui/icons-material/Send";
+import SearchIcon from "@mui/icons-material/Search";
+import CallMadeIcon from "@mui/icons-material/CallMade";
+import CallMissedIcon from "@mui/icons-material/CallMissed";
+
 
 import TranscribeVisual from "../assets/TranscribeVisual.png";
 import { millisecondsToTime } from "../utils/millisecondsToTime";
@@ -76,6 +81,7 @@ const Home = ({
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
   const [onlineContacts, setOnlineContacts] = useState([]);
+  const [recents, setRecents] = useState([]);
   const [responseMessage, setResponseMessage] = useState([]);
   const [liveTranscription, setLiveTranscription] = useState("");
 
@@ -94,13 +100,18 @@ const Home = ({
       setResponseMessage((prevState) => [...prevState, data])
     );
 
+    socket.on("transcribedMessage", (data) => {
+      setLiveTranscription(data.results[0].alternatives[0].transcript);
+    });
+
     axios.get(`${firebase_url}/contacts/${userID}.json`).then((response) => {
       setContacts(response.data !== null ? response.data : []);
     });
 
-    socket.on("transcribedMessage", (data) => {
-      setLiveTranscription(data.results[0].alternatives[0].transcript);
-    });
+    axios
+      .get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
+        setRecents(response.data !== null ? Object.values(response.data) : []);
+      });
   }, []);
 
   useEffect(() => {
@@ -130,17 +141,6 @@ const Home = ({
     });
   };
 
-  const handleChangeMessage = (e) => {
-    setMessage(e.target.value);
-  };
-
-  const handleSubmitMessage = () => {
-    if (message !== "") {
-      socket.emit("chat message", { message, userID, email });
-    }
-    setMessage("");
-  };
-
   const isInContactsHandler = (array, item) => {
     for (let index = 0; index < array.length; index++) {
       const element = array[index].userID;
@@ -162,6 +162,17 @@ const Home = ({
       .catch((error) => console.log("error catched: ", error));
   };
 
+  const handleChangeMessage = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleSubmitMessage = () => {
+    if (message !== "") {
+      socket.emit("chat message", { message, userID, email });
+    }
+    setMessage("");
+  };
+
   const handleDialogOpen = () => {
     setDialogOpen(true);
   };
@@ -171,50 +182,30 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( // ========================================== UI DURING A CALL ==========================================
+      {true ? ( //isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
-            height: "100vh",
             backgroundColor: "#F9FAFF",
-            p: 4,
+            p: 2,
           }}
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
 
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
-            IN CALL {">"} {callerInfo.callerEmail}
-          </Typography>
+          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>IN CALL {">"} {callerInfo.callerEmail}</Typography>
 
-          <Grid
-            container
-            sx={{
-              height: "100%",
-              ".MuiGrid-container.MuiGrid-item": { p: 0 },
-              ".MuiGrid-item": { p: 2 },
-            }}
-          >
-            <Grid
-              container
-              item
-              direction="column"
-              flexWrap="nowrap"
-              xs={12}
-              md={8}
-            >
-              <Grid
-                item
-                xs={7}
+          <Grid container sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
+            <Grid container item xs={12} md={8}>
+              <Grid item xs={12}
                 sx={{
                   position: "relative",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   overflow: "hidden",
-                }}
-              >
+                }}>
                 <video
                   playsInline={true}
                   autoPlay={true}
@@ -267,74 +258,52 @@ const Home = ({
                 )}
               </Grid>
 
-              <Grid container item xs={5}>
-                <Grid
-                  item
-                  xs={8}
+              <Grid item xs={12} lg={8}
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+
+                {isCameraOn && (
+                  <video
+                    playsInline={true}
+                    muted={true}
+                    autoPlay={true}
+                    ref={myMedia}
+                    style={{
+
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                )}
+
+                <Typography
                   sx={{
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    position: "absolute",
+                    padding: "16px 24px",
+                    bottom: 0,
+                    left: 0,
+                    ml: "16px",
+                    mb: "16px",
+                    backgroundColor: "rgba(0, 0, 0, .5)",
+                    borderTopRightRadius: 16,
+                    borderBottomLeftRadius: "24px",
+
+                    color: "white",
+                    fontSize: "18px",
+                    fontWeight: "500",
                   }}
                 >
-                  <Box
-                    sx={{
-                      height: "100%",
-                      width: "100%",
-                      backgroundColor: "#b5b5b5",
-                      borderRadius: "24px",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {isCameraOn && (
-                      <video
-                        playsInline={true}
-                        muted={true}
-                        autoPlay={true}
-                        ref={myMedia}
-                        style={{
-                          position: "absolute",
-                          height: "100%",
-                          width: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    )}
-                  </Box>
-
-                  <Typography
-                    sx={{
-                      position: "absolute",
-                      padding: "16px 24px",
-                      bottom: 0,
-                      left: 0,
-                      ml: "16px",
-                      mb: "16px",
-                      backgroundColor: "rgba(0, 0, 0, .5)",
-                      borderTopRightRadius: 16,
-                      borderBottomLeftRadius: "24px",
-
-                      color: "white",
-                      fontSize: "18px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    You
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={4}>
-                  <Box
-                    component={Paper}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      display: "grid",
-                      gridTemplateColumns: "50% 50%",
-                      gridTemplateRows: "50% 50%",
-                    }}
-                  >
+                  You
+                </Typography>
+              </Grid>
+              <Grid item xs={12} lg={4}>
+                <Grid container component={Paper}>
+                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <IconButton
                       onClick={() => setIsCameraOn(!isCameraOn)}
                       sx={{
@@ -365,7 +334,9 @@ const Home = ({
                         Camera: {isCameraOn ? "On" : "Off"}
                       </Typography>
                     </IconButton>
+                  </Grid>
 
+                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <IconButton
                       onClick={() => setIsMicOn(!isMicOn)}
                       sx={{
@@ -396,7 +367,9 @@ const Home = ({
                         Mic: {isMicOn ? "On" : "Off"}
                       </Typography>
                     </IconButton>
+                  </Grid>
 
+                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <IconButton
                       onClick={enableTranscription}
                       sx={{
@@ -431,7 +404,9 @@ const Home = ({
                         Transcribe: {isTranscriptionEnabled ? "On" : "Off"}
                       </Typography>
                     </IconButton>
+                  </Grid>
 
+                  <Grid item xs={3} lg={6} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <IconButton
                       onClick={endCall}
                       sx={{
@@ -457,7 +432,7 @@ const Home = ({
                         Hang Up
                       </Typography>
                     </IconButton>
-                  </Box>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -466,7 +441,10 @@ const Home = ({
               <Box
                 component={Paper}
                 sx={{
-                  height: "100%",
+                  height: {
+                    xs: "600px",
+                    md: "100%",
+                  },
                   display: "flex",
                   flexDirection: "column",
                 }}
@@ -548,15 +526,14 @@ const Home = ({
             </Grid>
           </Grid>
         </Box>
-      ) : isCallReceived || isCallSent ? ( // ========================================== UI WHEN A CALL IS RECEIVED/SENT ==========================================
+      ) : isCallSent || isCallReceived ? (
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             height: "100vh",
-            background:
-              "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
+            background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -567,23 +544,11 @@ const Home = ({
           <Box />
 
           <Box sx={{ textAlign: "center" }}>
-            <Typography
-              sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}
-            >
-              {callerInfo.callerEmail}
-            </Typography>
+            <Typography sx={{ color: "white", fontSize: "32px", fontWeight: "700" }}>{callerInfo.callerEmail}</Typography>
             {isCallReceived && !isCallSent ? (
-              <Typography
-                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
-              >
-                is calling...
-              </Typography>
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>is calling...</Typography>
             ) : (
-              <Typography
-                sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}
-              >
-                Ringing...
-              </Typography>
+              <Typography sx={{ color: "white", fontSize: "18px", fontWeight: "500" }}>Ringing...</Typography>
             )}
           </Box>
 
@@ -608,349 +573,325 @@ const Home = ({
           </Stack>
         </Box>
       ) : (
-        // ========================================== HOME UI ==========================================
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             backgroundColor: "#F9FAFF",
-            p: 4,
+            p: 2,
           }}
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
-          <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
-            HOME
-          </Typography>
 
-          <Grid
-            container
-            direction="column"
-            sx={{
-              ".MuiGrid-container.MuiGrid-item": { p: 0 },
-              ".MuiGrid-item": { p: 2 },
-            }}
-          >
-            <Grid item xs={7} sx={{ width: "100%" }}>
-              <Box component={Paper}>
-                <Grid container item sx={{ height: "100%" }}>
-                  <Grid item xs={12} lg={6}>
-                    <Box
-                      sx={{
-                        height: "100%",
-                        backgroundColor: "#EAEFFF",
-                        p: 2,
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Contacts
-                        </Typography>
-
-                        <Typography
-                          onClick={() => setDialogOpen(!dialogOpen)}
-                          sx={{
-                            paddingLeft: "12px",
-                            fontSize: "14px",
-                            fontWeight: "600",
-                            color: "#22BB72",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Add Contact
-                        </Typography>
-                        <Link
-                          to={"/contacts"}
-                          component={RouterLink}
-                          underline="none"
-                          sx={{
-                            marginLeft: "auto",
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            color: "#22BB72",
-                          }}
-                        >
-                          See All
-                        </Link>
-                      </Box>
-                      {contacts.length > 0 ? (
-                        <TableContainer>
-                          <Table size="small">
-                            <TableBody>
-                              {contacts.slice(0, 8).map((item) => (
-                                <TableRow key={item.userID}>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    sx={{ borderBottom: "none" }}
-                                  >
-                                    <Typography>
-                                      {item.email}{" "}
-                                      {isInContactsHandler(
-                                        onlineUsers,
-                                        item.userID
-                                      ) && <OnlineCircle />}
-                                    </Typography>
-                                  </TableCell>
-
-                                  {isInContactsHandler(
-                                    onlineUsers,
-                                    item.userID
-                                  ) && (
-                                    <TableCell
-                                      component="th"
-                                      scope="row"
-                                      align="right"
-                                      sx={{ borderBottom: "none" }}
-                                    >
-                                      <IconButton
-                                        size="small"
-                                        sx={{ color: "#22BB72" }}
-                                        onClick={() =>
-                                          callUser(item.userID, item.email)
-                                        }
-                                      >
-                                        <CallIcon fontSize="inherit" />
-                                      </IconButton>
-                                    </TableCell>
-                                  )}
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>
-                          No contacts...
-                        </Typography>
-                      )}
+          <Grid container sx={{ ".MuiGrid-item": { p: 2 }, }}>
+            <Grid container item xs={12}>
+              <Grid container item xs={12} component={Paper} sx={{ p: "0px!important" }}>
+                <Grid item xs={12} md={6} lg={3}>
+                  <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", borderRadius: 2, p: 2 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Online</Typography>
+                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
                     </Box>
-                  </Grid>
-
-                  <Grid item xs={12} lg={6}>
-                    <Box
-                      sx={{
-                        height: "100%",
-                        backgroundColor: "#EAEFFF",
-                        p: 2,
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Typography
-                          sx={{ fontSize: "18px", fontWeight: "500" }}
-                        >
-                          Online
-                        </Typography>
-                        <Link
-                          to={"/contacts"}
-                          component={RouterLink}
-                          underline="none"
-                          sx={{
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            color: "#22BB72",
-                          }}
-                        >
-                          See All
-                        </Link>
-                      </Box>
-                      {onlineContacts.length > 0 ? (
-                        <TableContainer>
-                          <Table size="small">
-                            <TableBody>
-                              {onlineContacts.slice(0, 8).map((item) => (
-                                <TableRow key={item.userID}>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    sx={{ borderBottom: "none" }}
-                                  >
-                                    <Typography>
-                                      {item.email} <OnlineCircle />
-                                    </Typography>
+                    {onlineContacts.length > 0 ? (
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            {onlineContacts.slice(0, 8).map((item) => (
+                              <TableRow key={item.userID}>
+                                <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
+                                  <Typography>{item.email} <OnlineCircle /> </Typography>
+                                </TableCell>
+                                {item.userID !== userID && (
+                                  <TableCell component="th" scope="row" align="right" padding="none" sx={{ borderBottom: "none" }}>
+                                    <IconButton size="small" sx={{ color: "#22BB72" }} onClick={() => callUser(item.userID, item.email)}>
+                                      <CallIcon fontSize="inherit" />
+                                    </IconButton>
                                   </TableCell>
-                                  {item.userID !== userID && (
-                                    <TableCell
-                                      component="th"
-                                      scope="row"
-                                      align="right"
-                                      sx={{ borderBottom: "none" }}
-                                    >
-                                      <IconButton
-                                        size="small"
-                                        sx={{ color: "#22BB72" }}
-                                        onClick={() =>
-                                          callUser(item.userID, item.email)
-                                        }
-                                      >
-                                        <CallIcon fontSize="inherit" />
-                                      </IconButton>
-                                    </TableCell>
-                                  )}
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      ) : (
-                        <Typography sx={{ px: "16px", py: "6px" }}>
-                          No online users...
-                        </Typography>
-                      )}
-                    </Box>
-                  </Grid>
+                                )}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    ) : (
+                      <Typography> No online users...</Typography>
+                    )}
+                  </Box>
                 </Grid>
-              </Box>
+
+                <Grid item xs={12} md={6} lg={2}>
+                  <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", borderRadius: 2, p: 2 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Contacts</Typography>
+                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
+                    </Box>
+                    {contacts.length > 0 ? (
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            {contacts.slice(0, 8).map((item) => (
+                              <TableRow key={item.userID}>
+                                <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
+                                  <Typography>{item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}</Typography>
+                                </TableCell>
+
+                                {isInContactsHandler(onlineUsers, item.userID) && (
+                                  <TableCell component="th" scope="row" align="right" padding="none" sx={{ borderBottom: "none" }}>
+                                    <IconButton size="small" sx={{ color: "#22BB72" }} onClick={() => callUser(item.userID, item.email)}>
+                                      <CallIcon fontSize="inherit" />
+                                    </IconButton>
+                                  </TableCell>
+                                )}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    ) : (
+                      <Typography>No contacts...</Typography>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} md={12} lg={7}>
+                  <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", borderRadius: 2, p: 2 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Recents</Typography>
+                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
+                    </Box>
+
+                    {recents.length > 0 ? (
+                      <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }} >
+                        <Box sx={{ position: "relative", height: "100%", overflowY: "auto" }}>
+                          <Table
+                            size="small"
+                            stickyHeader
+                            sx={{
+                              overflowY: "auto",
+                              position: "absolute",
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                            }}
+                          >
+                            <TableHead sx={{ backgroundColor: "#EAEFFF" }}>
+                              <TableRow sx={{ backgroundColor: "#EAEFFF" }}>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                  padding="checkbox"
+                                ></TableCell>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                >
+                                  Email
+                                </TableCell>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                  align="right"
+                                >
+                                  Date
+                                </TableCell>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                  align="right"
+                                >
+                                  Time
+                                </TableCell>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                  align="right"
+                                >
+                                  Duration
+                                </TableCell>
+                                <TableCell
+                                  sx={{
+                                    color: "#6667AB",
+                                    fontSize: "16px",
+                                    fontWeight: "700",
+                                    backgroundColor: "#EAEFFF",
+                                  }}
+                                  align="right"
+                                >
+                                  Type of Call
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody sx={{ overflowY: "scroll" }}>
+                              {recents.slice(0, 8).reverse().map((item) => (
+                                <TableRow key={item.userID}>
+                                  <TableCell
+                                    scope="row"
+                                    align="center"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    {item.type === "call made" ? (
+                                      <CallMadeIcon sx={{ color: "#22BB72" }} />
+                                    ) : (
+                                      <CallMissedIcon sx={{ color: "#BB223E" }} />
+                                    )}
+                                  </TableCell>
+                                  <TableCell scope="row" sx={{ borderBottom: "none" }}>
+                                    <Typography>{item.email}</Typography>
+                                  </TableCell>
+                                  <TableCell
+                                    scope="row"
+                                    align="right"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>{item.date}</Typography>
+                                  </TableCell>
+                                  <TableCell
+                                    scope="row"
+                                    align="right"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>{item.time}</Typography>
+                                  </TableCell>
+                                  <TableCell
+                                    scope="row"
+                                    align="right"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>{item.duration}</Typography>
+                                  </TableCell>
+                                  <TableCell
+                                    scope="row"
+                                    align="right"
+                                    sx={{ borderBottom: "none" }}
+                                  >
+                                    <Typography>{item.type}</Typography>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </Box>
+                      </TableContainer>
+                    ) : (
+                      <Typography>No recents...</Typography>
+                    )}
+                  </Box>
+                </Grid>
+              </Grid>
             </Grid>
 
-            <Grid container item xs={5} sx={{ width: "100%" }}>
-              <Grid
-                item
-                xs={12}
-                lg={5}
+            <Grid item xs={12} lg={5}>
+              <video
+                playsInline={true}
+                muted={true}
+                autoPlay={true}
+                ref={myMedia}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "24px",
+                  objectFit: "cover",
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} lg={7}>
+              <Box
+                component={Paper}
                 sx={{
-                  position: "relative",
+                  height: "100%",
                   display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  flexDirection: "column",
+                  p: 2,
                 }}
               >
-                <video
-                  playsInline={true}
-                  muted={true}
-                  autoPlay={true}
-                  ref={myMedia}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "24px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} lg={7}>
+                <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>TRANSCRIBE</Typography>
                 <Box
-                  component={Paper}
                   sx={{
-                    height: "100%",
+                    flex: 1,
                     display: "flex",
                     flexDirection: "column",
-                    p: 2,
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Typography sx={{ fontSize: "18px", fontWeight: "600" }}>
-                    TRANSCRIBE
-                  </Typography>
-                  <Box
-                    sx={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#22BB72",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                      }}
-                    >
-                      How to use?
-                    </Typography>
-                    <Grid container>
-                      <Grid item lg={6}>
-                        <List
-                          component="ol"
-                          sx={{
-                            listStyleType: "decimal",
-                            listStylePosition: "inside",
-                            textAlign: "left",
-                          }}
-                        >
-                          <ListItem
-                            sx={{ display: "list-item" }}
-                            dense
-                            disableGutters
-                          >
-                            Speak and this tool will transcribe the words spoken
-                            into written text.
-                          </ListItem>
-                          <ListItem
-                            sx={{ display: "list-item" }}
-                            dense
-                            disableGutters
-                          >
-                            Make sure the speaking voice is clear for better
-                            translation quality.
-                          </ListItem>
-                          <ListItem
-                            sx={{ display: "list-item" }}
-                            dense
-                            disableGutters
-                          >
-                            Click the button to start transcribing.
-                          </ListItem>
-                        </List>
-                      </Grid>
-
-                      <Grid
-                        item
-                        lg={6}
+                  <Typography sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "600", }}>How to use?</Typography>
+                  <Grid container>
+                    <Grid item lg={6}>
+                      <List
+                        component="ol"
                         sx={{
-                          position: "relative",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          listStyleType: "decimal",
+                          listStylePosition: "inside",
+                          textAlign: "left",
                         }}
                       >
-                        <Box
-                          component="img"
-                          sx={{
-                            height: "auto",
-                            width: "100%",
-                            padding: "16px",
-                          }}
-                          alt="Transcription Visual"
-                          src={TranscribeVisual}
-                        />
-                      </Grid>
+                        <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          Speak and this tool will transcribe the words spokeninto written text.
+                        </ListItem>
+                        <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          Make sure the speaking voice is clear for better translation quality.
+                        </ListItem>
+                        <ListItem sx={{ display: "list-item" }} dense disableGutters>
+                          Click the button to start transcribing.
+                        </ListItem>
+                      </List>
                     </Grid>
-                    <Button
-                      to="transcribe"
-                      component={RouterLink}
-                      sx={{ backgroundColor: "#6667AB" }}
+
+                    <Grid
+                      item
+                      lg={6}
+                      sx={{
+                        position: "relative",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                     >
-                      Transcribe Now
-                    </Button>
-                  </Box>
+                      <Box
+                        component="img"
+                        sx={{
+                          height: "auto",
+                          width: "100%",
+                          padding: "16px",
+                        }}
+                        alt="Transcription Visual"
+                        src={TranscribeVisual}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Button
+                    to="transcribe"
+                    component={RouterLink}
+                    sx={{ backgroundColor: "#6667AB" }}
+                  >
+                    Transcribe Now
+                  </Button>
                 </Box>
-              </Grid>
+              </Box>
             </Grid>
           </Grid>
-
-          <AddContactDialog
-            dialogOpen={dialogOpen}
-            handleDialogClose={handleDialogClose}
-            onlineUsers={onlineUsers}
-            contacts={contacts}
-            addContactHandler={addContactHandler}
-          />
         </Box>
       )}
     </>
