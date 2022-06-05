@@ -50,7 +50,7 @@ const firebase_url =
 
 const OnlineCircle = () => {
   return (
-    <svg style={{ width: "8px", height: "8px", marginRight: "8px" }}>
+    <svg style={{ width: "8px", height: "8px", marginLeft: "8px" }}>
       <circle cx={4} cy={4} r={4} fill="#22BB72" />
     </svg>
   );
@@ -600,7 +600,7 @@ const Home = ({
                             {onlineContacts.slice(0, 8).map((item) => (
                               <TableRow key={item.userID}>
                                 <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
-                                  <Typography><OnlineCircle />{item.email}</Typography>
+                                  <Typography>{item.email} <OnlineCircle /></Typography>
                                 </TableCell>
 
                                 {item.userID !== userID && (
@@ -634,7 +634,7 @@ const Home = ({
                             {contacts.slice(0, 8).map((item) => (
                               <TableRow key={item.userID}>
                                 <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
-                                  <Typography>{isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}{item.email}</Typography>
+                                  <Typography>{item.email}{isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}</Typography>
                                 </TableCell>
 
                                 {isInContactsHandler(onlineUsers, item.userID) && (
