@@ -659,7 +659,7 @@ const Home = ({
                   <Box sx={{ backgroundColor: "#EAEFFF", height: "100%", borderRadius: 2, p: 2 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography sx={{ fontSize: "18px", fontWeight: "500" }}>Recents</Typography>
-                      <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
+                      <Link to={"/recents"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
                     </Box>
 
                     {recents.length > 0 ? (
