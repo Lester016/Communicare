@@ -50,7 +50,7 @@ const firebase_url =
 
 const OnlineCircle = () => {
   return (
-    <svg style={{ width: "8px", height: "8px", marginLeft: "8px" }}>
+    <svg style={{ width: "8px", height: "8px", marginRight: "8px" }}>
       <circle cx={4} cy={4} r={4} fill="#22BB72" />
     </svg>
   );
@@ -183,7 +183,7 @@ const Home = ({
 
   return (
     <>
-      {true ? ( //isCallAccepted && !isCallEnded
+      {isCallAccepted && !isCallEnded ? ( //isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -601,8 +601,9 @@ const Home = ({
                             {onlineContacts.slice(0, 8).map((item) => (
                               <TableRow key={item.userID}>
                                 <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
-                                  <Typography>{item.email} <OnlineCircle /> </Typography>
+                                  <Typography><OnlineCircle />{item.email}</Typography>
                                 </TableCell>
+
                                 {item.userID !== userID && (
                                   <TableCell component="th" scope="row" align="right" padding="none" sx={{ borderBottom: "none" }}>
                                     <IconButton size="small" sx={{ color: "#22BB72" }} onClick={() => callUser(item.userID, item.email)}>
@@ -634,7 +635,7 @@ const Home = ({
                             {contacts.slice(0, 8).map((item) => (
                               <TableRow key={item.userID}>
                                 <TableCell component="th" scope="row" padding="none" sx={{ borderBottom: "none" }}>
-                                  <Typography>{item.email} {isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}</Typography>
+                                  <Typography>{isInContactsHandler(onlineUsers, item.userID) && <OnlineCircle />}{item.email}</Typography>
                                 </TableCell>
 
                                 {isInContactsHandler(onlineUsers, item.userID) && (
