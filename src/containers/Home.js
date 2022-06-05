@@ -110,7 +110,6 @@ const Home = ({
 
     axios
       .get(`${firebase_url}/call-history/${userID}.json`).then((response) => {
-        console.log(response);
         setRecents(response.data !== null ? Object.values(response.data) : []);
       });
   }, []);
@@ -737,7 +736,6 @@ const Home = ({
                             <TableBody sx={{ overflowY: "scroll" }}>
                               {recents.slice(0, 8).reverse().map((item) => (
                                 <TableRow key={item.userID}>
-                                  {console.log(item)}
                                   <TableCell
                                     scope="row"
                                     align="center"
