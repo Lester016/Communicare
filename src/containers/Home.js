@@ -183,7 +183,7 @@ const Home = ({
 
   return (
     <>
-      {isCallAccepted && !isCallEnded ? ( //isCallAccepted && !isCallEnded
+      {true ? ( //isCallAccepted && !isCallEnded
         <Box
           component="main"
           sx={{
@@ -265,6 +265,8 @@ const Home = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  borderRadius: "24px",
+                  overflow: "hidden",
                 }}>
 
                 {isCameraOn && (
@@ -274,7 +276,6 @@ const Home = ({
                     autoPlay={true}
                     ref={myMedia}
                     style={{
-
                       height: "100%",
                       width: "100%",
                       objectFit: "contain",
@@ -286,13 +287,12 @@ const Home = ({
                   sx={{
                     position: "absolute",
                     padding: "16px 24px",
-                    bottom: 0,
+                    bottom: "8px",
                     left: 0,
                     ml: "16px",
                     mb: "16px",
                     backgroundColor: "rgba(0, 0, 0, .5)",
                     borderTopRightRadius: 16,
-                    borderBottomLeftRadius: "24px",
 
                     color: "white",
                     fontSize: "18px",
