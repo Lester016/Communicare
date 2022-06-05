@@ -77,6 +77,8 @@ const Home = ({
   enableTranscription,
   handleToggleCamera,
   handleToggleMicrophone,
+  isCameraOn,
+  isMicOn,
 }) => {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
@@ -87,8 +89,8 @@ const Home = ({
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
+  //const [isCameraOn, setIsCameraOn] = useState(true);
+  //const [isMicOn, setIsMicOn] = useState(true);
 
   const ringtone = useAudio(
     require("../assets/Selecta Ringtone.mp3"),

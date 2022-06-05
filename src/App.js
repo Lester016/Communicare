@@ -330,6 +330,8 @@ function App({ onAutoSignup, userID, email }) {
               isTranscriptionEnabled={isTranscriptionEnabled}
               handleToggleCamera={handleToggleCamera}
               handleToggleMicrophone={handleToggleMicrophone}
+              isCameraOn={isCameraOn}
+              isMicOn={isMicOn}
             />
           }
         />
