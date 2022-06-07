@@ -111,8 +111,13 @@ const Contacts = ({ socket, userID, onlineUsers, callUser }) => {
         flexGrow: 1,
         width: { sm: `calc(100vw - 300px)` },
         height: "100vh",
-        p: 4,
         backgroundColor: "#F9FAFF",
+        xs: {
+          p: 1,
+        },
+        sm: {
+          p: 2,
+        }
       }}>
       <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
       <Grid container sx={{ height: "100%", ".MuiGrid-item": { p: 2 } }}>
