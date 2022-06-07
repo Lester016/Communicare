@@ -20,6 +20,7 @@ const RegisterContainer = styled(Box)(({ theme }) => ({
   display: "flex",
 
   [theme.breakpoints.down('md')]: {
+    height: "auto",
     flexDirection: "column",
     alignItems: "center",
     background: "linear-gradient(180deg, rgba(102,103,171,1) 0%, rgba(248,209,211,1) 100%)",
@@ -44,8 +45,8 @@ const Logo = styled(`img`)(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     width: "200px",
-    marginTop: "64px",
-    marginBottom: "64px",
+    marginTop: "32px",
+    marginBottom: "32px",
   }
 }))
 
@@ -67,7 +68,7 @@ const StyledForm = styled(Form)(({ theme }) => ({
   flexDirection: "column",
 
   borderRadius: "25px",
-  margin: "0px 10%",
+  margin: "0px 5%",
   padding: "5%",
 
   "& > *": {
@@ -117,7 +118,7 @@ const Register = ({ register, loading, error }) => {
           }}
         >
           <StyledForm>
-            <Header variant="h3">Register</Header>
+            <Header variant="h4">Register</Header>
 
             <TextField type="email" name="email" label="Email" />
             <ErrorMessage name="email" component="div" />
