@@ -46,11 +46,9 @@ const Recents = ({ userID }) => {
         width: { sm: `calc(100vw - 300px)` },
         height: "100vh",
         backgroundColor: "#F9FAFF",
-        xs: {
-          p: 1,
-        },
-        sm: {
-          p: 2,
+        p: {
+          xs: 1,
+          md: 2,
         }
       }}
     >

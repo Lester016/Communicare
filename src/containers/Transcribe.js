@@ -136,7 +136,13 @@ const Transcribe = ({ userID, socket }) => {
           Transcribe: {isTranscribeEnabled ? "On" : "Off"}
         </Button>
 
-        <Box sx={{ flex: 1, width: "100%", p: 4 }}>
+        <Box sx={{
+          flex: 1, width: "100%",
+          p: {
+            xs: 1,
+            md: 4,
+          }
+        }}>
           <Box sx={{ position: "relative", height: "100%" }}>
             <Box
               sx={{
@@ -148,7 +154,10 @@ const Transcribe = ({ userID, socket }) => {
                 backgroundColor: "#EAEFFF",
                 borderRadius: 4,
                 overflow: "scroll",
-                p: 4,
+                p: {
+                  xs: 1,
+                  md: 2,
+                }
               }}
             >
               <Typography
