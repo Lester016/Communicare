@@ -45,8 +45,13 @@ const Recents = ({ userID }) => {
         flexGrow: 1,
         width: { sm: `calc(100vw - 300px)` },
         height: "100vh",
-        p: 4,
         backgroundColor: "#F9FAFF",
+        xs: {
+          p: 1,
+        },
+        sm: {
+          p: 2,
+        }
       }}
     >
       <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
@@ -186,16 +191,16 @@ const Recents = ({ userID }) => {
                   <TableBody sx={{ overflowY: "scroll" }}>
                     {(searchRecents !== ""
                       ? recents.filter((row) => {
-                          return row.email
-                            .toLowerCase()
-                            .includes(searchRecents.toLowerCase());
-                        })
+                        return row.email
+                          .toLowerCase()
+                          .includes(searchRecents.toLowerCase());
+                      })
                       : recents
                     )
                       .slice(0)
                       .reverse()
                       .map((item) => (
-                        <TableRow key={item.userID}>
+                        <TableRow key={item.userID} sx={{ "& > *": { whiteSpace: "nowrap" } }}>
                           <TableCell
                             scope="row"
                             align="center"
