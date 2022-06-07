@@ -231,18 +231,13 @@ const Contacts = ({ socket, userID, onlineUsers, callUser }) => {
                         >
                           <IconButton
                             size="small"
+                            sx={{ color: "#22BB72" }}
                             onClick={() => {
                               navigate("/");
                               callUser(item.userID)
                             }}
                           >
                             <CallIcon fontSize="inherit" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => addContactHandler(item.userID, item.email)}
-                          >
-                            <AddIcon fontSize="inherit" />
                           </IconButton>
                         </TableCell>
                       </TableRow>

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
+import { sortByEmail } from "../utils/sortByEmail";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -123,6 +124,14 @@ const Home = ({
   useEffect(() => {
     setOnlineContacts(filterOnlineContacts(contacts, onlineUsers));
   }, [onlineUsers, contacts]);
+
+  useEffect(() => {
+    setContacts(contacts.sort(sortByEmail))
+  }, [contacts])
+
+  useEffect(() => {
+    setOnlineContacts(onlineContacts.sort(sortByEmail))
+  }, [onlineContacts])
 
   const filterOnlineContacts = (array1, array2) => {
     return array1.filter((array1Item) => {
