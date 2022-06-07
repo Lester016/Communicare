@@ -131,6 +131,22 @@ function App({ onAutoSignup, userID, email }) {
     };
   };
 
+  // Toggle on and off camera.
+  const cameraToggler = () => {
+    socket.emit("camera-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+  };
+
+  // Toggle on and off microphone.
+  const micToggler = () => {
+    socket.emit("mic-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+  };
+
   const onMedia = async () => {
     let stream = await getUserMedia({ video: true, audio: true });
     try {
@@ -145,7 +161,7 @@ function App({ onAutoSignup, userID, email }) {
   const handleToggleCamera = () => {
     setIsCameraOn(!isCameraOn);
     toggleCamera(!isCameraOn);
-  }
+  };
   const toggleCamera = (toggle) => {
     try {
       myMedia.current.srcObject.getTracks().forEach((track) => {
@@ -158,9 +174,8 @@ function App({ onAutoSignup, userID, email }) {
   const handleToggleMicrophone = () => {
     setIsMicOn(!isMicOn);
     toggleMicrophone(!isMicOn);
-  }
+  };
   const toggleMicrophone = (toggle) => {
-    
     try {
       myMedia.current.srcObject.getTracks().forEach((track) => {
         if (track.kind === "audio") track.enabled = toggle;
