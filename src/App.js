@@ -67,6 +67,9 @@ function App({ onAutoSignup, userID, email }) {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
+  const [isCamOn, setIsCamOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
+
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
@@ -98,7 +101,31 @@ function App({ onAutoSignup, userID, email }) {
       setIsCallEnded(true);
       window.location.reload();
     });
-  }, []);
+
+
+    socket.on("camera-toggler", (data) => {
+      console.log("cam");
+      if (userMedia.current.srcObject !== null && userMedia.current.srcObject.getVideoTracks().length > 0) {
+        try {
+          userMedia.current.srcObject.getVideoTracks()[0].enabled = !userMedia.current.srcObject.getVideoTracks()[0].enabled
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
+
+    socket.on("mic-toggler", (data) => {
+      console.log("mic");
+      if (userMedia.current.srcObject !== null && userMedia.current.srcObject.getAudioTracks().length > 0) {
+        try {
+          console.log(userMedia.current.srcObject.getAudioTracks()[0]);
+          userMedia.current.srcObject.getAudioTracks()[0].enabled = !userMedia.current.srcObject.getAudioTracks()[0].enabled
+        } catch (e) {
+          console.log(e);
+        }
+      };
+    });
+  }, [])
 
   useEffect(() => {
     socket.on("enable-transcribe", ({ transcribeFrom, isEnable }) => {
@@ -128,6 +155,40 @@ function App({ onAutoSignup, userID, email }) {
     };
   };
 
+  // Toggle on and off camera.
+  const cameraToggler = () => {
+    socket.emit("camera-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getVideoTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getVideoTracks()[0].enabled = !myMedia.current.srcObject.getVideoTracks()[0].enabled
+        setIsCamOn(!isCamOn)
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  // Toggle on and off microphone.
+  const micToggler = () => {
+    socket.emit("mic-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getAudioTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getAudioTracks()[0].enabled = !myMedia.current.srcObject.getAudioTracks()[0].enabled
+        setIsMicOn(!isMicOn)
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   const onMedia = async () => {
     let stream = await getUserMedia({ video: true, audio: true });
     try {
@@ -139,6 +200,7 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
+  /*
   const toggleCamera = () => {
     if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getVideoTracks().length > 0) {
       try {
@@ -148,7 +210,6 @@ function App({ onAutoSignup, userID, email }) {
       }
     }
   };
-
   const toggleMicrophone = () => {
     if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getAudioTracks().length > 0) {
       try {
@@ -156,8 +217,33 @@ function App({ onAutoSignup, userID, email }) {
       } catch (e) {
         console.log(e);
       }
+  const handleToggleCamera = () => {
+    setIsCameraOn(!isCameraOn);
+    toggleCamera(!isCameraOn);
+  };
+  const toggleCamera = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "video") track.enabled = toggle;
+      });
+    } catch (e) {
+      console.log(e);
     }
   };
+  const handleToggleMicrophone = () => {
+    setIsMicOn(!isMicOn);
+    toggleMicrophone(!isMicOn);
+  };
+  const toggleMicrophone = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "audio") track.enabled = toggle;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  */
 
   const callUser = (userToCallID, email) => {
     addCallHistory(email);
@@ -317,8 +403,10 @@ function App({ onAutoSignup, userID, email }) {
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
-              toggleCamera={toggleCamera}
-              toggleMicrophone={toggleMicrophone}
+              cameraToggler={cameraToggler}
+              micToggler={micToggler}
+              isCamOn={isCamOn}
+              isMicOn={isMicOn}
             />
           }
         />
