@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
+import { sortByEmail } from "../utils/sortByEmail";
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -53,6 +54,14 @@ const Contacts = ({ socket, userID, onlineUsers, callUser }) => {
       setContacts(response.data !== null ? response.data : []);
     });
   }, []);
+
+  useEffect(() => {
+    setContacts(contacts.sort(sortByEmail))
+  }, [contacts])
+
+  useEffect(() => {
+    setOnlineContacts(onlineContacts.sort(sortByEmail))
+  }, [onlineContacts])
 
   const addContactHandler = (contactID, contactEmail) => {
     let updatedContacts = [
