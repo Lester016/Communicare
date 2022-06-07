@@ -77,8 +77,8 @@ const Home = ({
   enableTranscription,
   handleToggleCamera,
   handleToggleMicrophone,
-  isCameraOn,
-  isMicOn,
+  toggleCamera,
+  toggleMicrophone,
 }) => {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
@@ -118,17 +118,7 @@ const Home = ({
 
   useEffect(() => {
     onMedia();
-  }, [isCallAccepted, isCallEnded, isCameraOn]);
-
-  /*
-  useEffect(() => {
-    toggleCamera(isCameraOn);
-  }, [isCameraOn]);
-
-  useEffect(() => {
-    toggleMicrophone(isMicOn);
-  }, [isMicOn]);
-  */
+  }, [isCallAccepted, isCallEnded]);
 
   useEffect(() => {
     setOnlineContacts(filterOnlineContacts(contacts, onlineUsers));
@@ -272,7 +262,7 @@ const Home = ({
                   overflow: "hidden",
                 }}>
 
-                {isCameraOn && (
+
                   <video
                     playsInline={true}
                     muted={true}
@@ -284,7 +274,7 @@ const Home = ({
                       objectFit: "contain",
                     }}
                   />
-                )}
+
 
                 <Typography
                   sx={{
@@ -309,7 +299,7 @@ const Home = ({
                 <Grid container component={Paper}>
                   <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
-                      onClick={handleToggleCamera}
+                      onClick={toggleCamera}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",
@@ -327,22 +317,22 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isCameraOn ? <VideocamIcon /> : <VideocamOffIcon />}
+                        {true ? <VideocamIcon /> : <VideocamOffIcon />}
                       </Box>
                       <Typography
                         sx={{
-                          color: isCameraOn ? "#22BB72" : "#BB223E",
+                          color: true ? "#22BB72" : "#BB223E",
                           fontSize: "14px",
                         }}
                       >
-                        Camera: {isCameraOn ? "On" : "Off"}
+                        Camera: {true ? "On" : "Off"}
                       </Typography>
                     </IconButton>
                   </Grid>
 
                   <Grid item xs={3} lg={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <IconButton
-                      onClick={handleToggleMicrophone}
+                      onClick={toggleMicrophone}
                       sx={{
                         borderRadius: 0,
                         color: "#7D7EAA",
@@ -360,15 +350,15 @@ const Home = ({
                           justifyContent: "center",
                         }}
                       >
-                        {isMicOn ? <MicIcon /> : <MicOffIcon />}
+                        {true ? <MicIcon /> : <MicOffIcon />}
                       </Box>
                       <Typography
                         sx={{
-                          color: isMicOn ? "#22BB72" : "#BB223E",
+                          color: true ? "#22BB72" : "#BB223E",
                           fontSize: "14px",
                         }}
                       >
-                        Mic: {isMicOn ? "On" : "Off"}
+                        Mic: {true ? "On" : "Off"}
                       </Typography>
                     </IconButton>
                   </Grid>

@@ -67,9 +67,6 @@ function App({ onAutoSignup, userID, email }) {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
-
   const myMedia = useRef();
   const userMedia = useRef();
   const connectionRef = useRef();
@@ -142,31 +139,23 @@ function App({ onAutoSignup, userID, email }) {
     setStream(stream);
   };
 
-  const handleToggleCamera = () => {
-    setIsCameraOn(!isCameraOn);
-    toggleCamera(!isCameraOn);
-  }
-  const toggleCamera = (toggle) => {
-    try {
-      myMedia.current.srcObject.getTracks().forEach((track) => {
-        if (track.kind === "video") track.enabled = toggle;
-      });
-    } catch (e) {
-      console.log(e);
+  const toggleCamera = () => {
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getVideoTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getVideoTracks()[0].enabled = !myMedia.current.srcObject.getVideoTracks()[0].enabled
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
-  const handleToggleMicrophone = () => {
-    setIsMicOn(!isMicOn);
-    toggleMicrophone(!isMicOn);
-  }
-  const toggleMicrophone = (toggle) => {
-    
-    try {
-      myMedia.current.srcObject.getTracks().forEach((track) => {
-        if (track.kind === "audio") track.enabled = toggle;
-      });
-    } catch (e) {
-      console.log(e);
+
+  const toggleMicrophone = () => {
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getAudioTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getAudioTracks()[0].enabled = !myMedia.current.srcObject.getAudioTracks()[0].enabled
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -328,10 +317,8 @@ function App({ onAutoSignup, userID, email }) {
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
-              handleToggleCamera={handleToggleCamera}
-              handleToggleMicrophone={handleToggleMicrophone}
-              isCameraOn={isCameraOn}
-              isMicOn={isMicOn}
+              toggleCamera={toggleCamera}
+              toggleMicrophone={toggleMicrophone}
             />
           }
         />
