@@ -740,8 +740,8 @@ const Home = ({
                               </TableRow>
                             </TableHead>
                             <TableBody sx={{ overflowY: "scroll" }}>
-                              {recents.slice(0, 8).reverse().map((item) => (
-                                <TableRow key={item.userID}>
+                              {recents.slice(0, 8).reverse().map((item, index) => (
+                                <TableRow key={index}>
                                   <TableCell
                                     scope="row"
                                     align="center"
