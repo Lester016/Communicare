@@ -582,12 +582,15 @@ const Home = ({
             flexGrow: 1,
             width: { sm: `calc(100vw - 300px)` },
             backgroundColor: "#F9FAFF",
-            p: 2,
+            p: {
+              xs: 1,
+              md: 2,
+            }
           }}
         >
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
 
-          <Grid container sx={{ ".MuiGrid-item": { p: 2 }, }}>
+          <Grid container sx={{ width: { md: "calc(100vw - 332px)", xs: "calc(100vw - 16px)" }, ".MuiGrid-item": { p: 2 }, }}>
             <Grid container item xs={12}>
               <Grid container item xs={12} component={Paper} sx={{ p: "0px!important" }}>
                 <Grid item xs={12} md={6} lg={3}>
@@ -597,7 +600,7 @@ const Home = ({
                       <Link to={"/contacts"} component={RouterLink} underline="none" sx={{ color: "#22BB72", fontSize: "14px", fontWeight: "400", ml: "auto" }}>See All</Link>
                     </Box>
                     {onlineContacts.length > 0 ? (
-                      <TableContainer>
+                      <TableContainer sx={{ height: "100%" }}>
                         <Table size="small">
                           <TableBody>
                             {onlineContacts.slice(0, 8).map((item) => (
@@ -668,7 +671,7 @@ const Home = ({
                     {recents.length > 0 ? (
                       <TableContainer sx={{ backgroundColor: "#EAEFFF", flex: 1, borderRadius: 2 }} >
                         <Box sx={{ height: "100%", overflowY: "auto" }}>
-                          <Table size="small" stickyHeader>
+                          <Table size="small" stickyHeader sx={{ minWidth: 0 }}>
                             <TableHead sx={{ backgroundColor: "#EAEFFF" }}>
                               <TableRow sx={{ backgroundColor: "#EAEFFF" }}>
                                 <TableCell
