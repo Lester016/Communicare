@@ -187,18 +187,11 @@ const Recents = ({ userID }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ overflowY: "scroll" }}>
-                    {(searchRecents !== ""
-                      ? recents.filter((row) => {
-                        return row.email
-                          .toLowerCase()
-                          .includes(searchRecents.toLowerCase());
-                      })
-                      : recents
-                    )
+                    {(searchRecents !== "" ? recents.filter((row) => { return row.email && row.email.toLowerCase().includes(searchRecents.toLowerCase()); }) : recents)
                       .slice(0)
                       .reverse()
-                      .map((item) => (
-                        <TableRow key={item.userID} sx={{ "& > *": { whiteSpace: "nowrap" } }}>
+                      .map((item, index) => (
+                        <TableRow key={index} sx={{ "& > *": { whiteSpace: "nowrap" } }}>
                           <TableCell
                             scope="row"
                             align="center"
