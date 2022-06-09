@@ -118,7 +118,6 @@ function App({ onAutoSignup, userID, email }) {
       console.log("mic");
       if (userMedia.current.srcObject !== null && userMedia.current.srcObject.getAudioTracks().length > 0) {
         try {
-          console.log(userMedia.current.srcObject.getAudioTracks()[0]);
           userMedia.current.srcObject.getAudioTracks()[0].enabled = !userMedia.current.srcObject.getAudioTracks()[0].enabled
         } catch (e) {
           console.log(e);
