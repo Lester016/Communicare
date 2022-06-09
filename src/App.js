@@ -12,13 +12,16 @@ import Layout from "./hoc/Layout";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import ProtectedLayout from "./hoc/ProtectedLayout";
+import Contacts from "./containers/Contacts";
+import Recents from "./containers/Recents";
+import Transcribe from "./containers/Transcribe";
 import Logout from "./containers/Logout";
 import { downSampleBuffer } from "./utils/downSampleBuffer";
 import { iceConfig as iceServers } from "./constants/iceConfig";
-import Transcribe from "./containers/Transcribe";
 import { getUserMedia } from "./utils/getUserMedia";
 import { getFormattedDate } from "./utils/getFormattedDate";
 import { getFormattedTime } from "./utils/getFormattedTime";
+import { millisecondsToTime } from "./utils/millisecondsToTime";
 
 // Hosted
 // https://communicare-server.herokuapp.com/
@@ -41,6 +44,7 @@ context.resume();
 
 function App({ onAutoSignup, userID, email }) {
   const [isCallReceived, setIsCallReceived] = useState(false);
+  const [isCallSent, setIsCallSent] = useState(false);
   const [stream, setStream] = useState();
   const [isTranscriptionEnabled, setIsTranscriptionEnabled] = useState(false);
   const [otherPartyID, setOtherPartyID] = useState(null);
@@ -60,6 +64,11 @@ function App({ onAutoSignup, userID, email }) {
   });
   const [callDuration, setCallDuration] = useState(0);
   const [callResponseHistory, setCallResponseHistory] = useState();
+
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
+  const [isCamOn, setIsCamOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
 
   const myMedia = useRef();
   const userMedia = useRef();
@@ -92,7 +101,30 @@ function App({ onAutoSignup, userID, email }) {
       setIsCallEnded(true);
       window.location.reload();
     });
-  }, []);
+
+
+    socket.on("camera-toggler", (data) => {
+      console.log("cam");
+      if (userMedia.current.srcObject !== null && userMedia.current.srcObject.getVideoTracks().length > 0) {
+        try {
+          userMedia.current.srcObject.getVideoTracks()[0].enabled = !userMedia.current.srcObject.getVideoTracks()[0].enabled
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
+
+    socket.on("mic-toggler", (data) => {
+      console.log("mic");
+      if (userMedia.current.srcObject !== null && userMedia.current.srcObject.getAudioTracks().length > 0) {
+        try {
+          userMedia.current.srcObject.getAudioTracks()[0].enabled = !userMedia.current.srcObject.getAudioTracks()[0].enabled
+        } catch (e) {
+          console.log(e);
+        }
+      };
+    });
+  }, [])
 
   useEffect(() => {
     socket.on("enable-transcribe", ({ transcribeFrom, isEnable }) => {
@@ -103,6 +135,10 @@ function App({ onAutoSignup, userID, email }) {
         socket.emit("endGoogleCloudStream");
       }
     });
+  }, []);
+
+  useEffect(() => {
+    socket.on("get-users", (users) => setOnlineUsers(users));
   }, []);
 
   const handleSuccess = (stream) => {
@@ -118,16 +154,100 @@ function App({ onAutoSignup, userID, email }) {
     };
   };
 
+  // Toggle on and off camera.
+  const cameraToggler = () => {
+    socket.emit("camera-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getVideoTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getVideoTracks()[0].enabled = !myMedia.current.srcObject.getVideoTracks()[0].enabled
+        setIsCamOn(!isCamOn)
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  // Toggle on and off microphone.
+  const micToggler = () => {
+    socket.emit("mic-toggler", {
+      id: otherPartyID,
+      isEnable: true, // boolean to pass to other user
+    });
+
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getAudioTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getAudioTracks()[0].enabled = !myMedia.current.srcObject.getAudioTracks()[0].enabled
+        setIsMicOn(!isMicOn)
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   const onMedia = async () => {
     let stream = await getUserMedia({ video: true, audio: true });
-    myMedia.current.srcObject = stream;
+    try {
+      myMedia.current.srcObject = stream;
+    } catch (e) {
+      console.log(e);
+    }
     handleSuccess(stream);
     setStream(stream);
   };
 
+  /*
+  const toggleCamera = () => {
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getVideoTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getVideoTracks()[0].enabled = !myMedia.current.srcObject.getVideoTracks()[0].enabled
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+  const toggleMicrophone = () => {
+    if (myMedia.current.srcObject !== null && myMedia.current.srcObject.getAudioTracks().length > 0) {
+      try {
+        myMedia.current.srcObject.getAudioTracks()[0].enabled = !myMedia.current.srcObject.getAudioTracks()[0].enabled
+      } catch (e) {
+        console.log(e);
+      }
+  const handleToggleCamera = () => {
+    setIsCameraOn(!isCameraOn);
+    toggleCamera(!isCameraOn);
+  };
+  const toggleCamera = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "video") track.enabled = toggle;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleToggleMicrophone = () => {
+    setIsMicOn(!isMicOn);
+    toggleMicrophone(!isMicOn);
+  };
+  const toggleMicrophone = (toggle) => {
+    try {
+      myMedia.current.srcObject.getTracks().forEach((track) => {
+        if (track.kind === "audio") track.enabled = toggle;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  */
+
   const callUser = (userToCallID, email) => {
     addCallHistory(email);
     setOtherPartyID(userToCallID);
+    setIsCallSent(true);
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -166,6 +286,8 @@ function App({ onAutoSignup, userID, email }) {
       setCallDuration((prevState) => prevState + 1000);
     }, 1000);
     setIsCallAccepted(true);
+    setIsCallReceived(false);
+    setIsCallSent(false);
 
     const peer = new Peer({
       initiator: false,
@@ -194,8 +316,11 @@ function App({ onAutoSignup, userID, email }) {
 
   const endCall = () => {
     setIsCallEnded(true);
+    setIsCallAccepted(false);
+    setIsCallSent(false);
+
     let updatedCallRecord = { ...callRecord };
-    updatedCallRecord["duration"] = callDuration;
+    updatedCallRecord["duration"] = millisecondsToTime(callDuration);
     updatedCallRecord["type"] = "call made";
 
     console.log("UPDATED CLAL RECORD: ", updatedCallRecord);
@@ -224,11 +349,12 @@ function App({ onAutoSignup, userID, email }) {
   };
 
   const addCallHistory = (email, type = "call missed") => {
+    let duration = millisecondsToTime(callDuration);
     let data = {
       email: email,
       date: "",
       time: "",
-      duration: "-",
+      duration: duration,
       type: type,
     };
 
@@ -255,37 +381,46 @@ function App({ onAutoSignup, userID, email }) {
         <Route path="register" element={<Register />} />
       </Route>
 
-      <Route
-        path="/"
-        element={
-          <ProtectedLayout
-            callDuration={callDuration}
-            isCallReceived={isCallReceived}
-            callerInfo={callerInfo}
-            answerCall={answerCall}
-            isCallAccepted={isCallAccepted}
-          />
-        }
-      >
+      <Route path="/" element={<ProtectedLayout />}>
         <Route
           index
           element={
             <Home
               socket={socket}
+              onlineUsers={onlineUsers}
               callUser={callUser}
+              answerCall={answerCall}
               myMedia={myMedia}
               userMedia={userMedia}
               onMedia={onMedia}
-              isCallAccepted={isCallAccepted}
-              isCallReceived={isCallReceived}
               callerInfo={callerInfo}
+              isCallAccepted={isCallAccepted}
+              isCallSent={isCallSent}
+              isCallReceived={isCallReceived}
               isCallEnded={isCallEnded}
+              callDuration={callDuration}
               endCall={endCall}
               enableTranscription={enableTranscriptionHandler}
               isTranscriptionEnabled={isTranscriptionEnabled}
+              cameraToggler={cameraToggler}
+              micToggler={micToggler}
+              isCamOn={isCamOn}
+              isMicOn={isMicOn}
             />
           }
         />
+
+        <Route
+          path="contacts"
+          element={
+            <Contacts
+              socket={socket}
+              onlineUsers={onlineUsers}
+              callUser={callUser}
+            />
+          }
+        />
+        <Route path="recents" element={<Recents />} />
 
         <Route path="transcribe" element={<Transcribe socket={socket} />} />
         <Route path="logout" element={<Logout />} />

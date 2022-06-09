@@ -17,6 +17,7 @@ const LoginContainer = styled(Box)(({ theme }) => ({
   width: "100vw",
   height: "100vh",
   display: "flex",
+  padding: 1,
   
   [theme.breakpoints.down('md')]: {
     flexDirection: "column",
@@ -43,8 +44,8 @@ const Logo = styled(`img`)(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     width: "200px",
-    marginTop: "64px",
-    marginBottom: "64px",
+    marginTop: "32px",
+    marginBottom: "32px",
   }
 }))
 
@@ -66,7 +67,7 @@ const StyledForm = styled(Form)(({ theme }) => ({
   flexDirection: "column",
 
   borderRadius: "25px",
-  margin: "0px 10%",
+  margin: "0px 5%",
   padding: "5%",
 
   "& > *": {
@@ -112,7 +113,7 @@ const Login = ({ login, error, loading }) => {
           }}
         >
           <StyledForm>
-            <Header variant="h3">Login</Header>
+            <Header variant="h4">Login</Header>
 
             <TextField type="email" name="email" label="Email" />
             <ErrorMessage name="email" component="div" />
