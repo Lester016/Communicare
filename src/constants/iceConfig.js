@@ -6,22 +6,22 @@ export const iceConfig = [
   {
     url: "turn:global.turn.twilio.com:3478?transport=udp",
     username:
-      "3a1f5285bf2d296a71d0c1149c94d368ae20d40a04544434f70cfa95405546a1",
+      "30f2ab77765cc712ea06cb3116293aaf27471fedffd074b501fe9e36b82d0f6f",
     urls: "turn:global.turn.twilio.com:3478?transport=udp",
-    credential: "7z9Itfz22CrS+ySweeSKnJethbAkansHYTRkZ3AYyow=",
+    credential: "9/ACis/5AHtjfuIPWZDjDZZRNWE/SUCshiDe8tYCLIw=",
   },
   {
     url: "turn:global.turn.twilio.com:3478?transport=tcp",
     username:
-      "3a1f5285bf2d296a71d0c1149c94d368ae20d40a04544434f70cfa95405546a1",
+      "30f2ab77765cc712ea06cb3116293aaf27471fedffd074b501fe9e36b82d0f6f",
     urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-    credential: "7z9Itfz22CrS+ySweeSKnJethbAkansHYTRkZ3AYyow=",
+    credential: "9/ACis/5AHtjfuIPWZDjDZZRNWE/SUCshiDe8tYCLIw=",
   },
   {
     url: "turn:global.turn.twilio.com:443?transport=tcp",
     username:
-      "3a1f5285bf2d296a71d0c1149c94d368ae20d40a04544434f70cfa95405546a1",
+      "30f2ab77765cc712ea06cb3116293aaf27471fedffd074b501fe9e36b82d0f6f",
     urls: "turn:global.turn.twilio.com:443?transport=tcp",
-    credential: "7z9Itfz22CrS+ySweeSKnJethbAkansHYTRkZ3AYyow=",
+    credential: "9/ACis/5AHtjfuIPWZDjDZZRNWE/SUCshiDe8tYCLIw=",
   },
 ];
